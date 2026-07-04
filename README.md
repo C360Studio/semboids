@@ -46,15 +46,28 @@ Architecture fixed in
 [ADR-001](docs/adr/001-hybrid-physics-substrate-split.md); work proceeds
 through [OpenSpec](openspec/README.md) changes.
 
-Roadmap: graph snapshots + sigma.js pane with LPA flock communities →
-lifecycle spawn/despawn → load-dial profiling harness.
+In flight: `add-graph-pane` — graph snapshots at a tunable cadence (the
+load dial v1), LPA flock communities, and the sigma.js pane. Spikes
+complete on semstreams beta.136 (which fixed
+[#461](https://github.com/C360Studio/semstreams/issues/461) same-day —
+`entity_id_edges` now lets LPA run on explicit flock topology). Since
+beta.135 fixed
+[#455](https://github.com/C360Studio/semstreams/issues/455), the UI rule
+toggles flip the **actual zone-steering rules** via runtime reconfiguration
+(the earlier app-side gate is gone; active modifiers still clear instantly
+on disable).
+
+Roadmap: graph pane → lifecycle spawn/despawn → load-dial profiling
+harness.
 
 Upstream findings filed from this repo:
 [semstreams#452](https://github.com/C360Studio/semstreams/issues/452) (docs),
 [#455](https://github.com/C360Studio/semstreams/issues/455) (rule hot-reload
-unreachable over HTTP),
+unreachable over HTTP — **fixed in beta.135**),
 [#459](https://github.com/C360Studio/semstreams/issues/459) (config bucket
-collision on shared NATS).
+collision on shared NATS),
+[#461](https://github.com/C360Studio/semstreams/issues/461) (clustering
+virtual edges not configurable).
 
 ## Development
 

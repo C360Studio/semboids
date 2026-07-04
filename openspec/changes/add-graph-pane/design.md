@@ -69,7 +69,12 @@ to `entity.boid.upsert` on the existing ENTITY stream. New
 `graphclustering.Register`; `configs/flock.json` wires: graph-index
 (ENTITY_STATES → OUTGOING/INCOMING indexes), graph-clustering (kv-watch
 ENTITY_STATES → COMMUNITY_INDEX; `detection_interval: "2s"`,
-`min_community_size: 3`, `enable_llm: false`). Zone entities also live in
+`min_community_size: 3`, `enable_llm: false`, and — spike 1.2 / beta.136 —
+`entity_id_edges: {include_siblings: false, include_system_peers: false}`
+so LPA runs on explicit `flock.neighbor` topology alone; with the ID-derived
+virtual edges on, all same-type entities merge into one community).
+Community reads filter to **level 0** (COMMUNITY_INDEX is hierarchical;
+higher levels legitimately contain everything). Zone entities also live in
 ENTITY_STATES; boid-only filtering happens at the read path (D4), and
 communities containing zones are harmless (zones have no neighbor edges).
 
@@ -111,13 +116,17 @@ select (0.5/1/5/10/30 Hz) sits in the pane header.
 - **Dial at runtime**: `--graph-hz` flag/config seeds it; the boids API
   gains `PUT /boids/graph/hz` flipping an atomic in the sim (same pattern
   as the rule gates) so dial experiments don't restart the world.
-- **Empty-neighbor staleness**: merge-by-predicate cannot express "now
-  zero neighbors". Spike: use the `graph.mutation.*` API's owned-projection
-  replace (`update_with_triples`/`replace_owned`, ADR-055/056) for boid
-  publishes instead of bare Graphable messages, if its envelope is
-  practical from a producer; **fallback** (acceptable for v1): emit a
-  `flock.neighbor.count` property (always present, so position updates
-  flow) and accept cosmetic stale edges for isolated boids, documented.
+- **Empty-neighbor staleness** (spike 1.1 outcome, 2026-07-04): the
+  mutation lane's `update_with_triples` supports predicate removal but is
+  must-exist request/reply per entity — the wrong lane for volume. Adopted
+  hybrid: snapshots ride the JetStream Graphable lane (the canonical
+  ingest path the dial is meant to stress); every snapshot carries a
+  `flock.neighbor.count` property (always changing → merge always fires);
+  and on a boid's non-empty→empty neighbor transition the publisher issues
+  one idempotent `graph.mutation.triple.remove`
+  (`RemoveTripleRequest{Subject, Predicate: "flock.neighbor"}`,
+  `mutations.go:277`) — rare, cheap, exact. No upstream gap; the
+  primitives compose.
 
 ## Risks / Trade-offs
 

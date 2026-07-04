@@ -1,8 +1,14 @@
 # Tasks — add-graph-pane
 
+> Briefly paused 2026-07-04 on
+> [semstreams#461](https://github.com/C360Studio/semstreams/issues/461)
+> (spike 1.2 finding); **resumed same day on beta.136**, which added the
+> `entity_id_edges` config — `TestLPADistinguishesDisjointFlocks` now passes
+> with `include_siblings/include_system_peers: false`.
+
 ## 1. Spikes (D6 — resolve before building on them)
 
-- [ ] 1.1 Spike: owned-projection replace from a producer — check the
+- [x] 1.1 Spike: owned-projection replace from a producer — check the
       `graph.mutation.*` API envelope (`update_with_triples` /
       `replace_owned`, ADR-055/056) for publishing boid entities so an
       empty neighbor set replaces the previous one; if impractical from a
@@ -10,7 +16,7 @@
       `flock.neighbor.count` property + documented cosmetic staleness) and
       note whether a "producer-side owned replace" gap is worth a
       SemStreams issue
-- [ ] 1.2 Spike: COMMUNITY_INDEX consumption — run graph-index +
+- [x] 1.2 Spike: COMMUNITY_INDEX consumption — run graph-index +
       graph-clustering against a testcontainer with hand-published boid
       entities; confirm bucket key/entry shape (`Community{ID, Level,
       Members}`), detection timing at `detection_interval: 2s`, and that
