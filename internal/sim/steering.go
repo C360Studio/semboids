@@ -127,16 +127,15 @@ type modEntry struct {
 	ttl  int
 }
 
-// steeringState holds active modifiers and the per-kind demo gate. The
-// subscription goroutine writes to the staged slice under the mutex; the
-// tick loop drains it once per tick via advance() — the hot per-boid loop
-// only ever sees the plain table map.
+// steeringState holds active modifiers. The subscription goroutine writes
+// to the staged slice under the mutex; the tick loop drains it once per
+// tick via advance() — the hot per-boid loop only ever sees the plain
+// table map.
 type steeringState struct {
 	logger *slog.Logger
 
 	mu     sync.Mutex
 	staged []modifier
-	gated  map[modKind]bool // true = disabled
 
 	// table is owned by the tick loop after advance(); no lock needed there.
 	table map[modTableKey]modEntry
@@ -145,7 +144,6 @@ type steeringState struct {
 func newSteeringState(logger *slog.Logger) *steeringState {
 	return &steeringState{
 		logger: logger,
-		gated:  make(map[modKind]bool),
 		table:  make(map[modTableKey]modEntry),
 	}
 }
@@ -157,47 +155,38 @@ func (s *steeringState) stage(m modifier) {
 	s.staged = append(s.staged, m)
 }
 
-// setKindEnabled flips the demo gate for a modifier kind ("flee", "attract",
-// "wind"). Disabling clears active entries of that kind immediately.
-func (s *steeringState) setKindEnabled(kind string, enabled bool) error {
+// clearKind drops all active and staged modifiers of a kind — used when the
+// kind's rules are toggled off so the visual effect ends immediately rather
+// than draining through TTLs. Rule toggling itself lives in the rule engine
+// (real hot-reload since semstreams#455 / beta.135).
+func (s *steeringState) clearKind(kind string) error {
 	k, ok := kindNames[kind]
 	if !ok || k == modCancel {
 		return fmt.Errorf("unknown modifier kind %q", kind)
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.gated[k] = !enabled
-	if !enabled {
-		for key, e := range s.table {
-			if e.kind == k {
-				delete(s.table, key)
-			}
+	kept := s.staged[:0]
+	for _, m := range s.staged {
+		if m.kind != k {
+			kept = append(kept, m)
+		}
+	}
+	s.staged = kept
+	for key, e := range s.table {
+		if e.kind == k {
+			delete(s.table, key)
 		}
 	}
 	return nil
 }
 
-// kindStates reports the gate state per kind (true = enabled).
-func (s *steeringState) kindStates() map[string]bool {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	out := make(map[string]bool, len(kindStrings))
-	for k, name := range kindStrings {
-		out[name] = !s.gated[k]
-	}
-	return out
-}
-
-// advance drains staged modifiers into the table (applying cancels and the
-// gate) and decrements TTLs, expiring dead entries — the once-per-tick step.
+// advance drains staged modifiers into the table (applying cancels) and
+// decrements TTLs, expiring dead entries — the once-per-tick step.
 func (s *steeringState) advance() {
 	s.mu.Lock()
 	staged := s.staged
 	s.staged = nil
-	gated := make(map[modKind]bool, len(s.gated))
-	for k, v := range s.gated {
-		gated[k] = v
-	}
 	s.mu.Unlock()
 
 	// Age existing entries first so a fresh modifier gets its full TTL of
@@ -215,9 +204,6 @@ func (s *steeringState) advance() {
 		key := modTableKey{boidID: m.boidID, zoneID: m.zoneID}
 		if m.kind == modCancel {
 			delete(s.table, key)
-			continue
-		}
-		if gated[m.kind] {
 			continue
 		}
 		s.table[key] = modEntry{kind: m.kind, ttl: m.ttl}

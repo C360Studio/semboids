@@ -155,16 +155,12 @@ func NewComponent(rawConfig json.RawMessage, deps component.Dependencies) (compo
 	return c, nil
 }
 
-// SetModifierKindEnabled flips the demo gate for a modifier kind ("flee",
-// "attract", "wind") — the live-toggle surface used by the boids API while
-// rule-engine hot reload is unreachable upstream (semstreams#455).
-func (c *Component) SetModifierKindEnabled(kind string, enabled bool) error {
-	return c.steering.setKindEnabled(kind, enabled)
-}
-
-// ModifierKindStates reports the gate state per kind (true = enabled).
-func (c *Component) ModifierKindStates() map[string]bool {
-	return c.steering.kindStates()
+// ClearModifierKind drops all active and staged modifiers of a kind. The
+// boids API calls this alongside real rule toggling (semstreams#455 fixed
+// in beta.135) so a toggled-off behavior stops instantly instead of
+// draining through TTLs.
+func (c *Component) ClearModifierKind(kind string) error {
+	return c.steering.clearKind(kind)
 }
 
 // Meta returns component metadata.

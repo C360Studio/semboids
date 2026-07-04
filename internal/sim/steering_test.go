@@ -128,30 +128,36 @@ func TestSteeringCancelRemoves(t *testing.T) {
 	}
 }
 
-func TestSteeringGateDropsAndClears(t *testing.T) {
+func TestSteeringClearKind(t *testing.T) {
 	st := newSteeringState(slog.Default())
 	st.stage(modifier{boidID: 0, zoneID: "pred-1", kind: modFlee, ttl: 100})
+	st.stage(modifier{boidID: 1, zoneID: "wind-1", kind: modWind, ttl: 100})
 	st.advance()
-	if st.activeCount() != 1 {
-		t.Fatal("flee modifier not active")
+	if st.activeCount() != 2 {
+		t.Fatal("modifiers not active")
 	}
 
-	// Disabling a kind clears existing entries and drops new arrivals.
-	st.setKindEnabled("flee", false)
-	if st.activeCount() != 0 {
-		t.Fatal("gate did not clear existing flee entries")
+	// Clearing a kind drops its active entries and any staged arrivals,
+	// leaving other kinds untouched.
+	st.stage(modifier{boidID: 2, zoneID: "pred-1", kind: modFlee, ttl: 100})
+	if err := st.clearKind("flee"); err != nil {
+		t.Fatalf("clearKind: %v", err)
 	}
-	st.stage(modifier{boidID: 1, zoneID: "pred-1", kind: modFlee, ttl: 100})
-	st.advance()
-	if st.activeCount() != 0 {
-		t.Fatal("gate did not drop staged flee modifier")
-	}
-
-	st.setKindEnabled("flee", true)
-	st.stage(modifier{boidID: 1, zoneID: "pred-1", kind: modFlee, ttl: 100})
 	st.advance()
 	if st.activeCount() != 1 {
-		t.Fatal("re-enabled kind not accepted")
+		t.Fatalf("active = %d after clear, want 1 (wind survives)", st.activeCount())
+	}
+
+	// New arrivals after a clear flow normally — rule enable/disable is the
+	// rule engine's job, not the sim's.
+	st.stage(modifier{boidID: 3, zoneID: "pred-1", kind: modFlee, ttl: 100})
+	st.advance()
+	if st.activeCount() != 2 {
+		t.Fatal("post-clear flee modifier not accepted")
+	}
+
+	if err := st.clearKind("teleport"); err == nil {
+		t.Fatal("unknown kind accepted")
 	}
 }
 

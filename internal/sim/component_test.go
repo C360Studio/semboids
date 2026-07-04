@@ -222,19 +222,17 @@ func TestComponentPublishesTransitionEvents(t *testing.T) {
 	}
 }
 
-func TestComponentModifierGateRoundTrip(t *testing.T) {
+func TestComponentClearModifierKind(t *testing.T) {
 	comp, _ := newTestComponent(t, 5, 200)
-	states := comp.ModifierKindStates()
-	if !states["flee"] || !states["attract"] || !states["wind"] {
-		t.Fatalf("kinds not enabled by default: %v", states)
+	comp.steering.stage(modifier{boidID: 0, zoneID: "z", kind: modFlee, ttl: 100})
+	comp.steering.advance()
+	if err := comp.ClearModifierKind("flee"); err != nil {
+		t.Fatalf("ClearModifierKind: %v", err)
 	}
-	if err := comp.SetModifierKindEnabled("flee", false); err != nil {
-		t.Fatalf("disable flee: %v", err)
+	if n := comp.steering.activeCount(); n != 0 {
+		t.Fatalf("active = %d after clear, want 0", n)
 	}
-	if comp.ModifierKindStates()["flee"] {
-		t.Fatal("flee still enabled after disable")
-	}
-	if err := comp.SetModifierKindEnabled("teleport", false); err == nil {
+	if err := comp.ClearModifierKind("teleport"); err == nil {
 		t.Fatal("unknown kind accepted")
 	}
 }

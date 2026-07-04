@@ -1,11 +1,11 @@
-// Package api provides the SemBoids domain REST service: live rule-gate
-// toggles for the demo UI. It implements service.Service and the service
-// manager's HTTPHandler so it mounts at /boids on the :8080 API server.
+// Package api provides the SemBoids domain REST service: live rule toggles
+// for the demo UI. It implements service.Service and the service manager's
+// HTTPHandler so it mounts at /boids on the :8080 API server.
 //
-// The gate flips modifier kinds in the sim component (D5 fallback while the
-// rule engine's runtime reconfiguration is unreachable over HTTP —
-// https://github.com/C360Studio/semstreams/issues/455). When #455 lands,
-// these endpoints swap to real rule toggling without UI changes.
+// Toggles flip the actual zone-steering rules through the rule processor's
+// runtime-reconfiguration interface (real hot-reload — semstreams#455,
+// fixed in beta.135) and clear the kind's active modifiers in the sim so
+// the visual effect stops instantly instead of draining through TTLs.
 package api
 
 import (
@@ -22,13 +22,29 @@ import (
 // derives from it ("boids" → /boids).
 const ServiceName = "boids"
 
-// modifierGate is the slice of the sim component the API needs.
-type modifierGate interface {
-	SetModifierKindEnabled(kind string, enabled bool) error
-	ModifierKindStates() map[string]bool
+// kindRules maps a modifier kind to the zone-steering rule IDs that emit it
+// (the entered→modifier rule and its exited→cancel twin toggle together).
+var kindRules = map[string][]string{
+	"flee":    {"predator-flee", "predator-clear"},
+	"attract": {"food-attract", "food-clear"},
+	"wind":    {"wind-bias", "wind-clear"},
 }
 
-// Service exposes the rule-gate endpoints.
+// ruleReconfigurer is the slice of the rule processor the API needs — the
+// service.RuntimeConfigurable trio, resolved structurally so this package
+// needs no processor/rule import.
+type ruleReconfigurer interface {
+	GetRuntimeConfig() map[string]any
+	ValidateConfigUpdate(changes map[string]any) error
+	ApplyConfigUpdate(changes map[string]any) error
+}
+
+// modifierClearer is the slice of the sim component the API needs.
+type modifierClearer interface {
+	ClearModifierKind(kind string) error
+}
+
+// Service exposes the rule-toggle endpoints.
 type Service struct {
 	*service.BaseService
 	deps   *service.Dependencies
@@ -56,40 +72,66 @@ func New(_ json.RawMessage, deps *service.Dependencies) (service.Service, error)
 	return &Service{BaseService: base, deps: deps, logger: logger}, nil
 }
 
-// gate resolves the sim component lazily: the component manager creates it
-// after services construct, so resolution must happen per request.
-func (s *Service) gate() (modifierGate, error) {
+// rules resolves the rule processor lazily: the component manager creates
+// components after services construct, so resolution happens per request.
+func (s *Service) rules() (ruleReconfigurer, error) {
 	for _, comp := range s.deps.ComponentRegistry.ListComponents() {
-		if g, ok := comp.(modifierGate); ok {
-			return g, nil
+		if r, ok := comp.(ruleReconfigurer); ok {
+			return r, nil
 		}
 	}
-	return nil, fmt.Errorf("sim component not available")
+	return nil, fmt.Errorf("rule processor not available")
 }
 
-// OpenAPISpec documents the rule-gate endpoints (required half of the
+// clearer resolves the sim component lazily (optional — clearing is a
+// visual nicety; toggling still works if the sim is absent).
+func (s *Service) clearer() modifierClearer {
+	for _, comp := range s.deps.ComponentRegistry.ListComponents() {
+		if c, ok := comp.(modifierClearer); ok {
+			return c
+		}
+	}
+	return nil
+}
+
+// kindStates derives per-kind enabled state from the live rule config: a
+// kind is enabled when its primary (entered→modifier) rule is enabled.
+func kindStates(cfg map[string]any) map[string]bool {
+	rules, _ := cfg["rules"].(map[string]any)
+	out := make(map[string]bool, len(kindRules))
+	for kind, ids := range kindRules {
+		enabled := false
+		if rule, ok := rules[ids[0]].(map[string]any); ok {
+			enabled, _ = rule["enabled"].(bool)
+		}
+		out[kind] = enabled
+	}
+	return out
+}
+
+// OpenAPISpec documents the rule-toggle endpoints (required half of the
 // service manager's HTTPHandler interface — without it the handlers are
 // never mounted).
 func (s *Service) OpenAPISpec() *service.OpenAPISpec {
 	return &service.OpenAPISpec{
 		Tags: []service.TagSpec{
-			{Name: "Boids", Description: "Flock rule-gate toggles"},
+			{Name: "Boids", Description: "Flock zone-rule toggles"},
 		},
 		Paths: map[string]service.PathSpec{
 			"/rules": {
 				GET: &service.OperationSpec{
-					Summary:     "List rule gates",
-					Description: "Returns enabled state per modifier kind (flee, attract, wind)",
+					Summary:     "List rule states",
+					Description: "Returns enabled state per modifier kind (flee, attract, wind), derived from the live rule engine config",
 					Tags:        []string{"Boids"},
 					Responses: map[string]service.ResponseSpec{
-						"200": {Description: "Gate state per kind", ContentType: "application/json"},
+						"200": {Description: "Enabled state per kind", ContentType: "application/json"},
 					},
 				},
 			},
 			"/rules/{kind}": {
 				PUT: &service.OperationSpec{
-					Summary:     "Toggle a rule gate",
-					Description: "Enables or disables one modifier kind; body {\"enabled\": bool}",
+					Summary:     "Toggle a zone rule pair",
+					Description: "Enables or disables the rules emitting one modifier kind; body {\"enabled\": bool}",
 					Tags:        []string{"Boids"},
 					Parameters: []service.ParameterSpec{
 						{Name: "kind", In: "path", Required: true,
@@ -97,7 +139,7 @@ func (s *Service) OpenAPISpec() *service.OpenAPISpec {
 							Schema:      service.Schema{Type: "string"}},
 					},
 					Responses: map[string]service.ResponseSpec{
-						"200": {Description: "New gate state", ContentType: "application/json"},
+						"200": {Description: "New state", ContentType: "application/json"},
 						"404": {Description: "Unknown kind"},
 					},
 				},
@@ -106,7 +148,7 @@ func (s *Service) OpenAPISpec() *service.OpenAPISpec {
 	}
 }
 
-// RegisterHTTPHandlers mounts the rule-gate endpoints on the service
+// RegisterHTTPHandlers mounts the rule-toggle endpoints on the service
 // manager's HTTP server.
 func (s *Service) RegisterHTTPHandlers(prefix string, mux *http.ServeMux) {
 	if !strings.HasSuffix(prefix, "/") {
@@ -117,30 +159,32 @@ func (s *Service) RegisterHTTPHandlers(prefix string, mux *http.ServeMux) {
 	s.logger.Info("Boids API handlers registered", "prefix", prefix)
 }
 
-// handleRules serves GET <prefix>/rules: the gate state per modifier kind.
+// handleRules serves GET <prefix>/rules: enabled state per modifier kind.
 func (s *Service) handleRules(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	g, err := s.gate()
+	rp, err := s.rules()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
 		return
 	}
-	writeJSON(w, http.StatusOK, g.ModifierKindStates())
+	writeJSON(w, http.StatusOK, kindStates(rp.GetRuntimeConfig()))
 }
 
 // handleRuleToggle serves PUT <prefix>/rules/{kind} with body
-// {"enabled": bool}.
+// {"enabled": bool}: flips the kind's rule pair through the rule engine's
+// validate+apply runtime path, then clears active modifiers on disable.
 func (s *Service) handleRuleToggle(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPut {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 	kind := r.URL.Path[strings.LastIndex(r.URL.Path, "/")+1:]
-	if kind == "" {
-		http.Error(w, "kind is required", http.StatusBadRequest)
+	ruleIDs, known := kindRules[kind]
+	if !known {
+		http.Error(w, fmt.Sprintf("unknown modifier kind %q", kind), http.StatusNotFound)
 		return
 	}
 
@@ -152,17 +196,55 @@ func (s *Service) handleRuleToggle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	g, err := s.gate()
+	rp, err := s.rules()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
 		return
 	}
-	if err := g.SetModifierKindEnabled(kind, *req.Enabled); err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+
+	// applyRuleChanges treats the rules map as the complete set (absent
+	// rules are deleted), so round-trip the full live config with just the
+	// kind's pair flipped.
+	cfg := rp.GetRuntimeConfig()
+	rules, ok := cfg["rules"].(map[string]any)
+	if !ok || len(rules) == 0 {
+		http.Error(w, "rule engine has no rules loaded", http.StatusServiceUnavailable)
 		return
 	}
-	s.logger.Info("Rule gate toggled", "kind", kind, "enabled", *req.Enabled)
-	writeJSON(w, http.StatusOK, map[string]any{"kind": kind, "enabled": *req.Enabled})
+	found := 0
+	for _, id := range ruleIDs {
+		if rule, ok := rules[id].(map[string]any); ok {
+			rule["enabled"] = *req.Enabled
+			found++
+		}
+	}
+	if found == 0 {
+		http.Error(w, fmt.Sprintf("rules for kind %q not loaded", kind), http.StatusNotFound)
+		return
+	}
+
+	changes := map[string]any{"rules": rules}
+	if err := rp.ValidateConfigUpdate(changes); err != nil {
+		http.Error(w, fmt.Sprintf("validate rule update: %v", err), http.StatusBadRequest)
+		return
+	}
+	if err := rp.ApplyConfigUpdate(changes); err != nil {
+		http.Error(w, fmt.Sprintf("apply rule update: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	// Disabling stops new modifiers via the rules; clearing makes the
+	// existing ones stop influencing boids right now.
+	if !*req.Enabled {
+		if c := s.clearer(); c != nil {
+			if err := c.ClearModifierKind(kind); err != nil {
+				s.logger.Warn("clear modifiers after disable", "kind", kind, "error", err)
+			}
+		}
+	}
+
+	s.logger.Info("Zone rules toggled", "kind", kind, "rules", ruleIDs, "enabled", *req.Enabled)
+	writeJSON(w, http.StatusOK, map[string]any{"kind": kind, "enabled": *req.Enabled, "rules": ruleIDs})
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {
