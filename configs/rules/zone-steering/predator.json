@@ -1,0 +1,49 @@
+[
+  {
+    "id": "predator-flee",
+    "type": "expression",
+    "name": "Predator zone entry → flee modifier",
+    "description": "Boid enters a predator zone: push it away from the zone center for ~2s of ticks.",
+    "enabled": true,
+    "conditions": [
+      {"field": "zone_type", "operator": "eq", "value": "predator"},
+      {"field": "event", "operator": "eq", "value": "entered"}
+    ],
+    "logic": "and",
+    "on_enter": [
+      {
+        "type": "publish",
+        "subject": "boids.steering",
+        "properties": {
+          "boid_id": "$message.boid_id",
+          "zone_id": "$message.zone_id",
+          "kind": "flee",
+          "ttl_ticks": 60
+        }
+      }
+    ]
+  },
+  {
+    "id": "predator-clear",
+    "type": "expression",
+    "name": "Predator zone exit → cancel modifier",
+    "description": "Boid leaves a predator zone: cancel its flee modifier (TTL also self-heals).",
+    "enabled": true,
+    "conditions": [
+      {"field": "zone_type", "operator": "eq", "value": "predator"},
+      {"field": "event", "operator": "eq", "value": "exited"}
+    ],
+    "logic": "and",
+    "on_enter": [
+      {
+        "type": "publish",
+        "subject": "boids.steering",
+        "properties": {
+          "boid_id": "$message.boid_id",
+          "zone_id": "$message.zone_id",
+          "kind": "cancel"
+        }
+      }
+    ]
+  }
+]

@@ -6,6 +6,8 @@ package componentregistry
 import (
 	"github.com/c360studio/semstreams/component"
 	wsoutput "github.com/c360studio/semstreams/output/websocket"
+	graphingest "github.com/c360studio/semstreams/processor/graph-ingest"
+	rule "github.com/c360studio/semstreams/processor/rule"
 
 	"github.com/c360studio/semboids/internal/sim"
 )
@@ -13,8 +15,15 @@ import (
 // RegisterAll registers all components semboids uses with the given registry.
 func RegisterAll(registry *component.Registry) error {
 	// SemStreams components consumed by the flock flow.
-	if err := wsoutput.Register(registry); err != nil {
-		return err
+	semstreamsComponents := []func(*component.Registry) error{
+		wsoutput.Register,    // frames → browser
+		graphingest.Register, // zone entities → ENTITY_STATES
+		rule.Register,        // zone transitions → steering modifiers
+	}
+	for _, register := range semstreamsComponents {
+		if err := register(registry); err != nil {
+			return err
+		}
 	}
 
 	// SemBoids domain components.

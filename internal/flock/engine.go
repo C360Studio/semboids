@@ -28,6 +28,10 @@ type Engine struct {
 	ticks   uint64
 	grid    *grid
 	scratch []int32
+	// external holds per-boid steering staged by the owner before Tick
+	// (zone modifiers per ADR-001's rules→physics contract). Read-only
+	// during Tick; nil or empty means no external influence.
+	external map[uint32]Vec2
 }
 
 // NewEngine seeds n boids deterministically: uniform random positions,
@@ -69,6 +73,13 @@ func (e *Engine) Boids() []Boid { return e.buf[e.cur] }
 // TickCount returns the number of completed ticks.
 func (e *Engine) TickCount() uint64 { return e.ticks }
 
+// SetExternalSteering stages per-boid external steering (units/second²)
+// applied on subsequent ticks, summed with the Reynolds terms before the
+// MaxForce clamp — external influence can never exceed the force budget.
+// The engine keeps the reference; the owner must not mutate the map while
+// Tick runs. Pass nil to clear.
+func (e *Engine) SetExternalSteering(ext map[uint32]Vec2) { e.external = ext }
+
 // Params returns the engine's simulation parameters.
 func (e *Engine) Params() Params { return e.p }
 
@@ -92,9 +103,13 @@ func (e *Engine) Tick() {
 // to MaxForce.
 func (e *Engine) steer(boids []Boid, i int) Vec2 {
 	self := boids[i]
+	var ext Vec2
+	if e.external != nil {
+		ext = e.external[self.ID]
+	}
 	e.scratch = e.grid.neighbors(boids, i, e.p.NeighborRadius, e.scratch[:0])
 	if len(e.scratch) == 0 {
-		return Vec2{}
+		return ext.Limit(e.p.MaxForce)
 	}
 
 	var sep, cohSum, alnSum Vec2
@@ -123,7 +138,7 @@ func (e *Engine) steer(boids []Boid, i int) Vec2 {
 	if e.p.AlignmentWeight != 0 {
 		acc = acc.Add(e.steerToward(alnSum.Scale(1/n), self.Vel).Scale(e.p.AlignmentWeight))
 	}
-	return acc.Limit(e.p.MaxForce)
+	return acc.Add(ext).Limit(e.p.MaxForce)
 }
 
 // steerToward converts a desired direction into a Reynolds steering force:

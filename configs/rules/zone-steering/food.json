@@ -1,0 +1,48 @@
+[
+  {
+    "id": "food-attract",
+    "type": "expression",
+    "name": "Food zone entry → attract modifier",
+    "description": "Boid enters a food zone: pull it toward the zone center while inside.",
+    "enabled": true,
+    "conditions": [
+      {"field": "zone_type", "operator": "eq", "value": "food"},
+      {"field": "event", "operator": "eq", "value": "entered"}
+    ],
+    "logic": "and",
+    "on_enter": [
+      {
+        "type": "publish",
+        "subject": "boids.steering",
+        "properties": {
+          "boid_id": "$message.boid_id",
+          "zone_id": "$message.zone_id",
+          "kind": "attract",
+          "ttl_ticks": 90
+        }
+      }
+    ]
+  },
+  {
+    "id": "food-clear",
+    "type": "expression",
+    "name": "Food zone exit → cancel modifier",
+    "enabled": true,
+    "conditions": [
+      {"field": "zone_type", "operator": "eq", "value": "food"},
+      {"field": "event", "operator": "eq", "value": "exited"}
+    ],
+    "logic": "and",
+    "on_enter": [
+      {
+        "type": "publish",
+        "subject": "boids.steering",
+        "properties": {
+          "boid_id": "$message.boid_id",
+          "zone_id": "$message.zone_id",
+          "kind": "cancel"
+        }
+      }
+    ]
+  }
+]

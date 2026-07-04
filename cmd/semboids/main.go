@@ -29,6 +29,8 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/c360studio/semboids/componentregistry"
+	"github.com/c360studio/semboids/internal/api"
+	"github.com/c360studio/semboids/internal/zone"
 )
 
 const appName = "semboids"
@@ -56,6 +58,8 @@ type CLIConfig struct {
 	Boids  int
 	TickHz float64
 	Seed   uint64
+	// Zones toggles zone steering (false strips zones for a plain run).
+	Zones bool
 }
 
 func main() {
@@ -111,6 +115,13 @@ func run() error {
 		natsClient.Close(closeCtx)
 	}()
 
+	// Ensure JetStream streams (system streams + the ENTITY stream that
+	// carries zone entities to graph-ingest).
+	streamsManager := config.NewStreamsManager(natsClient, slog.Default())
+	if err := streamsManager.EnsureStreams(ctx, cfg); err != nil {
+		return fmt.Errorf("ensure streams: %w", err)
+	}
+
 	logger := setupLogger(cliCfg.LogLevel, cliCfg.LogFormat)
 	slog.SetDefault(logger)
 	slog.Info("SemBoids ready", "version", Version, "build_time", BuildTime)
@@ -136,6 +147,9 @@ func run() error {
 	if err := payloadbuiltins.Register(payloadReg); err != nil {
 		return fmt.Errorf("register builtin payloads: %w", err)
 	}
+	if err := zone.RegisterPayloads(payloadReg); err != nil {
+		return fmt.Errorf("register zone payloads: %w", err)
+	}
 
 	svcDeps := &service.Dependencies{
 		NATSClient:        natsClient,
@@ -149,6 +163,16 @@ func run() error {
 
 	if err := configureAndCreateServices(cfg, manager, svcDeps); err != nil {
 		return err
+	}
+
+	// Land the configured zones in the graph (ADR-001: zones are real
+	// entities from day one). graph-ingest consumes them once it starts —
+	// JetStream retains the publishes.
+	if zones := simZones(cfg); len(zones) > 0 {
+		if err := zone.Ingest(ctx, natsClient, zones, platform.Org, platform.Platform); err != nil {
+			return fmt.Errorf("ingest zones: %w", err)
+		}
+		slog.Info("Zones published to graph", "count", len(zones))
 	}
 
 	return runWithSignalHandling(ctx, manager, cliCfg.ShutdownTimeout)
@@ -168,6 +192,7 @@ func parseCLI() (*CLIConfig, bool) {
 	flag.IntVar(&cliCfg.Boids, "boids", 0, "Override boid population (0 = use config)")
 	flag.Float64Var(&cliCfg.TickHz, "tick-hz", 0, "Override tick rate in Hz (0 = use config)")
 	flag.Uint64Var(&cliCfg.Seed, "seed", 0, "Override sim seed (0 = use config)")
+	flag.BoolVar(&cliCfg.Zones, "zones", true, "Enable zone steering (false strips configured zones)")
 	flag.Parse()
 
 	if cliCfg.ShowVersion {
@@ -197,7 +222,7 @@ func loadConfig(path string) (*config.Config, error) {
 // applySimOverrides patches the sim component config with CLI overrides so
 // quick experiments don't require editing the flow file.
 func applySimOverrides(cfg *config.Config, cliCfg *CLIConfig) {
-	if cliCfg.Boids <= 0 && cliCfg.TickHz <= 0 && cliCfg.Seed == 0 {
+	if cliCfg.Boids <= 0 && cliCfg.TickHz <= 0 && cliCfg.Seed == 0 && cliCfg.Zones {
 		return
 	}
 	simCfg, ok := cfg.Components["sim"]
@@ -219,6 +244,9 @@ func applySimOverrides(cfg *config.Config, cliCfg *CLIConfig) {
 	if cliCfg.Seed != 0 {
 		raw["seed"] = cliCfg.Seed
 	}
+	if !cliCfg.Zones {
+		delete(raw, "zones")
+	}
 	patched, err := json.Marshal(raw)
 	if err != nil {
 		slog.Warn("cannot marshal sim config overrides", "error", err)
@@ -226,6 +254,23 @@ func applySimOverrides(cfg *config.Config, cliCfg *CLIConfig) {
 	}
 	simCfg.Config = patched
 	cfg.Components["sim"] = simCfg
+}
+
+// simZones extracts the zone set from the sim component config — the single
+// source of truth shared by the sim and boot-time graph ingestion.
+func simZones(cfg *config.Config) []zone.Zone {
+	simCfg, ok := cfg.Components["sim"]
+	if !ok {
+		return nil
+	}
+	var parsed struct {
+		Zones []zone.Zone `json:"zones"`
+	}
+	if err := json.Unmarshal(simCfg.Config, &parsed); err != nil {
+		slog.Warn("cannot parse sim config for zones", "error", err)
+		return nil
+	}
+	return parsed.Zones
 }
 
 // connectToNATS connects to NATS. NATS is a hard requirement.
@@ -316,6 +361,9 @@ func setupRegistriesAndManager(cfg *config.Config) (*component.Registry, *servic
 	serviceRegistry := service.NewServiceRegistry()
 	if err := service.RegisterAll(serviceRegistry); err != nil {
 		return nil, nil, fmt.Errorf("register semstreams services: %w", err)
+	}
+	if err := serviceRegistry.Register(api.ServiceName, api.New); err != nil {
+		return nil, nil, fmt.Errorf("register boids service: %w", err)
 	}
 
 	manager := service.NewServiceManager(serviceRegistry)

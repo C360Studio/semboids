@@ -11,6 +11,14 @@
   "nats": {
     "urls": ["nats://localhost:4222"]
   },
+  "streams": {
+    "ENTITY": {
+      "subjects": ["entity.>"],
+      "storage": "file",
+      "max_age": "168h",
+      "replicas": 1
+    }
+  },
   "services": {
     "service-manager": {
       "name": "service-manager",
@@ -38,6 +46,11 @@
         "path": "/metrics",
         "include_go_metrics": false
       }
+    },
+    "boids": {
+      "name": "boids",
+      "enabled": true,
+      "config": {}
     }
   },
   "components": {
@@ -49,6 +62,11 @@
         "boids": 200,
         "tick_hz": 30,
         "seed": 1,
+        "zones": [
+          {"id": "pred-1", "type": "predator", "x": 500, "y": 450, "r": 90, "strength": 1.0},
+          {"id": "food-1", "type": "food", "x": 1150, "y": 300, "r": 100, "strength": 0.6},
+          {"id": "wind-1", "type": "wind", "x": 800, "y": 700, "r": 140, "strength": 0.4, "dx": 1, "dy": 0}
+        ],
         "ports": {
           "inputs": [],
           "outputs": [
@@ -57,6 +75,60 @@
               "subject": "boids.frames",
               "type": "nats",
               "required": true
+            }
+          ]
+        }
+      }
+    },
+    "graph-ingest": {
+      "type": "processor",
+      "name": "graph-ingest",
+      "enabled": true,
+      "config": {
+        "ports": {
+          "inputs": [
+            {
+              "name": "entity_stream",
+              "subject": "entity.>",
+              "type": "jetstream",
+              "stream_name": "ENTITY"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "entity_states",
+              "type": "kv-write",
+              "subject": "ENTITY_STATES"
+            }
+          ]
+        }
+      }
+    },
+    "rule-processor": {
+      "type": "processor",
+      "name": "rule-processor",
+      "enabled": true,
+      "config": {
+        "rules_files": [
+          "configs/rules/zone-steering/predator.json",
+          "configs/rules/zone-steering/food.json",
+          "configs/rules/zone-steering/wind.json"
+        ],
+        "enable_graph_integration": false,
+        "ports": {
+          "inputs": [
+            {
+              "name": "zone_events",
+              "subject": "boids.zone.events",
+              "type": "nats",
+              "required": true
+            }
+          ],
+          "outputs": [
+            {
+              "name": "steering",
+              "subject": "boids.steering",
+              "type": "nats"
             }
           ]
         }

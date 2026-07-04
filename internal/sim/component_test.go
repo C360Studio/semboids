@@ -9,15 +9,12 @@ import (
 	"github.com/c360studio/semstreams/component"
 )
 
-// newTestComponent builds a sim component with a fast tick and an injected
-// publisher that forwards published frames to the returned channel. No NATS.
-func newTestComponent(t *testing.T, boids int, tickHz float64) (*Component, <-chan []byte) {
+// newTestComponentCfg builds a sim component from raw config with an
+// injected publisher that routes frames and zone events to separate
+// channels. No NATS.
+func newTestComponentCfg(t *testing.T, cfgMap map[string]any) (*Component, <-chan []byte, <-chan []byte) {
 	t.Helper()
-	cfg, err := json.Marshal(map[string]any{
-		"boids":   boids,
-		"tick_hz": tickHz,
-		"seed":    42,
-	})
+	cfg, err := json.Marshal(cfgMap)
 	if err != nil {
 		t.Fatalf("marshal config: %v", err)
 	}
@@ -27,10 +24,27 @@ func newTestComponent(t *testing.T, boids int, tickHz float64) (*Component, <-ch
 	}
 	comp := disc.(*Component)
 	frames := make(chan []byte, 256)
-	comp.publish = func(_ context.Context, _ string, data []byte) error {
-		frames <- data
+	events := make(chan []byte, 256)
+	comp.publish = func(_ context.Context, subject string, data []byte) error {
+		switch subject {
+		case EventsSubject:
+			events <- data
+		default:
+			frames <- data
+		}
 		return nil
 	}
+	return comp, frames, events
+}
+
+// newTestComponent is the zone-free variant used by the frame-cadence tests.
+func newTestComponent(t *testing.T, boids int, tickHz float64) (*Component, <-chan []byte) {
+	t.Helper()
+	comp, frames, _ := newTestComponentCfg(t, map[string]any{
+		"boids":   boids,
+		"tick_hz": tickHz,
+		"seed":    42,
+	})
 	return comp, frames
 }
 
@@ -152,6 +166,89 @@ func TestComponentRejectsDoubleStart(t *testing.T) {
 
 	if err := comp.Start(ctx); err == nil {
 		t.Fatal("second Start succeeded, want error")
+	}
+}
+
+func TestComponentPublishesTransitionEvents(t *testing.T) {
+	// A zone covering the whole world: every boid "enters" on tick one,
+	// then steady state produces no further events.
+	comp, _, events := newTestComponentCfg(t, map[string]any{
+		"boids":   5,
+		"tick_hz": 200,
+		"seed":    42,
+		"zones": []map[string]any{
+			{"id": "everywhere", "type": "food", "x": 800, "y": 450, "r": 5000, "strength": 0.5},
+		},
+	})
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := comp.Initialize(); err != nil {
+		t.Fatalf("Initialize: %v", err)
+	}
+	if err := comp.Start(ctx); err != nil {
+		t.Fatalf("Start: %v", err)
+	}
+	defer func() { _ = comp.Stop(time.Second) }()
+
+	for i := range 5 {
+		select {
+		case data := <-events:
+			var envelope struct {
+				Payload struct {
+					Data map[string]any `json:"data"`
+				} `json:"payload"`
+			}
+			if err := json.Unmarshal(data, &envelope); err != nil {
+				t.Fatalf("decode event: %v", err)
+			}
+			d := envelope.Payload.Data
+			if d["event"] != "entered" || d["zone_id"] != "everywhere" || d["zone_type"] != "food" {
+				t.Fatalf("event %d payload = %v", i, d)
+			}
+			if _, ok := d["boid_id"]; !ok {
+				t.Fatalf("event missing boid_id: %v", d)
+			}
+		case <-time.After(2 * time.Second):
+			t.Fatalf("timed out waiting for enter event %d", i)
+		}
+	}
+
+	// Steady state: no further events while all boids remain inside.
+	select {
+	case data := <-events:
+		t.Fatalf("unexpected steady-state event: %s", data)
+	case <-time.After(150 * time.Millisecond):
+	}
+}
+
+func TestComponentModifierGateRoundTrip(t *testing.T) {
+	comp, _ := newTestComponent(t, 5, 200)
+	states := comp.ModifierKindStates()
+	if !states["flee"] || !states["attract"] || !states["wind"] {
+		t.Fatalf("kinds not enabled by default: %v", states)
+	}
+	if err := comp.SetModifierKindEnabled("flee", false); err != nil {
+		t.Fatalf("disable flee: %v", err)
+	}
+	if comp.ModifierKindStates()["flee"] {
+		t.Fatal("flee still enabled after disable")
+	}
+	if err := comp.SetModifierKindEnabled("teleport", false); err == nil {
+		t.Fatal("unknown kind accepted")
+	}
+}
+
+func TestComponentRejectsInvalidZones(t *testing.T) {
+	cfg, err := json.Marshal(map[string]any{
+		"boids": 5,
+		"zones": []map[string]any{{"id": "bad", "type": "blackhole", "x": 0, "y": 0, "r": 10}},
+	})
+	if err != nil {
+		t.Fatalf("marshal config: %v", err)
+	}
+	if _, err := NewComponent(cfg, component.Dependencies{}); err == nil {
+		t.Fatal("invalid zone type accepted")
 	}
 }
 

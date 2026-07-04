@@ -1,0 +1,48 @@
+[
+  {
+    "id": "wind-bias",
+    "type": "expression",
+    "name": "Wind zone entry → directional bias",
+    "description": "Boid enters a wind zone: apply the zone's constant directional push while inside.",
+    "enabled": true,
+    "conditions": [
+      {"field": "zone_type", "operator": "eq", "value": "wind"},
+      {"field": "event", "operator": "eq", "value": "entered"}
+    ],
+    "logic": "and",
+    "on_enter": [
+      {
+        "type": "publish",
+        "subject": "boids.steering",
+        "properties": {
+          "boid_id": "$message.boid_id",
+          "zone_id": "$message.zone_id",
+          "kind": "wind",
+          "ttl_ticks": 90
+        }
+      }
+    ]
+  },
+  {
+    "id": "wind-clear",
+    "type": "expression",
+    "name": "Wind zone exit → cancel modifier",
+    "enabled": true,
+    "conditions": [
+      {"field": "zone_type", "operator": "eq", "value": "wind"},
+      {"field": "event", "operator": "eq", "value": "exited"}
+    ],
+    "logic": "and",
+    "on_enter": [
+      {
+        "type": "publish",
+        "subject": "boids.steering",
+        "properties": {
+          "boid_id": "$message.boid_id",
+          "zone_id": "$message.zone_id",
+          "kind": "cancel"
+        }
+      }
+    ]
+  }
+]
