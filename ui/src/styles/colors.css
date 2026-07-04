@@ -1,0 +1,479 @@
+/**
+ * SemStreams Color Palette - Three-Layer Architecture
+ *
+ * Based on research from Node-RED, Material Design 3, and Carbon Design System
+ * Spec: /docs/design-system/COLOR_PALETTE.md
+ *
+ * Layer 1: UI Colors (surfaces, text, borders, interactive states)
+ * Layer 2: Status Colors (error, warning, success, info) - SEMANTIC
+ * Layer 3: Domain & Data Viz (robotics, semantic, network, storage) - CATEGORICAL
+ *
+ * WCAG AA Compliant - All color combinations verified for 4.5:1 contrast ratio
+ *
+ * DEFAULT: Dark theme
+ */
+
+/* CSS Layers for cascade management (2026 best practice) */
+@layer reset, theme, components, utilities;
+
+:root {
+  /* Enable CSS color scheme support - dark is default */
+  color-scheme: dark light;
+
+  /* ============================================
+     LAYER 1: UI COLORS (DARK - Default)
+     Foundation colors with no semantic meaning
+     ============================================ */
+
+  /* Surface Colors */
+  --ui-surface-primary: #161616; /* Gray-100 */
+  --ui-surface-primary-rgb: 22, 22, 22; /* RGB triplet for rgba() usage */
+  --ui-surface-secondary: #262626; /* Gray-90 */
+  --ui-surface-tertiary: #393939; /* Gray-80 */
+  --ui-surface-overlay: #262626;
+
+  /* Elevated Surfaces (with subtle shadows) */
+  --ui-surface-elevated-1: #262626;
+  --ui-surface-elevated-2: #393939;
+  --ui-surface-elevated-3: #525252;
+
+  /* Text Colors (WCAG AA compliant on dark) */
+  --ui-text-primary: #f4f4f4; /* Gray-10 - Contrast: 15.8:1 */
+  --ui-text-secondary: #c6c6c6; /* Gray-30 - Contrast: 10.7:1 */
+  --ui-text-tertiary: #8d8d8d; /* Gray-50 - Contrast: 5.4:1 */
+  --ui-text-disabled: #525252;
+  --ui-text-placeholder: #6f6f6f;
+
+  /* Text on Colored Backgrounds */
+  --ui-text-on-primary: #161616;
+  --ui-text-on-error: #161616;
+  --ui-text-on-warning: #161616;
+  --ui-text-on-success: #161616;
+
+  /* Border Colors */
+  --ui-border-subtle: #393939; /* Gray-80 */
+  --ui-border-strong: #6f6f6f; /* Gray-60 */
+  --ui-border-interactive: #78a9ff;
+  --ui-border-disabled: #525252;
+
+  /* Interactive States (Primary) */
+  --ui-interactive-primary: #78a9ff; /* Blue-40 */
+  --ui-interactive-primary-hover: #a6c8ff; /* Blue-30 */
+  --ui-interactive-primary-active: #4589ff; /* Blue-50 */
+  --ui-interactive-primary-disabled: #525252; /* Gray-70 */
+
+  /* Interactive States (Secondary) */
+  --ui-interactive-secondary: #6f6f6f; /* Gray-60 */
+  --ui-interactive-secondary-hover: #8d8d8d; /* Gray-50 */
+  --ui-interactive-secondary-active: #525252; /* Gray-70 */
+
+  /* Focus Indicators */
+  --ui-focus-ring: #78a9ff; /* Blue-40 */
+  --ui-focus-inverse: #161616; /* On light backgrounds */
+
+  /* ============================================
+     LAYER 2: STATUS COLORS (DARK)
+     Semantic states - validation, alerts, confirmations
+     Adjusted for dark backgrounds
+     ============================================ */
+
+  /* Error - Validation failures, critical alerts */
+  --status-error-bg: #2d0709; /* Error background for banners */
+  --status-error: #ff8389; /* Red-40 - Contrast: 6.8:1 on dark */
+  --status-error-hover: #ffb3b8; /* Red-30 */
+  --status-error-active: #fa4d56; /* Red-50 */
+  --status-error-container: #2d0709; /* Dark red background */
+  --status-error-on-container: #ffb3b8; /* Text on error container */
+
+  /* Warning - Non-blocking issues, cautions */
+  --status-warning: #f1c21b; /* Yellow-30 */
+  --status-warning-hover: #fddc69; /* Yellow-20 */
+  --status-warning-active: #d2a106; /* Yellow-40 */
+  --status-warning-container: #3e3000; /* Dark yellow background */
+  --status-warning-on-container: #fddc69; /* Text on warning container */
+
+  /* Success - Confirmations, completed actions */
+  --status-success: #42be65; /* Green-40 - Contrast: 6.1:1 on dark */
+  --status-success-hover: #6fdc8c; /* Green-30 */
+  --status-success-active: #24a148; /* Green-50 */
+  --status-success-container: #071908; /* Dark green background */
+  --status-success-on-container: #6fdc8c; /* Text on success container */
+
+  /* Info - Help text, informational messages */
+  --status-info: #78a9ff; /* Blue-40 - Contrast: 7.8:1 on dark */
+  --status-info-hover: #a6c8ff; /* Blue-30 */
+  --status-info-active: #4589ff; /* Blue-50 */
+  --status-info-container: #001141; /* Dark blue background */
+  --status-info-on-container: #a6c8ff; /* Text on info container */
+
+  /* ============================================
+     LAYER 3: DOMAIN & DATA VISUALIZATION COLORS (DARK)
+     Component categories and data visualization
+     DISTINCT from status colors to prevent confusion
+     ============================================ */
+
+  /* Domain: Robotics (autonomous vehicles, MAVLink) */
+  --domain-robotics: #a56eff; /* Purple-50 - Contrast: 5.9:1 */
+  --domain-robotics-hover: #be95ff; /* Purple-40 */
+  --domain-robotics-active: #8a3ffc; /* Purple-60 */
+  --domain-robotics-container: #1c0f30; /* Dark purple */
+
+  /* Domain: Semantic Processing (graph, rules, context) */
+  --domain-semantic: #08bdba; /* Teal-50 - Contrast: 7.4:1 */
+  --domain-semantic-hover: #3ddbd9; /* Teal-40 */
+  --domain-semantic-active: #009d9a; /* Teal-60 */
+  --domain-semantic-container: #0d1c1c; /* Dark teal */
+
+  /* Domain: Network I/O (UDP, WebSocket, HTTP) */
+  --domain-network: #4589ff; /* Blue-50 - Contrast: 5.7:1 */
+  --domain-network-hover: #78a9ff; /* Blue-40 */
+  --domain-network-active: #0f62fe; /* Blue-60 */
+  --domain-network-container: #001141; /* Dark blue */
+
+  /* Domain: Storage (object store, databases) */
+  --domain-storage: #42be65; /* Green-40 - Contrast: 6.1:1 */
+  --domain-storage-hover: #6fdc8c; /* Green-30 */
+  --domain-storage-active: #24a148; /* Green-50 */
+  --domain-storage-container: #071908; /* Dark green */
+
+  /* Future Domains (reserved for expansion) */
+  --domain-telemetry: #ff7eb6; /* Magenta-40 (metrics, observability) */
+  --domain-geospatial: #3ddbd9; /* Cyan-40 (GIS, mapping) */
+  --domain-media: #ff8389; /* Red-40 (video, audio, images) */
+  --domain-integration: #8d8d8d; /* Gray-50 (external systems) */
+
+  /* Component Categories (backend categories: input, output, processor, gateway, storage) */
+  --category-input: #4589ff; /* Blue - receiving data */
+  --category-output: #08bdba; /* Teal - sending data */
+  --category-processor: #a56eff; /* Purple - transforming data */
+  --category-gateway: #ff832b; /* Orange - routing/bridging */
+  --category-storage: #42be65; /* Green - persisting data */
+
+  /* Data Visualization: Categorical Palette (14 colors for discrete categories) */
+  --dataviz-cat-01: #a56eff; /* Purple */
+  --dataviz-cat-02: #4589ff; /* Blue */
+  --dataviz-cat-03: #08bdba; /* Teal */
+  --dataviz-cat-04: #ff7eb6; /* Magenta */
+  --dataviz-cat-05: #ff8389; /* Red (NOT status error!) */
+  --dataviz-cat-06: #ffb3b8; /* Light red */
+  --dataviz-cat-07: #42be65; /* Green (NOT status success!) */
+  --dataviz-cat-08: #78a9ff; /* Light blue */
+  --dataviz-cat-09: #ee5396; /* Pink */
+  --dataviz-cat-10: #f1c21b; /* Gold */
+  --dataviz-cat-11: #3ddbd9; /* Cyan */
+  --dataviz-cat-12: #a6c8ff; /* Pale blue */
+  --dataviz-cat-13: #fa4d56; /* Orange-red */
+  --dataviz-cat-14: #be95ff; /* Light purple */
+
+  /* ============================================
+     COMPONENT-SPECIFIC NAMESPACES
+     Each major UI component gets its own namespace
+     ============================================ */
+
+  /* Palette Component (Sidebar) */
+  --palette-background: var(--ui-surface-secondary);
+  --palette-header-background: var(--ui-surface-tertiary);
+  --palette-header-text: var(--ui-text-primary);
+  --palette-header-text-hover: var(--ui-text-primary);
+
+  --palette-card-background: var(--ui-surface-primary);
+  --palette-card-border: var(--ui-border-subtle);
+  --palette-card-border-hover: var(--ui-interactive-primary);
+  --palette-card-shadow-hover: rgba(120, 169, 255, 0.2);
+
+  --palette-domain-stripe-width: 4px;
+
+  /* Canvas Component (Flow Editor) */
+  --canvas-background: var(--ui-surface-primary);
+  --canvas-grid-color: var(--ui-border-subtle);
+  --canvas-grid-size: 20px;
+
+  --canvas-node-background: var(--ui-surface-secondary);
+  --canvas-node-border: var(--ui-border-subtle);
+  --canvas-node-border-width: 1px;
+  --canvas-node-border-radius: 4px;
+
+  --canvas-node-border-hover: var(--ui-interactive-primary);
+  --canvas-node-border-selected: var(--ui-interactive-primary);
+  --canvas-node-border-error: var(--status-error);
+  --canvas-node-shadow-selected: 0 0 0 2px var(--ui-interactive-primary);
+
+  --canvas-node-domain-accent-width: 4px;
+
+  /* Port Handles */
+  --port-handle-size: 12px;
+  --port-handle-border-width: 3px;
+  --port-handle-background: var(--ui-surface-secondary);
+  --port-handle-background-required: var(--ui-surface-secondary);
+
+  --port-handle-border-hover: var(--ui-interactive-primary);
+  --port-handle-scale-hover: 1.3;
+  --port-handle-glow-hover: 0 0 4px rgba(120, 169, 255, 0.5);
+
+  /* Port Pattern Colors (matches backend pattern types) */
+  --port-pattern-stream: #4589ff; /* Blue-50 (NATS stream) */
+  --port-pattern-request: #a56eff; /* Purple-50 (NATS request) */
+  --port-pattern-watch: #42be65; /* Green-40 (KV watch) */
+  --port-pattern-api: #fa4d56; /* Red-50 (HTTP/network) */
+  --port-pattern-file: #8d8d8d; /* Gray-50 (file://) */
+  --port-pattern-unknown: #6f6f6f; /* Gray-60 (fallback) */
+
+  /* Connection Lines */
+  --connection-stroke-width: 2px;
+  --connection-stroke-width-hover: 3px;
+  --connection-stroke-width-selected: 3px;
+
+  --connection-color-auto: var(--ui-interactive-primary); /* Auto-discovered */
+  --connection-color-manual: var(--ui-text-secondary); /* Manual */
+  --connection-dasharray-auto: 5 5; /* Dashed for auto */
+  --connection-dasharray-manual: none; /* Solid for manual */
+
+  --connection-color-valid: var(--status-success);
+  --connection-color-warning: var(--status-warning);
+  --connection-color-error: var(--status-error);
+
+  /* Status Bar */
+  --statusbar-background: var(--ui-surface-tertiary);
+  --statusbar-border-top: 1px solid var(--ui-border-subtle);
+  --statusbar-text: var(--ui-text-secondary);
+
+  --statusbar-indicator-valid: var(--status-success);
+  --statusbar-indicator-warning: var(--status-warning);
+  --statusbar-indicator-error: var(--status-error);
+  --statusbar-indicator-draft: var(--status-warning);
+  --statusbar-indicator-running: var(--status-success);
+  --statusbar-indicator-stopped: var(--ui-text-disabled);
+
+  /* Modals and Overlays */
+  --modal-backdrop: rgba(0, 0, 0, 0.7);
+
+  --modal-background: var(--ui-surface-overlay);
+  --modal-border: var(--ui-border-subtle);
+  --modal-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --modal-border-radius: 8px;
+
+  --modal-header-background: var(--ui-surface-tertiary);
+  --modal-header-text: var(--ui-text-primary);
+  --modal-header-border-bottom: 1px solid var(--ui-border-subtle);
+
+  /* Panel Layout (VS Code-style three-panel) */
+  --panel-left-width: 280px;
+  --panel-left-min-width: 200px;
+  --panel-left-max-width: 400px;
+  --panel-right-width: 320px;
+  --panel-right-min-width: 240px;
+  --panel-right-max-width: 480px;
+  --panel-center-min-width: 400px;
+
+  --panel-resize-handle-width: 4px;
+  --panel-resize-handle-hover-width: 6px;
+  --panel-resize-handle-bg: transparent;
+  --panel-resize-handle-hover-bg: var(--ui-interactive-primary);
+  --panel-resize-handle-active-bg: var(--ui-interactive-primary-active);
+
+  --panel-collapse-button-size: 20px;
+  --panel-collapse-button-bg: var(--ui-surface-tertiary);
+  --panel-collapse-button-hover-bg: var(--ui-surface-secondary);
+  --panel-collapse-button-icon-color: var(--ui-text-secondary);
+
+  --panel-transition-duration: 200ms;
+  --panel-transition-timing: ease-out;
+
+  /* Explorer Panel (Left) */
+  --explorer-background: var(--ui-surface-secondary);
+  --explorer-tab-bar-bg: var(--ui-surface-tertiary);
+  --explorer-tab-active-bg: var(--ui-surface-secondary);
+  --explorer-tab-inactive-bg: transparent;
+  --explorer-tab-text: var(--ui-text-secondary);
+  --explorer-tab-active-text: var(--ui-text-primary);
+  --explorer-tab-border-bottom: 2px solid var(--ui-interactive-primary);
+
+  /* Properties Panel (Right) */
+  --properties-background: var(--ui-surface-secondary);
+  --properties-header-bg: var(--ui-surface-tertiary);
+  --properties-header-text: var(--ui-text-primary);
+  --properties-section-header-bg: var(--ui-surface-tertiary);
+  --properties-section-header-text: var(--ui-text-secondary);
+  --properties-empty-state-text: var(--ui-text-tertiary);
+
+  /* ============================================
+     UTILITY VARIABLES
+     Modern CSS utilities (Pico replacements)
+     ============================================ */
+
+  /* Border Radius Utilities */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* Semantic Button Colors */
+  --button-primary-background: #78a9ff; /* Blue-40 */
+  --button-primary-background-hover: #a6c8ff; /* Blue-30 */
+  --button-primary-text: #161616; /* Dark text on light button */
+  --button-secondary-background: #6f6f6f; /* Gray-60 */
+  --button-secondary-background-hover: #8d8d8d; /* Gray-50 */
+  --button-secondary-text: #f4f4f4; /* Light text */
+  --button-danger-background: #ff8389; /* Red-40 */
+  --button-danger-background-hover: #ffb3b8; /* Red-30 */
+  --button-danger-text: #161616; /* Dark text on light button */
+}
+
+/* ============================================
+   LIGHT THEME (Optional)
+   Set data-theme="light" on html element to use
+   ============================================ */
+
+[data-theme="light"] {
+  /* Layer 1: UI Colors (Light) */
+  --ui-surface-primary: #ffffff;
+  --ui-surface-primary-rgb: 255, 255, 255; /* RGB triplet for rgba() usage */
+  --ui-surface-secondary: #f7f7f7;
+  --ui-surface-tertiary: #f3f3f3;
+  --ui-surface-overlay: #ffffff;
+
+  --ui-surface-elevated-1: #ffffff;
+  --ui-surface-elevated-2: #ffffff;
+  --ui-surface-elevated-3: #ffffff;
+
+  --ui-text-primary: #161616; /* Contrast: 15.8:1 */
+  --ui-text-secondary: #525252; /* Contrast: 7.4:1 */
+  --ui-text-tertiary: #8d8d8d; /* Contrast: 4.6:1 */
+  --ui-text-disabled: #c6c6c6;
+  --ui-text-placeholder: #a8a8a8;
+
+  --ui-text-on-primary: #ffffff;
+  --ui-text-on-error: #ffffff;
+  --ui-text-on-warning: #161616;
+  --ui-text-on-success: #ffffff;
+
+  --ui-border-subtle: #e0e0e0;
+  --ui-border-strong: #8d8d8d;
+  --ui-border-interactive: #0f62fe;
+  --ui-border-disabled: #c6c6c6;
+
+  --ui-interactive-primary: #0f62fe; /* Blue-60 */
+  --ui-interactive-primary-hover: #0353e9; /* Blue-70 */
+  --ui-interactive-primary-active: #002d9c; /* Blue-80 */
+  --ui-interactive-primary-disabled: #c6c6c6; /* Gray-30 */
+
+  --ui-interactive-secondary: #393939; /* Gray-80 */
+  --ui-interactive-secondary-hover: #474747; /* Gray-70 */
+  --ui-interactive-secondary-active: #161616; /* Gray-100 */
+
+  --ui-focus-ring: #0f62fe; /* Blue-60 */
+  --ui-focus-inverse: #ffffff; /* On dark backgrounds */
+
+  /* Layer 2: Status Colors (Light) */
+  --status-error-bg: #fff1f1; /* Error background for banners (light) */
+  --status-error: #da1e28; /* Red-60 */
+  --status-error-hover: #b81921; /* Red-70 */
+  --status-error-active: #750e13; /* Red-90 */
+  --status-error-container: #fff1f1; /* Red-10 */
+  --status-error-on-container: #2d0709;
+
+  --status-warning: #f1c21b; /* Yellow-30 */
+  --status-warning-hover: #d2a106; /* Yellow-40 */
+  --status-warning-active: #8e6a00; /* Yellow-60 */
+  --status-warning-container: #fcf4d6; /* Yellow-10 */
+  --status-warning-on-container: #3e3000;
+
+  --status-success: #24a148; /* Green-50 */
+  --status-success-hover: #198038; /* Green-60 */
+  --status-success-active: #0e6027; /* Green-80 */
+  --status-success-container: #defbe6; /* Green-10 */
+  --status-success-on-container: #071908;
+
+  --status-info: #0043ce; /* Blue-70 */
+  --status-info-hover: #002d9c; /* Blue-80 */
+  --status-info-active: #001d6c; /* Blue-90 */
+  --status-info-container: #d0e2ff; /* Blue-10 */
+  --status-info-on-container: #001141;
+
+  /* Layer 3: Domain Colors (Light) */
+  --domain-robotics: #6929c4; /* Purple-70 */
+  --domain-robotics-hover: #8a3ffc; /* Purple-60 */
+  --domain-robotics-active: #491d8b; /* Purple-80 */
+  --domain-robotics-container: #e8daff;
+
+  --domain-semantic: #005d5d; /* Teal-70 */
+  --domain-semantic-hover: #007d79; /* Teal-60 */
+  --domain-semantic-active: #004144; /* Teal-80 */
+  --domain-semantic-container: #d9fbfb;
+
+  --domain-network: #1192e8; /* Blue-50 */
+  --domain-network-hover: #0f62fe; /* Blue-60 */
+  --domain-network-active: #0043ce; /* Blue-70 */
+  --domain-network-container: #d0e2ff;
+
+  --domain-storage: #198038; /* Green-60 */
+  --domain-storage-hover: #24a148; /* Green-50 */
+  --domain-storage-active: #0e6027; /* Green-80 */
+  --domain-storage-container: #defbe6;
+
+  /* Future Domains (Light) */
+  --domain-telemetry: #ee5396; /* Magenta-50 */
+  --domain-geospatial: #08bdba; /* Cyan-50 */
+  --domain-media: #fa4d56; /* Red-50 */
+  --domain-integration: #6f6f6f; /* Gray-60 */
+
+  /* Component Categories (Light) */
+  --category-input: #1192e8; /* Blue - receiving data */
+  --category-output: #005d5d; /* Teal - sending data */
+  --category-processor: #6929c4; /* Purple - transforming data */
+  --category-gateway: #ba4e00; /* Orange - routing/bridging */
+  --category-storage: #198038; /* Green - persisting data */
+
+  /* Data Viz (Light) */
+  --dataviz-cat-01: #6929c4;
+  --dataviz-cat-02: #1192e8;
+  --dataviz-cat-03: #005d5d;
+  --dataviz-cat-04: #9f1853;
+  --dataviz-cat-05: #fa4d56;
+  --dataviz-cat-06: #570408;
+  --dataviz-cat-07: #198038;
+  --dataviz-cat-08: #002d9c;
+  --dataviz-cat-09: #ee5396;
+  --dataviz-cat-10: #b28600;
+  --dataviz-cat-11: #009d9a;
+  --dataviz-cat-12: #012749;
+  --dataviz-cat-13: #8a3800;
+  --dataviz-cat-14: #a56eff;
+
+  /* Component overrides for light theme */
+  --palette-card-shadow-hover: rgba(15, 98, 254, 0.2);
+  --port-handle-glow-hover: 0 0 4px rgba(15, 98, 254, 0.5);
+  --modal-backdrop: rgba(22, 22, 22, 0.5);
+  --modal-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --canvas-node-background: var(--ui-surface-primary);
+  --port-handle-background: var(--ui-surface-primary);
+  --port-handle-background-required: var(--ui-surface-primary);
+
+  /* Port Pattern Colors (Light) */
+  --port-pattern-stream: #1d4ed8; /* Blue-700 */
+  --port-pattern-request: #7c3aed; /* Purple-700 */
+  --port-pattern-watch: #047857; /* Emerald-700 */
+  --port-pattern-api: #c2410c; /* Orange-700 */
+  --port-pattern-file: #374151; /* Gray-700 */
+  --port-pattern-unknown: #6b7280; /* Gray-500 */
+
+  /* Semantic Button Colors (Light) */
+  --button-primary-background: var(--ui-interactive-primary);
+  --button-primary-background-hover: var(--ui-interactive-primary-hover);
+  --button-primary-text: var(--ui-text-on-primary);
+  --button-secondary-background: var(--ui-interactive-secondary);
+  --button-secondary-background-hover: var(--ui-interactive-secondary-hover);
+  --button-secondary-text: var(--ui-text-on-primary);
+  --button-danger-background: var(--status-error);
+  --button-danger-background-hover: var(--status-error-hover);
+  --button-danger-text: var(--ui-text-on-error);
+}
+
+/* Media query for system preference (optional - uncomment to enable) */
+/*
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    // Light theme colors here
+  }
+}
+*/

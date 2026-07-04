@@ -1,0 +1,51 @@
+# Caddyfile for SemBoids UI
+# Reverse proxy: Go backend APIs + WebSocket frames + SvelteKit Node server
+
+{
+	auto_https off
+	admin off
+}
+
+:3000 {
+	# Flock frame stream (semstreams output/websocket on :8081)
+	handle /ws {
+		reverse_proxy {$WS_HOST:backend:8081}
+	}
+
+	# Go backend API + health
+	handle /health {
+		reverse_proxy {$BACKEND_HOST:backend:8080}
+	}
+
+	handle /readyz {
+		reverse_proxy {$BACKEND_HOST:backend:8080}
+	}
+
+	handle /components/* {
+		reverse_proxy {$BACKEND_HOST:backend:8080}
+	}
+
+	# Prometheus metrics
+	handle /metrics {
+		reverse_proxy {$METRICS_HOST:backend:9090}
+	}
+
+	# SvelteKit handles everything else
+	handle {
+		reverse_proxy {$UI_HOST:ui:3000}
+	}
+
+	header {
+		X-Frame-Options "SAMEORIGIN"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+
+	encode gzip
+
+	log {
+		output stdout
+		format json
+		level {$LOG_LEVEL:INFO}
+	}
+}
