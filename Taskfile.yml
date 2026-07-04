@@ -1,0 +1,42 @@
+version: "3"
+
+# .env is gitignored; copy .env.example to .env. Matches the sibling
+# pattern in ../semstreams and ../semspec.
+dotenv: ['.env']
+
+includes:
+  build:
+    taskfile: ./taskfiles/build.yml
+    aliases: [b]
+  test:
+    taskfile: ./taskfiles/test.yml
+    aliases: [t]
+  lint:
+    taskfile: ./taskfiles/lint.yml
+    aliases: [l]
+  clean:
+    taskfile: ./taskfiles/clean.yml
+  dev:
+    taskfile: ./taskfiles/dev.yml
+    aliases: [d]
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  check:
+    desc: Run all checks (lint + test)
+    cmds:
+      - task: lint:default
+      - task: test:default
+
+  check:push:
+    desc: "Full pre-push gate, mirrors CI: build, lint, race unit + integration"
+    cmds:
+      - task: build:default
+      - task: lint:default
+      - go vet -tags=integration ./...
+      - go test -race ./...
+      - go test -race -tags=integration ./...

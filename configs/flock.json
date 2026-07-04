@@ -1,0 +1,91 @@
+{
+  "version": "1.0.0",
+  "platform": {
+    "org": "c360",
+    "id": "semboids",
+    "type": "simulation",
+    "region": "local",
+    "instance_id": "semboids-001",
+    "environment": "development"
+  },
+  "nats": {
+    "urls": ["nats://localhost:4222"]
+  },
+  "services": {
+    "service-manager": {
+      "name": "service-manager",
+      "enabled": true,
+      "config": {
+        "http_port": 8080,
+        "swagger_ui": true,
+        "server_info": {
+          "title": "SemBoids API",
+          "description": "Reynolds boids simulator on the SemStreams substrate",
+          "version": "0.1.0"
+        }
+      }
+    },
+    "component-manager": {
+      "name": "component-manager",
+      "enabled": true,
+      "config": {}
+    },
+    "metrics": {
+      "name": "metrics",
+      "enabled": true,
+      "config": {
+        "port": 9090,
+        "path": "/metrics",
+        "include_go_metrics": false
+      }
+    }
+  },
+  "components": {
+    "sim": {
+      "type": "input",
+      "name": "sim",
+      "enabled": true,
+      "config": {
+        "boids": 200,
+        "tick_hz": 30,
+        "seed": 1,
+        "ports": {
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "frames",
+              "subject": "boids.frames",
+              "type": "nats",
+              "required": true
+            }
+          ]
+        }
+      }
+    },
+    "frames-websocket": {
+      "type": "output",
+      "name": "websocket",
+      "enabled": true,
+      "config": {
+        "delivery_mode": "at-most-once",
+        "ports": {
+          "inputs": [
+            {
+              "name": "nats_input",
+              "subject": "boids.frames",
+              "type": "nats",
+              "required": true
+            }
+          ],
+          "outputs": [
+            {
+              "name": "websocket_server",
+              "subject": "http://0.0.0.0:8081/ws",
+              "type": "network"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

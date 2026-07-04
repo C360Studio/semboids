@@ -1,0 +1,15 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Run all linters (vet + fmt check + revive; warnings = failure)
+    cmds:
+      - go vet ./...
+      - |
+        UNFORMATTED=$(git ls-files -z '*.go' | xargs -0 gofmt -l)
+        if [ -n "$UNFORMATTED" ]; then
+          echo "gofmt needed on:"; echo "$UNFORMATTED"; exit 1
+        fi
+      # -exclude ui/...: revive walks the filesystem (unlike go list), so the
+      # ui/ sentinel go.mod alone doesn't hide frontend node_modules from it.
+      - go tool revive -config revive.toml -formatter friendly -exclude ui/... ./...

@@ -1,0 +1,59 @@
+version: '3'
+
+# Development workflow tasks for local development
+
+tasks:
+  # NATS Server Management (canonical sem* dev NATS; container name is
+  # semboids-nats so it can run beside sibling repos' instances)
+  nats:start:
+    desc: Start NATS server for local development
+    cmds:
+      - |
+        echo "[DEV] Starting NATS server with JetStream..."
+        if docker ps -a --format '{{.Names}}' | grep -q '^semboids-nats$'; then
+          docker start semboids-nats 2>/dev/null || true
+        else
+          docker run -d --name semboids-nats -p 4222:4222 -p 8222:8222 nats:2.12-alpine -js -m 8222
+        fi
+        echo "[OK] NATS running at nats://localhost:4222"
+        echo "     Monitor at http://localhost:8222"
+
+  nats:stop:
+    desc: Stop local NATS server
+    cmds:
+      - |
+        echo "[DEV] Stopping NATS server..."
+        docker stop semboids-nats 2>/dev/null || true
+        echo "[OK] NATS stopped"
+
+  nats:clean:
+    desc: Stop and remove local NATS server (clears all data)
+    cmds:
+      - |
+        echo "[DEV] Removing NATS server..."
+        docker stop semboids-nats 2>/dev/null || true
+        docker rm semboids-nats 2>/dev/null || true
+        echo "[OK] NATS removed"
+
+  nats:status:
+    desc: Check NATS server status
+    cmds:
+      - |
+        if docker ps --format '{{.Names}}' | grep -q '^semboids-nats$'; then
+          echo "[OK] NATS is running"
+          docker ps --filter name=semboids-nats --format "table {{.Status}}\t{{.Ports}}"
+        else
+          echo "[--] NATS is not running"
+          echo "     Start with: task dev:nats:start"
+        fi
+
+  backend:
+    desc: Run the semboids backend against local NATS (debug pprof on :6060)
+    cmds:
+      - go run ./cmd/semboids --config configs/flock.json --debug
+
+  ui:
+    desc: Run the SvelteKit dev server (:5173)
+    dir: ui
+    cmds:
+      - npm run dev

@@ -1,0 +1,12 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Build the semboids binary
+    cmds:
+      - go build -o cmd/semboids/semboids ./cmd/semboids
+
+  linux:
+    desc: Cross-compile for linux/amd64 (mirrors CI)
+    cmds:
+      - CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o semboids-linux-amd64 ./cmd/semboids

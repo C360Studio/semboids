@@ -1,0 +1,17 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Run unit tests with race detector
+    cmds:
+      - go test -race ./...
+
+  integration:
+    desc: Run integration tests (requires Docker for NATS)
+    cmds:
+      - go test -race -tags=integration ./...
+
+  bench:
+    desc: Run flock engine benchmarks
+    cmds:
+      - go test -bench=. -benchmem -run=^$ ./internal/flock/...
