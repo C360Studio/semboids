@@ -25,12 +25,12 @@
 
 ## 2. graph-snapshots (`internal/boidgraph` + sim) — TDD
 
-- [ ] 2.1 Failing tests: boid Graphable payload (entity ID, position/
+- [x] 2.1 Failing tests: boid Graphable payload (entity ID, position/
       velocity triples, `flock.neighbor` relationships per spike 1.1
       outcome); snapshot derivation (correct boids/neighbors from a known
       engine state; cadence — N snapshots per M ticks); drop-oldest channel
       (stalled consumer → drops counted, send never blocks)
-- [ ] 2.2 Implement `internal/boidgraph` payload + registration; sim
+- [x] 2.2 Implement `internal/boidgraph` payload + registration; sim
       snapshot derivation on the tick loop (copied value, non-blocking
       send) with runtime-adjustable cadence (atomic), publisher goroutine,
       Prometheus counters/gauges
@@ -38,7 +38,7 @@
       entities land in ENTITY_STATES with current neighbor sets; second
       snapshot replaces (no union); physics tick timing unaffected with a
       deliberately stalled publisher
-- [ ] 2.4 Boids API: `PUT /boids/graph/hz` + `GET` state (mirror the rule
+- [x] 2.4 Boids API: `PUT /boids/graph/hz` + `GET` state (mirror the rule
       gates pattern), unit tests
 
 ## 3. flock-communities (flow + bridge)

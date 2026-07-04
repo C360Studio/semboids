@@ -65,9 +65,10 @@ func (f *fakeRules) ApplyConfigUpdate(changes map[string]any) error {
 	return nil
 }
 
-// fakeSim is a stub sim exposing only ClearModifierKind.
+// fakeSim is a stub sim exposing ClearModifierKind + the graph dial.
 type fakeSim struct {
 	cleared []string
+	hz      float64
 }
 
 func (f *fakeSim) Meta() component.Metadata {
@@ -85,6 +86,16 @@ func (f *fakeSim) ClearModifierKind(kind string) error {
 	f.cleared = append(f.cleared, kind)
 	return nil
 }
+
+func (f *fakeSim) SetGraphHz(hz float64) error {
+	if hz < 0 {
+		return http.ErrAbortHandler
+	}
+	f.hz = hz
+	return nil
+}
+func (f *fakeSim) GraphHz() float64                                   { return f.hz }
+func (f *fakeSim) GraphCounts() (snapshots, entities, dropped uint64) { return 3, 30, 1 }
 
 // newTestService wires the API service against a registry holding the fakes.
 func newTestService(t *testing.T, withRules, withSim bool) (*Service, *http.ServeMux, *fakeRules, *fakeSim) {
@@ -224,6 +235,44 @@ func TestUnavailableWithoutRuleProcessor(t *testing.T) {
 	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/boids/rules", nil))
 	if rec.Code != http.StatusServiceUnavailable {
 		t.Fatalf("GET without rule processor = %d, want 503", rec.Code)
+	}
+}
+
+func TestGraphDialRoundTrip(t *testing.T) {
+	_, mux, _, sim := newTestService(t, true, true)
+
+	rec := httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodPut, "/boids/graph/hz",
+		strings.NewReader(`{"hz": 10}`)))
+	if rec.Code != http.StatusOK {
+		t.Fatalf("PUT graph/hz = %d: %s", rec.Code, rec.Body)
+	}
+	if sim.hz != 10 {
+		t.Fatalf("dial = %v, want 10", sim.hz)
+	}
+
+	rec = httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/boids/graph", nil))
+	if rec.Code != http.StatusOK {
+		t.Fatalf("GET graph = %d: %s", rec.Code, rec.Body)
+	}
+	var state struct {
+		Hz        float64 `json:"hz"`
+		Snapshots uint64  `json:"snapshots"`
+		Dropped   uint64  `json:"dropped"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &state); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if state.Hz != 10 || state.Snapshots != 3 || state.Dropped != 1 {
+		t.Fatalf("graph state = %+v", state)
+	}
+
+	rec = httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodPut, "/boids/graph/hz",
+		strings.NewReader(`{}`)))
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("missing hz = %d, want 400", rec.Code)
 	}
 }
 

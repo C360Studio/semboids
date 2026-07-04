@@ -44,6 +44,13 @@ type modifierClearer interface {
 	ClearModifierKind(kind string) error
 }
 
+// graphDialer is the sim's load-dial surface (graph snapshot cadence).
+type graphDialer interface {
+	SetGraphHz(hz float64) error
+	GraphHz() float64
+	GraphCounts() (snapshots, entities, dropped uint64)
+}
+
 // Service exposes the rule-toggle endpoints.
 type Service struct {
 	*service.BaseService
@@ -156,7 +163,66 @@ func (s *Service) RegisterHTTPHandlers(prefix string, mux *http.ServeMux) {
 	}
 	mux.HandleFunc(prefix+"rules", s.handleRules)
 	mux.HandleFunc(prefix+"rules/", s.handleRuleToggle)
+	mux.HandleFunc(prefix+"graph", s.handleGraph)
+	mux.HandleFunc(prefix+"graph/hz", s.handleGraphHz)
 	s.logger.Info("Boids API handlers registered", "prefix", prefix)
+}
+
+// dialer resolves the sim's dial surface lazily.
+func (s *Service) dialer() (graphDialer, error) {
+	for _, comp := range s.deps.ComponentRegistry.ListComponents() {
+		if d, ok := comp.(graphDialer); ok {
+			return d, nil
+		}
+	}
+	return nil, fmt.Errorf("sim component not available")
+}
+
+// handleGraph serves GET <prefix>/graph: dial state + pipeline counters.
+func (s *Service) handleGraph(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	d, err := s.dialer()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusServiceUnavailable)
+		return
+	}
+	snapshots, entities, dropped := d.GraphCounts()
+	writeJSON(w, http.StatusOK, map[string]any{
+		"hz":        d.GraphHz(),
+		"snapshots": snapshots,
+		"entities":  entities,
+		"dropped":   dropped,
+	})
+}
+
+// handleGraphHz serves PUT <prefix>/graph/hz with body {"hz": N} — the
+// runtime load dial.
+func (s *Service) handleGraphHz(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		Hz *float64 `json:"hz"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Hz == nil {
+		http.Error(w, `body must be {"hz": <number>}`, http.StatusBadRequest)
+		return
+	}
+	d, err := s.dialer()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusServiceUnavailable)
+		return
+	}
+	if err := d.SetGraphHz(*req.Hz); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	s.logger.Info("Graph dial set", "hz", d.GraphHz())
+	writeJSON(w, http.StatusOK, map[string]any{"hz": d.GraphHz()})
 }
 
 // handleRules serves GET <prefix>/rules: enabled state per modifier kind.

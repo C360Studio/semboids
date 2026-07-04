@@ -9,7 +9,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"math"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/c360studio/semstreams/component"
@@ -17,6 +19,7 @@ import (
 	"github.com/c360studio/semstreams/natsclient"
 	"github.com/nats-io/nats.go"
 
+	"github.com/c360studio/semboids/internal/boidgraph"
 	"github.com/c360studio/semboids/internal/flock"
 	"github.com/c360studio/semboids/internal/zone"
 )
@@ -41,6 +44,12 @@ type Config struct {
 	Seed uint64 `json:"seed"`
 	// Zones are the static steering zones (may be empty).
 	Zones []zone.Zone `json:"zones,omitempty"`
+	// GraphHz is the graph snapshot cadence (the load dial, ADR-001 §4).
+	// 0 disables snapshots. Runtime-adjustable via the boids API.
+	GraphHz float64 `json:"graph_hz,omitempty"`
+	// SnapshotRadius is the neighbor radius for graph snapshots
+	// (0 = the physics NeighborRadius).
+	SnapshotRadius float64 `json:"snapshot_radius,omitempty"`
 	// Ports optionally overrides the default frames output port.
 	Ports *component.PortConfig `json:"ports,omitempty"`
 }
@@ -69,6 +78,15 @@ type publishFunc func(ctx context.Context, subject string, data []byte) error
 // Component drives the flock engine on a ticker and publishes frames, zone
 // transition events (edge-triggered), and applies steering modifiers
 // arriving from the rule engine.
+// snapshotSink is the slice of boidgraph.Publisher the tick loop needs;
+// an interface so unit tests count offers without NATS.
+type snapshotSink interface {
+	Offer(s boidgraph.Snapshot) bool
+}
+
+// Component drives the flock engine on a ticker, publishing frames, zone
+// transition events, graph snapshots (at the dial cadence), and applying
+// steering modifiers from the rule engine.
 type Component struct {
 	config   Config
 	engine   *flock.Engine
@@ -79,6 +97,13 @@ type Component struct {
 	tracker  *zoneTracker
 	org      string
 	platform string
+
+	// Graph snapshot pipeline (nil sink = disabled). graphHzBits holds the
+	// runtime dial as math.Float64bits for lock-free reads on the tick loop.
+	snapshots      snapshotSink
+	publisher      *boidgraph.Publisher
+	graphHzBits    atomic.Uint64
+	snapshotRadius float64
 
 	natsClient interface {
 		Subscribe(ctx context.Context, subject string,
@@ -148,11 +173,79 @@ func NewComponent(rawConfig json.RawMessage, deps component.Dependencies) (compo
 			component.BuildPortFromDefinition(config.Ports.Outputs[0], component.DirectionOutput),
 		},
 	}
+	c.snapshotRadius = config.SnapshotRadius
+	if c.snapshotRadius <= 0 {
+		c.snapshotRadius = params.NeighborRadius
+	}
+	c.setGraphHz(config.GraphHz)
+
 	if deps.NATSClient != nil {
 		c.publish = deps.NATSClient.Publish
 		c.natsClient = deps.NATSClient
+		c.publisher = boidgraph.NewPublisher(
+			deps.NATSClient, deps.NATSClient, org, platform, logger)
+		c.snapshots = c.publisher
 	}
 	return c, nil
+}
+
+// setGraphHz stores the dial; clamps to [0, physics tick rate].
+func (c *Component) setGraphHz(hz float64) {
+	if hz < 0 {
+		hz = 0
+	}
+	if hz > c.config.TickHz {
+		hz = c.config.TickHz
+	}
+	c.graphHzBits.Store(math.Float64bits(hz))
+}
+
+// GraphHz reports the current snapshot cadence (the load dial).
+func (c *Component) GraphHz() float64 {
+	return math.Float64frombits(c.graphHzBits.Load())
+}
+
+// SetGraphHz adjusts the snapshot cadence at runtime — the boids API's dial
+// surface. Values clamp to [0, tick rate]; 0 disables snapshots.
+func (c *Component) SetGraphHz(hz float64) error {
+	if hz < 0 {
+		return fmt.Errorf("graph hz must be >= 0, got %v", hz)
+	}
+	c.setGraphHz(hz)
+	c.logger.Info("Graph snapshot cadence set", slog.Float64("graph_hz", c.GraphHz()))
+	return nil
+}
+
+// GraphCounts reports (snapshots published, boid entities published,
+// snapshots dropped) — zeros when the pipeline is disabled.
+func (c *Component) GraphCounts() (snapshots, entities, dropped uint64) {
+	if c.publisher == nil {
+		return 0, 0, 0
+	}
+	return c.publisher.Counts()
+}
+
+// maybeSnapshot derives and offers a graph snapshot when the dial says this
+// tick is due. Runs on the tick goroutine: derivation is bounded O(N×k) and
+// the offer never blocks (drop-oldest).
+func (c *Component) maybeSnapshot(now time.Time) {
+	if c.snapshots == nil {
+		return
+	}
+	hz := c.GraphHz()
+	if hz <= 0 {
+		return
+	}
+	every := uint64(c.config.TickHz / hz)
+	if every < 1 {
+		every = 1
+	}
+	tick := c.engine.TickCount()
+	if tick%every != 0 {
+		return
+	}
+	neighbors := c.engine.SnapshotNeighbors(c.snapshotRadius)
+	c.snapshots.Offer(boidgraph.BuildSnapshot(tick, now, c.engine.Boids(), neighbors))
 }
 
 // ClearModifierKind drops all active and staged modifiers of a kind. The
@@ -197,6 +290,16 @@ func (c *Component) ConfigSchema() component.ConfigSchema {
 				Type:        "integer",
 				Description: "Deterministic seed for initial placement",
 				Default:     1,
+			},
+			"graph_hz": {
+				Type:        "number",
+				Description: "Graph snapshot cadence in Hz (the load dial); 0 disables",
+				Default:     0,
+			},
+			"snapshot_radius": {
+				Type:        "number",
+				Description: "Neighbor radius for graph snapshots (0 = physics neighbor radius)",
+				Default:     0,
 			},
 		},
 		Required: []string{},
@@ -267,6 +370,12 @@ func (c *Component) Start(ctx context.Context) error {
 		slog.Uint64("seed", c.config.Seed),
 		slog.Int("zones", len(c.config.Zones)),
 		slog.String("subject", c.subject))
+
+	// The snapshot publisher owns all JetStream traffic (ADR-001: the tick
+	// loop never blocks on the substrate).
+	if c.publisher != nil {
+		go c.publisher.Run(ctx)
+	}
 
 	// Steering modifiers arrive from the rule engine; unit tests feed
 	// handleSteering directly instead of subscribing.
@@ -354,6 +463,9 @@ func (c *Component) run(ctx context.Context) {
 			for _, tr := range c.tracker.transitions(boids) {
 				c.publishTransition(ctx, tr)
 			}
+
+			// Graph snapshot at the dial cadence (drop-oldest, non-blocking).
+			c.maybeSnapshot(now)
 
 			frame := NewFrame(c.engine.TickCount(), now, params, boids,
 				c.config.Zones, c.steering.modFlags(boids))

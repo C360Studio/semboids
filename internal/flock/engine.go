@@ -73,6 +73,25 @@ func (e *Engine) Boids() []Boid { return e.buf[e.cur] }
 // TickCount returns the number of completed ticks.
 func (e *Engine) TickCount() uint64 { return e.ticks }
 
+// SnapshotNeighbors returns each boid's neighbor IDs within radius (torus
+// distance, self excluded) from the current state. It rebuilds the reusable
+// grid — safe because the owner serializes it with Tick — and allocates the
+// result; intended for snapshot cadence (graph publishing), not per tick.
+func (e *Engine) SnapshotNeighbors(radius float64) map[uint32][]uint32 {
+	boids := e.Boids()
+	e.grid.rebuild(boids)
+	out := make(map[uint32][]uint32, len(boids))
+	for i := range boids {
+		e.scratch = e.grid.neighbors(boids, i, radius, e.scratch[:0])
+		ns := make([]uint32, 0, len(e.scratch))
+		for _, j := range e.scratch {
+			ns = append(ns, boids[j].ID)
+		}
+		out[boids[i].ID] = ns
+	}
+	return out
+}
+
 // SetExternalSteering stages per-boid external steering (units/second²)
 // applied on subsequent ticks, summed with the Reynolds terms before the
 // MaxForce clamp — external influence can never exceed the force budget.
