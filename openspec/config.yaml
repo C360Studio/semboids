@@ -28,5 +28,5 @@ rules:
       so, confirm it stays off NATS/rules/graph-ingest.
     - Substrate gaps discovered go to the SemStreams issue queue, not app-side
       workarounds — name the issue to file, if any.
-  spec:
+  specs:
     - Specs describe CURRENT behavior verified against code, not aspirations.
