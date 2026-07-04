@@ -4,12 +4,14 @@ A classic [Reynolds boids](https://www.red3d.com/cwr/boids/) simulator for the
 C360 `sem*` family — a celebration of simple-yet-detailed over complex: three
 steering rules (separation, cohesion, alignment) producing emergent flocking.
 
-![SemBoids flocking demo](docs/images/flock-demo.png)
+![SemBoids zone steering demo](docs/images/zone-steering-demo.png)
 
 Built on [SemStreams](https://github.com/c360studio/semstreams). Physics runs
-in-process at 30Hz; the substrate does what it's good at — websocket egress to
-the split-screen UI today; rule-driven zone steering, lifecycle-managed
-spawn/despawn, and graph snapshots with live flock community detection in
+in-process at 30Hz; the substrate does what it's good at — **rule-driven zone
+steering** (boids flee predator zones, pool at food, drift in wind — each a
+SemStreams JSON rule you can toggle live from the UI), zones as graph
+entities, and websocket egress to the split-screen UI. Lifecycle-managed
+spawn/despawn and graph snapshots with live flock community detection come in
 upcoming changes.
 
 SemBoids is also a calibrated load generator: the graph-ingest cadence is a
@@ -31,15 +33,28 @@ frame stream on :8081/ws.
 
 ## Status
 
-Walking skeleton complete (`add-flock-core`): in-process physics engine
-(spatial hash, deterministic seeding, ~114µs/tick at 200 boids), sim as a
-SemStreams input component publishing one frame per tick, websocket egress,
-and a Canvas 2D pane rendering live flocking. Architecture fixed in
+Zone steering complete (`add-zone-steering`): predator/food/wind zones live
+as graph entities via graph-ingest, the sim publishes edge-triggered
+transition events, six SemStreams expression rules translate them into
+TTL'd steering modifiers applied inside the physics force budget, and the
+UI renders zone overlays, modifier-tinted boids, and live rule toggles.
+Rule-engine performance under the demo:
+[docs/perf/zone-steering-rules.md](docs/perf/zone-steering-rules.md)
+(~3.9µs/rule evaluation). Earlier: walking skeleton (`add-flock-core`) with
+the in-process engine (~114µs/tick at 200 boids) and baseline profile.
+Architecture fixed in
 [ADR-001](docs/adr/001-hybrid-physics-substrate-split.md); work proceeds
 through [OpenSpec](openspec/README.md) changes.
 
-Roadmap: zone steering rules → graph snapshots + sigma.js pane with LPA flock
-communities → lifecycle spawn/despawn → load-dial profiling harness.
+Roadmap: graph snapshots + sigma.js pane with LPA flock communities →
+lifecycle spawn/despawn → load-dial profiling harness.
+
+Upstream findings filed from this repo:
+[semstreams#452](https://github.com/C360Studio/semstreams/issues/452) (docs),
+[#455](https://github.com/C360Studio/semstreams/issues/455) (rule hot-reload
+unreachable over HTTP),
+[#459](https://github.com/C360Studio/semstreams/issues/459) (config bucket
+collision on shared NATS).
 
 ## Development
 

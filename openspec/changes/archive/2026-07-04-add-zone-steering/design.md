@@ -70,15 +70,24 @@ subject: boids.zone.events
  "event": "entered", "tick": 1234}
 ```
 
-Core NATS, fire-and-forget, BaseMessage-wrapped with a registered
-`zone.transition.v1` payload so the rule processor's message path can decode
-it. Event rate is bounded by flock dynamics (bursts when a flock crosses a
-boundary), not tick rate.
+Core NATS, fire-and-forget, BaseMessage-wrapped as **`core.json.v1`
+(GenericJSONPayload)** — spike finding (task 1.1): the rule engine's
+message-path conditions and `$message.*` substitution only see
+`GenericJSONPayload.Data` (`expression_factory.go:119`,
+`message_handler.go:410`); a custom registered payload type would decode but
+never match. Condition `field`s therefore address the flat `data` map
+directly (`boid_id`, `zone_type`, `event`), and `entity_id` in the data
+(the boid's 6-part ID) keys per-boid rule state. Event rate is bounded by
+flock dynamics (bursts when a flock crosses a boundary), not tick rate.
 
 ### D3. Rules: JSON message-path rules; modifiers via the publish action
 
 New `configs/rules/zone-steering/*.json`, loaded via the rule processor's
-`rules_files`. One rule per zone type, e.g. predator:
+`rules_files`. **Two rules per zone type** (spike 1.1 refinement): an
+`entered` rule whose `on_enter` publishes the modifier, and an `exited` rule
+whose `on_enter` publishes the `cancel` — each rule's per-entity state is
+keyed by the boid's `entity_id`, so enter/exit pairs fire exactly once per
+visit. Predator entered rule:
 
 ```json
 {
@@ -102,12 +111,11 @@ New `configs/rules/zone-steering/*.json`, loaded via the rule processor's
 ```
 
 Exit events publish `kind: "cancel"` for the same boid/zone pair (needed by
-wind/food, harmless for flee). Exact condition field paths against the
-BaseMessage envelope are verified in an early implementation task — if
-message-path conditions cannot address our payload fields, that is a
-SemStreams issue to file (conditions over registered payload fields), with
-the interim being flattening the event payload to whatever shape conditions
-can reach.
+wind/food, harmless for flee). The modifier arriving at the sim is the
+`publish` action's fixed envelope — raw JSON (not BaseMessage):
+`{entity_id, subject, timestamp, source: "rule_engine", properties: {...}}`
+— so the sim's steering parser reads `properties` and coerces `boid_id`
+leniently (substitution may render numbers as strings).
 
 ### D4. Modifier application: buffered, TTL'd, clamped
 
@@ -122,16 +130,25 @@ decrement per tick; `cancel` removes entries; expiry self-heals a missed
 exit. No locks in the hot path: the subscription goroutine writes to a
 mutex-guarded staging map the tick loop drains once per tick.
 
-### D5. Live toggles: component config update → hot reload
+### D5. Live toggles: app-side modifier gate (spike outcome — fallback path)
 
-The UI toggle calls the backend's component API (`:8080`, already proxied by
-the Caddyfile's `/components/*` handle) to update the rule processor's
-config, flipping the target rule's `enabled` flag; the hot-reload path
-(`ValidateConfigUpdate`) applies it without restart. The exact endpoint
-shape is confirmed in an early task; **fallback if the surface doesn't
-exist**: a semboids HTTP endpoint that gates modifier kinds app-side (drop
-`flee` modifiers while "predator rule" is off) — visibly identical demo,
-and the missing runtime-toggle API gets filed upstream.
+Spike 1.2 finding: the component API's `PUT …/config/<name>` hot-applies
+only via `UpdateConfig(ctx, json.RawMessage)`
+(`component_manager_http.go:701`); the rule processor implements the
+*service*-flavored `RuntimeConfigurable.ApplyConfigUpdate` instead, whose
+only driver serves services (`service_manager.go:807`). The rule engine's
+hot-reload machinery is unreachable over HTTP, and the PUT reports success
+without applying — filed as
+[semstreams#455](https://github.com/C360Studio/semstreams/issues/455).
+
+Adopted fallback (as designed): a minimal semboids `boids-api` service
+(registered with the service manager like semdragons' `game` service)
+exposing `GET /boids/rules` and `PUT /boids/rules/{kind}` on :8080. It
+gates modifier *kinds* in the sim's steering intake (a gated kind's
+modifiers are dropped on arrival and its active entries cleared) — visibly
+identical demo behavior, no rule-engine reimplementation. The Caddyfile
+gains a `/boids/*` handle. When #455 lands, the gate swaps for real rule
+toggling without UI changes.
 
 ### D6. Frame format: zones + per-boid modifier flag
 
@@ -158,8 +175,9 @@ parser accepts both 5- and 6-element tuples for compatibility.
 
 ## Open Questions
 
-- Exact component config-update endpoint shape for D5 (task 1 of
-  implementation; both paths designed).
-- Whether message-path rule conditions address BaseMessage payload fields
-  directly or need a flattened shape (early spike task; upstream issue if
-  gapped).
+All resolved by the phase-1 spikes (2026-07-04):
+
+- ~~Component config-update endpoint~~ → unreachable for the rule
+  processor; app-side gate adopted, semstreams#455 filed (see D5).
+- ~~Condition field addressing~~ → events publish as `core.json.v1`;
+  conditions address the flat data map; `$message.*` works (see D2/D3).
