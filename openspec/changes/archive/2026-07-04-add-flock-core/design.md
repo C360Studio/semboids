@@ -42,6 +42,10 @@
 - `output/websocket` subscribes to `boids.frames`, broadcasts
   **at-most-once** with per-client write timeouts — a slow client drops
   frames; nothing propagates back to physics.
+- Verified shape on the wire to browsers: the ws-output wraps each frame in
+  its client envelope `{"type":"data","id":"msg-…","timestamp":…,
+  "payload":{<frame>}}` — the UI store reads `payload` when
+  `type === "data"`.
 
 ## Host wiring
 
