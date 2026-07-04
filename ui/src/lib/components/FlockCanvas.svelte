@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { FlockConnection } from "$lib/stores/flock.svelte";
+  import { MOD_FLEE, MOD_ATTRACT, MOD_WIND } from "$lib/types/frame";
 
   let { conn }: { conn: FlockConnection } = $props();
 
@@ -14,8 +15,23 @@
     if (ctx === null) return;
 
     const styles = getComputedStyle(canvas);
-    const boidColor = styles.getPropertyValue("--ui-interactive-primary").trim() || "#78a9ff";
-    const bgColor = styles.getPropertyValue("--ui-surface-primary").trim() || "#161616";
+    const cssVar = (name: string, fallback: string) =>
+      styles.getPropertyValue(name).trim() || fallback;
+
+    const boidColor = cssVar("--ui-interactive-primary", "#78a9ff");
+    const bgColor = cssVar("--ui-surface-primary", "#161616");
+    // Kind colors: shared by zone circles and modifier-tinted boids so the
+    // cause→effect reads directly on the canvas.
+    const kindColors: Record<string, string> = {
+      predator: cssVar("--status-error", "#fa4d56"),
+      food: cssVar("--status-success", "#42be65"),
+      wind: cssVar("--status-warning", "#f1c21b"),
+    };
+    const modColors: Record<number, string> = {
+      [MOD_FLEE]: kindColors.predator,
+      [MOD_ATTRACT]: kindColors.food,
+      [MOD_WIND]: kindColors.wind,
+    };
 
     let dpr = window.devicePixelRatio || 1;
 
@@ -42,12 +58,31 @@
       const offsetX = (canvas.width - frame.w * scale) / 2;
       const offsetY = (canvas.height - frame.h * scale) / 2;
 
+      // Zones beneath the boids: translucent fill + stroke in kind color.
+      for (const [type, zx, zy, zr] of frame.zones ?? []) {
+        const color = kindColors[type] ?? boidColor;
+        const px = offsetX + zx * scale;
+        const py = offsetY + zy * scale;
+        ctx.beginPath();
+        ctx.arc(px, py, zr * scale, 0, Math.PI * 2);
+        ctx.globalAlpha = 0.12;
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.globalAlpha = 0.5;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5 * dpr;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+
       const size = 5 * dpr; // triangle half-length in device px
-      ctx.fillStyle = boidColor;
-      for (const [, x, y, vx, vy] of frame.boids) {
+      for (const b of frame.boids) {
+        const [, x, y, vx, vy] = b;
+        const m = b[5] ?? 0;
         const px = offsetX + x * scale;
         const py = offsetY + y * scale;
         const angle = Math.atan2(vy, vx);
+        ctx.fillStyle = modColors[m] ?? boidColor;
         ctx.save();
         ctx.translate(px, py);
         ctx.rotate(angle);

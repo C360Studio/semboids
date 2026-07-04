@@ -12,6 +12,11 @@
 		reverse_proxy {$WS_HOST:backend:8081}
 	}
 
+	# Boids domain API (rule-gate toggles)
+	handle /boids/* {
+		reverse_proxy {$BACKEND_HOST:backend:8080}
+	}
+
 	# Go backend API + health
 	handle /health {
 		reverse_proxy {$BACKEND_HOST:backend:8080}

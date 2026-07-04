@@ -58,6 +58,9 @@ export default [
     rules: {
       ...tseslint.configs.recommended.rules,
       "no-unused-vars": "off",
+      // TypeScript itself checks undefined identifiers; core no-undef
+      // false-positives on TS-only types like RequestInit.
+      "no-undef": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },

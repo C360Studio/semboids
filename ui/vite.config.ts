@@ -6,8 +6,12 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
-    // No vite proxy: API/WS routing is handled by the Caddy gateway,
-    // matching the sibling sem* UIs.
+    // Prod routing goes through the Caddy gateway (ui/Caddyfile). The lone
+    // dev proxy below exists because `task dev` runs vite + backend without
+    // Caddy, and the rules API needs a same-origin path (CORS).
+    proxy: {
+      "/boids": "http://localhost:8080",
+    },
   },
   test: {
     include: ["src/**/*.{test,spec}.{js,ts}"],
