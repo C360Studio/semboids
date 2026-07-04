@@ -12,7 +12,14 @@
 		reverse_proxy {$WS_HOST:backend:8081}
 	}
 
-	# Boids domain API (rule-gate toggles)
+	# Graph SSE stream: immediate flushing, no buffering
+	handle /boids/graph/stream {
+		reverse_proxy {$BACKEND_HOST:backend:8080} {
+			flush_interval -1
+		}
+	}
+
+	# Boids domain API (rule toggles + graph dial)
 	handle /boids/* {
 		reverse_proxy {$BACKEND_HOST:backend:8080}
 	}
@@ -46,7 +53,10 @@
 		Referrer-Policy "strict-origin-when-cross-origin"
 	}
 
-	encode gzip
+	# Gzip everywhere except SSE — compression buffers chunks and breaks
+	# incremental delivery (same lesson as semteams' SSE routes).
+	@notSSE not path /boids/graph/stream
+	encode @notSSE gzip
 
 	log {
 		output stdout

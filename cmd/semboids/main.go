@@ -60,6 +60,8 @@ type CLIConfig struct {
 	Seed   uint64
 	// Zones toggles zone steering (false strips zones for a plain run).
 	Zones bool
+	// GraphHz overrides the snapshot cadence (-1 = use config).
+	GraphHz float64
 }
 
 func main() {
@@ -193,6 +195,7 @@ func parseCLI() (*CLIConfig, bool) {
 	flag.Float64Var(&cliCfg.TickHz, "tick-hz", 0, "Override tick rate in Hz (0 = use config)")
 	flag.Uint64Var(&cliCfg.Seed, "seed", 0, "Override sim seed (0 = use config)")
 	flag.BoolVar(&cliCfg.Zones, "zones", true, "Enable zone steering (false strips configured zones)")
+	flag.Float64Var(&cliCfg.GraphHz, "graph-hz", -1, "Override graph snapshot cadence in Hz (-1 = use config; 0 disables)")
 	flag.Parse()
 
 	if cliCfg.ShowVersion {
@@ -222,7 +225,7 @@ func loadConfig(path string) (*config.Config, error) {
 // applySimOverrides patches the sim component config with CLI overrides so
 // quick experiments don't require editing the flow file.
 func applySimOverrides(cfg *config.Config, cliCfg *CLIConfig) {
-	if cliCfg.Boids <= 0 && cliCfg.TickHz <= 0 && cliCfg.Seed == 0 && cliCfg.Zones {
+	if cliCfg.Boids <= 0 && cliCfg.TickHz <= 0 && cliCfg.Seed == 0 && cliCfg.Zones && cliCfg.GraphHz < 0 {
 		return
 	}
 	simCfg, ok := cfg.Components["sim"]
@@ -246,6 +249,9 @@ func applySimOverrides(cfg *config.Config, cliCfg *CLIConfig) {
 	}
 	if !cliCfg.Zones {
 		delete(raw, "zones")
+	}
+	if cliCfg.GraphHz >= 0 {
+		raw["graph_hz"] = cliCfg.GraphHz
 	}
 	patched, err := json.Marshal(raw)
 	if err != nil {

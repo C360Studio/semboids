@@ -165,6 +165,7 @@ func (s *Service) RegisterHTTPHandlers(prefix string, mux *http.ServeMux) {
 	mux.HandleFunc(prefix+"rules/", s.handleRuleToggle)
 	mux.HandleFunc(prefix+"graph", s.handleGraph)
 	mux.HandleFunc(prefix+"graph/hz", s.handleGraphHz)
+	mux.HandleFunc(prefix+"graph/stream", s.handleGraphStream)
 	s.logger.Info("Boids API handlers registered", "prefix", prefix)
 }
 

@@ -1,16 +1,20 @@
 <script lang="ts">
   import FlockCanvas from "$lib/components/FlockCanvas.svelte";
+  import GraphCanvas from "$lib/components/GraphCanvas.svelte";
   import { getFlockConnection } from "$lib/stores/flock.svelte";
+  import { getGraphStream } from "$lib/stores/graph.svelte";
   import { getRuleGates } from "$lib/stores/rules.svelte";
 
   const conn = getFlockConnection();
   const gates = getRuleGates();
+  const graph = getGraphStream();
 
   $effect(() => {
     conn.connect();
+    graph.connect();
     void gates.load();
-    // The connection is a singleton shared across the app; leaving it open
-    // on unmount keeps frames warm for other views.
+    // Singletons shared across the app; leaving them open on unmount keeps
+    // data warm for other views.
   });
 
   const population = $derived(conn.frame?.boids.length ?? 0);
@@ -21,6 +25,28 @@
     { kind: "attract", label: "Food", cls: "food" },
     { kind: "wind", label: "Wind", cls: "wind" },
   ];
+
+  // Graph snapshot cadence presets (the load dial).
+  const dialOptions = [0.5, 1, 5, 10, 30];
+  let dialHz = $state(1);
+  let dialError = $state<string | null>(null);
+
+  async function setDial(hz: number) {
+    const previous = dialHz;
+    dialHz = hz;
+    dialError = null;
+    try {
+      const res = await fetch("/boids/graph/hz", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ hz }),
+      });
+      if (!res.ok) throw new Error(`dial: ${res.status}`);
+    } catch (err) {
+      dialHz = previous;
+      dialError = err instanceof Error ? err.message : String(err);
+    }
+  }
 </script>
 
 <div class="page">
@@ -53,9 +79,25 @@
     <section class="pane" aria-label="Flock space">
       <FlockCanvas {conn} />
     </section>
-    <section class="pane placeholder" aria-label="Graph view">
-      <p>Graph view</p>
-      <p class="hint">Neighbor topology &amp; flock communities — coming in a later change.</p>
+    <section class="pane graph" aria-label="Graph view">
+      <div class="pane-header">
+        <span>substrate graph</span>
+        <label>
+          dial
+          <select
+            value={dialHz}
+            onchange={(e) => setDial(Number(e.currentTarget.value))}
+          >
+            {#each dialOptions as hz (hz)}
+              <option value={hz}>{hz} Hz</option>
+            {/each}
+          </select>
+        </label>
+        {#if dialError}
+          <span class="gate-error" title={dialError}>dial failed</span>
+        {/if}
+      </div>
+      <GraphCanvas stream={graph} />
     </section>
   </main>
 </div>
@@ -178,21 +220,39 @@
     border-right: none;
   }
 
-  .placeholder {
+  .graph {
     display: flex;
     flex-direction: column;
+  }
+
+  .pane-header {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
+    gap: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
     color: var(--ui-text-tertiary);
+    border-bottom: 1px solid var(--ui-border-subtle);
+    background: var(--ui-surface-secondary);
+  }
+
+  .pane-header label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .pane-header select {
     background: var(--ui-surface-primary);
+    color: var(--ui-text-secondary);
+    border: 1px solid var(--ui-border-subtle);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    padding: 0.1rem 0.25rem;
   }
 
-  .placeholder p {
-    margin: 0;
-  }
-
-  .hint {
-    font-size: 0.8rem;
+  .graph :global(.graph-pane) {
+    flex: 1;
+    min-height: 0;
   }
 </style>

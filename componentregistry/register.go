@@ -6,6 +6,8 @@ package componentregistry
 import (
 	"github.com/c360studio/semstreams/component"
 	wsoutput "github.com/c360studio/semstreams/output/websocket"
+	graphclustering "github.com/c360studio/semstreams/processor/graph-clustering"
+	graphindex "github.com/c360studio/semstreams/processor/graph-index"
 	graphingest "github.com/c360studio/semstreams/processor/graph-ingest"
 	rule "github.com/c360studio/semstreams/processor/rule"
 
@@ -16,9 +18,11 @@ import (
 func RegisterAll(registry *component.Registry) error {
 	// SemStreams components consumed by the flock flow.
 	semstreamsComponents := []func(*component.Registry) error{
-		wsoutput.Register,    // frames → browser
-		graphingest.Register, // zone entities → ENTITY_STATES
-		rule.Register,        // zone transitions → steering modifiers
+		wsoutput.Register,        // frames → browser
+		graphingest.Register,     // zone + boid entities → ENTITY_STATES
+		rule.Register,            // zone transitions → steering modifiers
+		graphindex.Register,      // relationship indexes (LPA adjacency)
+		graphclustering.Register, // flock communities (COMMUNITY_INDEX)
 	}
 	for _, register := range semstreamsComponents {
 		if err := register(registry); err != nil {

@@ -43,14 +43,14 @@
 
 ## 3. flock-communities (flow + bridge)
 
-- [ ] 3.1 Wire the flow: register `graph-index` + `graph-clustering`;
+- [x] 3.1 Wire the flow: register `graph-index` + `graph-clustering`;
       extend `configs/flock.json` (index ports; clustering kv-watch,
       `detection_interval: "2s"`, `min_community_size: 3`,
       `enable_llm: false`); `--graph-hz` flag plumbing
-- [ ] 3.2 Failing tests: SSE bridge — initial sync snapshot; per-entity
+- [x] 3.2 Failing tests: SSE bridge — initial sync snapshot; per-entity
       coalescing between flushes (latest wins); community inversion
       (Members[] → per-entity map); client disconnect cleans watchers
-- [ ] 3.3 Implement `GET /boids/graph/stream` in the boids service: KV
+- [x] 3.3 Implement `GET /boids/graph/stream` in the boids service: KV
       watchers (ENTITY_STATES boid keys + COMMUNITY_INDEX), batched
       ~500ms flushes; Caddyfile SSE flush handling (`flush_interval -1`)
 - [ ] 3.4 Integration test: full chain — sim → ingest → index → clustering
@@ -59,20 +59,20 @@
 
 ## 4. graph-pane (`ui/`)
 
-- [ ] 4.1 Add sigma + graphology deps; failing tests: SSE store (initial
+- [x] 4.1 Add sigma + graphology deps; failing tests: SSE store (initial
       sync, batch application, reconnect); community→color mapping stable
       across batches; world→normalized coordinate transform
-- [ ] 4.2 Implement `graphStream.svelte.ts` (EventSource store, semdragons
+- [x] 4.2 Implement `graphStream.svelte.ts` (EventSource store, semdragons
       pattern) and `graphStore.svelte.ts` ($state maps for
       entities/communities)
-- [ ] 4.3 `GraphCanvas.svelte`: sigma instance (SSR-safe dynamic import per
+- [x] 4.3 `GraphCanvas.svelte`: sigma instance (SSR-safe dynamic import per
       the semspec pattern), node/edge sync from store with
       `sigma.refresh()` per batch — no force layout; community colors from
       the categorical palette; empty/connecting status states
-- [ ] 4.4 Replace the placeholder pane; cadence select wired to
+- [x] 4.4 Replace the placeholder pane; cadence select wired to
       `PUT /boids/graph/hz` with failure surfacing; hover shows boid id +
       community
-- [ ] 4.5 `svelte-check`/eslint/vitest/build green with the new deps
+- [x] 4.5 `svelte-check`/eslint/vitest/build green with the new deps
 
 ## 5. Verification
 
