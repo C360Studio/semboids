@@ -1,0 +1,32 @@
+schema: spec-driven
+
+# Project context shown to AI when creating artifacts. Full context lives in
+# openspec/project.md (Purpose + Product Boundary + Conventions) and CLAUDE.md.
+context: |
+  SemBoids is a classic Reynolds boids simulator and SemStreams load-generator
+  demo (Go 1.26, SemStreams by tag, NATS JetStream, SvelteKit/Svelte 5 ui/,
+  Taskfile). It owns domain semantics only — physics, zones, flock UI; the
+  substrate (graph, rules, lifecycle, websocket egress) is consumed from
+  SemStreams, never reimplemented. See openspec/project.md "Product Boundary".
+
+  Architecture non-negotiable: per-tick physics state never routes through
+  NATS/rules/lifecycle/graph-ingest (hybrid split, decided 2026-07-04 —
+  SemStreams ADR-040 and its 10-30ms/entity write budget make it 30-450x too
+  slow). Physics is an in-process 30Hz loop; rules fire on zone transitions and
+  emit steering modifiers; lifecycle handles spawn/despawn; graph snapshots
+  flow at a tunable dial for profiling; output/websocket streams frames
+  at-most-once to the browser.
+
+  Role split: openspec/specs/<capability>/spec.md = CURRENT TRUTH (Requirement
+  + GIVEN/WHEN/THEN), seeded lazily; openspec/changes/<id>/ = proposal + tasks
+  + spec deltas, archived on completion; docs/adr/ = genuine decisions only.
+
+rules:
+  proposal:
+    - Always include a "## Non-goals" section (boundary discipline).
+    - State explicitly whether the change touches the physics hot path, and if
+      so, confirm it stays off NATS/rules/graph-ingest.
+    - Substrate gaps discovered go to the SemStreams issue queue, not app-side
+      workarounds — name the issue to file, if any.
+  spec:
+    - Specs describe CURRENT behavior verified against code, not aspirations.

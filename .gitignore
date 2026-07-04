@@ -26,7 +26,26 @@ go.work.sum
 
 # env file
 .env
+.env.*
 
 # Editor/IDE
 # .idea/
 # .vscode/
+.DS_Store
+
+# Per-cmd binaries (anchored so source dirs aren't ignored)
+cmd/semboids/semboids
+/semboids
+/semboids-linux-amd64
+
+# UI (SvelteKit in ui/)
+node_modules/
+ui/build/
+ui/.svelte-kit/
+ui/dist/
+ui/test-results/
+.playwright-mcp/
+
+# Agent/session artifacts
+.claude/scheduled_tasks.lock
+.artifacts/
