@@ -30,6 +30,7 @@ import (
 
 	"github.com/c360studio/semboids/componentregistry"
 	"github.com/c360studio/semboids/internal/api"
+	"github.com/c360studio/semboids/internal/boidgraph"
 	"github.com/c360studio/semboids/internal/zone"
 )
 
@@ -151,6 +152,9 @@ func run() error {
 	}
 	if err := zone.RegisterPayloads(payloadReg); err != nil {
 		return fmt.Errorf("register zone payloads: %w", err)
+	}
+	if err := boidgraph.RegisterPayloads(payloadReg); err != nil {
+		return fmt.Errorf("register boid payloads: %w", err)
 	}
 
 	svcDeps := &service.Dependencies{

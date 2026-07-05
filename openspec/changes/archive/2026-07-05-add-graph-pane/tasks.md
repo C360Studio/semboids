@@ -34,7 +34,7 @@
       snapshot derivation on the tick loop (copied value, non-blocking
       send) with runtime-adjustable cadence (atomic), publisher goroutine,
       Prometheus counters/gauges
-- [ ] 2.3 Integration test: sim + graph-ingest on a testcontainer — boid
+- [x] 2.3 Integration test: sim + graph-ingest on a testcontainer — boid
       entities land in ENTITY_STATES with current neighbor sets; second
       snapshot replaces (no union); physics tick timing unaffected with a
       deliberately stalled publisher
@@ -53,7 +53,7 @@
 - [x] 3.3 Implement `GET /boids/graph/stream` in the boids service: KV
       watchers (ENTITY_STATES boid keys + COMMUNITY_INDEX), batched
       ~500ms flushes; Caddyfile SSE flush handling (`flush_interval -1`)
-- [ ] 3.4 Integration test: full chain — sim → ingest → index → clustering
+- [x] 3.4 Integration test: full chain — sim → ingest → index → clustering
       → SSE emits entities with community assignments (spike 1.2 wiring
       reused)
 
@@ -76,12 +76,12 @@
 
 ## 5. Verification
 
-- [ ] 5.1 `task check:push` green; live demo on isolated NATS (:24222 —
+- [x] 5.1 `task check:push` green; live demo on isolated NATS (:24222 —
       semstreams#459): graph pane mirrors flocks at dial 1Hz, communities
       recolor on a flock merge; screenshot for README
-- [ ] 5.2 Dial exercise (not the formal campaign): step 1 → 5 → 10 → 30 Hz;
+- [x] 5.2 Dial exercise (not the formal campaign): step 1 → 5 → 10 → 30 Hz;
       record published/dropped/ingest metrics and pane lag observations in
       `docs/perf/graph-dial-first-look.md`; file upstream issues if the
       substrate misbehaves (vs. merely lagging)
-- [ ] 5.3 `openspec validate add-graph-pane --strict`; README status +
+- [x] 5.3 `openspec validate add-graph-pane --strict`; README status +
       roadmap update; archive the change

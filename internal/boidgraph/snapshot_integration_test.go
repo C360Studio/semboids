@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"log/slog"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -27,13 +28,6 @@ import (
 // accumulation), and frames keep flowing at tick rate while the graph
 // pipeline works — the ADR-001 isolation, observed end to end.
 func TestSnapshotsLandAndReplace(t *testing.T) {
-	// BLOCKED upstream: graph-ingest's MergeEntity raw-appends triples
-	// (component.go:1802) instead of predicate-level replacement, so
-	// repeated snapshots grow entities unboundedly. Acceptance criterion
-	// for the load dial — unskip when
-	// https://github.com/C360Studio/semstreams/issues/466 lands.
-	t.Skip("blocked on semstreams#466 (MergeEntity appends without predicate replacement)")
-
 	tc := natsclient.NewTestClient(t,
 		natsclient.WithE2EDefaults(),
 		natsclient.WithStreams(natsclient.TestStreamConfig{
@@ -76,9 +70,10 @@ func TestSnapshotsLandAndReplace(t *testing.T) {
 	})
 
 	// Frames observer: proves physics cadence while the graph pipeline runs.
-	frames := 0
+	var frames atomic.Int64
+	started := time.Now()
 	frameSub, err := tc.Client.Subscribe(ctx, "boids.frames", func(_ context.Context, _ *natspkg.Msg) {
-		frames++
+		frames.Add(1)
 	})
 	if err != nil {
 		t.Fatalf("subscribe frames: %v", err)
@@ -176,8 +171,14 @@ func TestSnapshotsLandAndReplace(t *testing.T) {
 	}
 
 	// Physics cadence held while the graph pipeline ran: ≥ 20 frames/s
-	// observed over the test window (30Hz nominal, generous CI margin).
-	if frames < 40 {
-		t.Fatalf("only %d frames observed — physics cadence suffered", frames)
+	// average over the (variable-length) test window — 30Hz nominal with a
+	// generous CI margin. Ensure at least one full second elapsed so the
+	// rate is meaningful.
+	if elapsed := time.Since(started); elapsed < time.Second {
+		time.Sleep(time.Second - elapsed)
+	}
+	rate := float64(frames.Load()) / time.Since(started).Seconds()
+	if rate < 20 {
+		t.Fatalf("frame rate %.1f/s — physics cadence suffered", rate)
 	}
 }
