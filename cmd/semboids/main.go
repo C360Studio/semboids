@@ -46,10 +46,10 @@ var (
 
 // CLIConfig holds parsed command-line flags.
 type CLIConfig struct {
-	ConfigPath      string
-	LogLevel        string
-	LogFormat       string
-	Debug           bool
+	ConfigPath string
+	LogLevel   string
+	LogFormat  string
+	Debug      bool
 	// PProf starts the pprof server without forcing debug log level, so a
 	// profile isn't polluted by DEBUG logging (load-dial campaign 6.1).
 	PProf           bool
