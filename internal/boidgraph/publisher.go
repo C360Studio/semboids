@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/c360studio/semstreams/message"
+	"github.com/c360studio/semstreams/metric"
 
 	"github.com/c360studio/semboids/internal/flock"
 )
@@ -22,9 +23,11 @@ type Snapshot struct {
 }
 
 // StreamPublisher is the JetStream slice of the NATS client the publisher
-// needs.
+// needs: one snapshot's boid entities are published as a single async batch
+// (gh#470, semstreams beta.138) — pipelined past the per-ack RTT ceiling and
+// joined on all acks before returning, so per-subject order is preserved.
 type StreamPublisher interface {
-	PublishToStream(ctx context.Context, subject string, data []byte) error
+	PublishBatchToStream(ctx context.Context, subject string, msgs [][]byte) error
 }
 
 // TripleRemover issues graph.mutation.triple.remove requests — used on a
@@ -45,6 +48,7 @@ type Publisher struct {
 	logger   *slog.Logger
 	orgID    string
 	platform string
+	metrics  *publisherMetrics
 
 	ch chan Snapshot
 
@@ -53,13 +57,15 @@ type Publisher struct {
 	dropped   atomic.Uint64 // snapshots dropped at Offer
 
 	// prevHadNeighbors tracks which boids had neighbors in the previous
-	// snapshot (publisher-goroutine local; no locking).
+	// snapshot. It is read and written only on the coordinator goroutine
+	// (Run → publishSnapshot's post-join loop) — so no locking (D1).
 	prevHadNeighbors map[uint32]bool
 }
 
 // NewPublisher creates a Publisher with a small buffer (capacity 2: one in
-// flight, one pending).
-func NewPublisher(pub StreamPublisher, remover TripleRemover, orgID, platform string, logger *slog.Logger) *Publisher {
+// flight, one pending). reg may be nil (tests), which disables the Prometheus
+// pipeline metrics.
+func NewPublisher(pub StreamPublisher, remover TripleRemover, orgID, platform string, reg *metric.MetricsRegistry, logger *slog.Logger) *Publisher {
 	if logger == nil {
 		logger = slog.Default()
 	}
@@ -69,6 +75,7 @@ func NewPublisher(pub StreamPublisher, remover TripleRemover, orgID, platform st
 		logger:           logger,
 		orgID:            orgID,
 		platform:         platform,
+		metrics:          newPublisherMetrics(reg),
 		ch:               make(chan Snapshot, 2),
 		prevHadNeighbors: make(map[uint32]bool),
 	}
@@ -82,6 +89,7 @@ func (p *Publisher) Offer(s Snapshot) bool {
 		return true
 	default:
 		p.dropped.Add(1)
+		p.metrics.incDropped()
 		return false
 	}
 }
@@ -93,6 +101,15 @@ func (p *Publisher) Counts() (snapshots, entities, dropped uint64) {
 }
 
 // Run consumes and publishes snapshots until ctx is cancelled.
+//
+// INVARIANT (D1/D2): snapshots are consumed strictly one at a time —
+// publishSnapshot dispatches a whole snapshot as one async batch and joins on
+// every ack before returning, so every publish for snapshot N completes
+// before snapshot N+1 begins. Each boid appears at most once per snapshot and
+// all publish to one subject (in-order per connection), so no entity's
+// updates can reorder across snapshots. A future "pipeline snapshots" change
+// that consumed concurrently would break this and the ordering test in
+// publisher_test.go pins it.
 func (p *Publisher) Run(ctx context.Context) {
 	for {
 		select {
@@ -104,9 +121,20 @@ func (p *Publisher) Run(ctx context.Context) {
 	}
 }
 
-// publishSnapshot publishes each boid as a BaseMessage-wrapped Graphable
-// and issues predicate removals for boids whose neighbor sets emptied.
+// publishSnapshot marshals every boid as a BaseMessage-wrapped Graphable and
+// publishes the whole snapshot as one async batch, then issues predicate
+// removals for boids whose neighbor sets emptied.
+//
+// The batch (gh#470's PublishBatchToStream) pipelines all the snapshot's
+// publishes past the per-ack RTT ceiling — the instrument sits two orders
+// above any plausible substrate melt (D2) — and waits for every ack before
+// returning, holding the one-snapshot-at-a-time invariant. Stateful
+// bookkeeping (prevHadNeighbors + removals) then runs on this coordinator
+// goroutine after the batch joins.
 func (p *Publisher) publishSnapshot(ctx context.Context, s Snapshot) {
+	start := time.Now()
+
+	msgs := make([][]byte, 0, len(s.Boids))
 	for i := range s.Boids {
 		b := s.Boids[i]
 		entity := &Entity{
@@ -119,12 +147,24 @@ func (p *Publisher) publishSnapshot(ctx context.Context, s Snapshot) {
 			p.logger.Error("marshal boid entity", slog.Uint64("boid", uint64(b.ID)), slog.Any("error", err))
 			continue
 		}
-		if err := p.pub.PublishToStream(ctx, IngestSubject, data); err != nil {
-			p.logger.Warn("publish boid entity", slog.Uint64("boid", uint64(b.ID)), slog.Any("error", err))
-			continue
-		}
-		p.published.Add(1)
+		msgs = append(msgs, data)
+	}
 
+	if err := p.pub.PublishBatchToStream(ctx, IngestSubject, msgs); err != nil {
+		// A batch error means a connection fault or some acks failed; the
+		// counters below only advance on a fully-acked batch so achieved-rate
+		// metrics never overcount a partial melt window.
+		p.logger.Warn("publish snapshot batch",
+			slog.Uint64("tick", s.Tick), slog.Int("boids", len(msgs)), slog.Any("error", err))
+	} else {
+		p.published.Add(uint64(len(msgs)))
+		p.metrics.addEntities(len(msgs))
+	}
+
+	// Coordinator-only: neighbor-empty transitions. prevHadNeighbors is read
+	// and written on this single goroutine, so no locking (D1).
+	for i := range s.Boids {
+		b := s.Boids[i]
 		had := p.prevHadNeighbors[b.ID]
 		has := len(b.Neighbors) > 0
 		if had && !has {
@@ -132,7 +172,10 @@ func (p *Publisher) publishSnapshot(ctx context.Context, s Snapshot) {
 		}
 		p.prevHadNeighbors[b.ID] = has
 	}
+
 	p.snapshots.Add(1)
+	p.metrics.incSnapshot()
+	p.metrics.observeDuration(time.Since(start).Seconds())
 }
 
 // removeNeighborTriples issues one idempotent predicate removal for a boid

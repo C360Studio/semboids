@@ -47,6 +47,9 @@ type Config struct {
 	// GraphHz is the graph snapshot cadence (the load dial, ADR-001 §4).
 	// 0 disables snapshots. Runtime-adjustable via the boids API.
 	GraphHz float64 `json:"graph_hz,omitempty"`
+	// GraphProbeSampleN is the e2e-latency probe's 1-in-N sampling rate
+	// (load-dial D4). 0/unset = 10; 1 samples every boid update.
+	GraphProbeSampleN int `json:"graph_probe_sample_n,omitempty"`
 	// SnapshotRadius is the neighbor radius for graph snapshots
 	// (0 = the physics NeighborRadius).
 	SnapshotRadius float64 `json:"snapshot_radius,omitempty"`
@@ -102,7 +105,9 @@ type Component struct {
 	// runtime dial as math.Float64bits for lock-free reads on the tick loop.
 	snapshots      snapshotSink
 	publisher      *boidgraph.Publisher
+	probe          *boidgraph.LatencyProbe
 	graphHzBits    atomic.Uint64
+	setDialMetric  func(hz float64) // updates boids_graph_dial_hz; never nil
 	snapshotRadius float64
 
 	natsClient interface {
@@ -134,6 +139,9 @@ func NewComponent(rawConfig json.RawMessage, deps component.Dependencies) (compo
 	}
 	if config.TickHz <= 0 {
 		config.TickHz = defaults.TickHz
+	}
+	if config.GraphProbeSampleN <= 0 {
+		config.GraphProbeSampleN = boidgraph.DefaultProbeSampleN
 	}
 	if config.Ports == nil || len(config.Ports.Outputs) == 0 {
 		config.Ports = defaults.Ports
@@ -177,14 +185,18 @@ func NewComponent(rawConfig json.RawMessage, deps component.Dependencies) (compo
 	if c.snapshotRadius <= 0 {
 		c.snapshotRadius = params.NeighborRadius
 	}
+	c.setDialMetric = boidgraph.NewDialHzSetter(deps.MetricsRegistry)
 	c.setGraphHz(config.GraphHz)
 
 	if deps.NATSClient != nil {
 		c.publish = deps.NATSClient.Publish
 		c.natsClient = deps.NATSClient
 		c.publisher = boidgraph.NewPublisher(
-			deps.NATSClient, deps.NATSClient, org, platform, logger)
+			deps.NATSClient, deps.NATSClient, org, platform,
+			deps.MetricsRegistry, logger)
 		c.snapshots = c.publisher
+		c.probe = boidgraph.NewLatencyProbe(
+			deps.NATSClient, deps.MetricsRegistry, config.GraphProbeSampleN, logger)
 	}
 	return c, nil
 }
@@ -198,6 +210,9 @@ func (c *Component) setGraphHz(hz float64) {
 		hz = c.config.TickHz
 	}
 	c.graphHzBits.Store(math.Float64bits(hz))
+	if c.setDialMetric != nil {
+		c.setDialMetric(hz)
+	}
 }
 
 // GraphHz reports the current snapshot cadence (the load dial).
@@ -296,6 +311,11 @@ func (c *Component) ConfigSchema() component.ConfigSchema {
 				Description: "Graph snapshot cadence in Hz (the load dial); 0 disables",
 				Default:     0,
 			},
+			"graph_probe_sample_n": {
+				Type:        "integer",
+				Description: "E2E-latency probe 1-in-N sampling; 0 = 10, 1 = every update",
+				Default:     boidgraph.DefaultProbeSampleN,
+			},
 			"snapshot_radius": {
 				Type:        "number",
 				Description: "Neighbor radius for graph snapshots (0 = physics neighbor radius)",
@@ -375,6 +395,18 @@ func (c *Component) Start(ctx context.Context) error {
 	// loop never blocks on the substrate).
 	if c.publisher != nil {
 		go c.publisher.Run(ctx)
+	}
+
+	// The e2e latency probe watches ENTITY_STATES independently of any UI
+	// client (load-dial D4); its lifecycle is tied to this component, not to
+	// SSE connections. A watcher setup failure is logged, not fatal — the
+	// dial and physics keep running without the substrate-latency signal.
+	if c.probe != nil {
+		go func() {
+			if err := c.probe.Run(ctx); err != nil {
+				c.logger.Warn("e2e latency probe stopped", slog.String("error", err.Error()))
+			}
+		}()
 	}
 
 	// Steering modifiers arrive from the rule engine; unit tests feed
