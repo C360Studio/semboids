@@ -108,7 +108,15 @@ func run() error {
 	}
 
 	ctx := context.Background()
-	natsClient, err := connectToNATS(ctx, cfg)
+
+	// The metrics registry is created before the NATS client so the client
+	// can be built WithMetrics — that turns on the substrate's JetStream
+	// consumer/stream gauges (consumer_pending_messages is the ingest-lag
+	// signal) with no app-side poller (load-dial D3). The same registry is
+	// handed to services below and scraped on :9090.
+	metricsRegistry := metric.NewMetricsRegistry()
+
+	natsClient, err := connectToNATS(ctx, cfg, metricsRegistry)
 	if err != nil {
 		return err
 	}
@@ -129,7 +137,6 @@ func run() error {
 	slog.SetDefault(logger)
 	slog.Info("SemBoids ready", "version", Version, "build_time", BuildTime)
 
-	metricsRegistry := metric.NewMetricsRegistry()
 	platform := extractPlatformMeta(cfg)
 
 	configManager, err := config.NewConfigManager(cfg, natsClient, logger)
@@ -283,8 +290,10 @@ func simZones(cfg *config.Config) []zone.Zone {
 	return parsed.Zones
 }
 
-// connectToNATS connects to NATS. NATS is a hard requirement.
-func connectToNATS(ctx context.Context, cfg *config.Config) (*natsclient.Client, error) {
+// connectToNATS connects to NATS. NATS is a hard requirement. The metrics
+// registry is passed so the client exports JetStream stream/consumer gauges
+// on the host's :9090 (load-dial D3); it may be nil.
+func connectToNATS(ctx context.Context, cfg *config.Config, registry *metric.MetricsRegistry) (*natsclient.Client, error) {
 	fmt.Print("Connecting to NATS... ")
 
 	natsURLs := "nats://localhost:4222"
@@ -296,7 +305,11 @@ func connectToNATS(ctx context.Context, cfg *config.Config) (*natsclient.Client,
 		natsURLs = strings.Join(cfg.NATS.URLs, ",")
 	}
 
-	natsClient, err := natsclient.NewClient(natsURLs)
+	var opts []natsclient.ClientOption
+	if registry != nil {
+		opts = append(opts, natsclient.WithMetrics(registry))
+	}
+	natsClient, err := natsclient.NewClient(natsURLs, opts...)
 	if err != nil {
 		fmt.Println("FAILED")
 		return nil, fmt.Errorf("create NATS client: %w", err)
