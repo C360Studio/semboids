@@ -46,9 +46,22 @@ Architecture fixed in
 [ADR-001](docs/adr/001-hybrid-physics-substrate-split.md); work proceeds
 through [OpenSpec](openspec/README.md) changes.
 
-Complete: the split screen — Canvas 2D flock on the left, the substrate's own graph on the right (sigma.js at real positions, LPA communities coloring flocks, a runtime load dial). First dial data: docs/perf/graph-dial-first-look.md — saturation at ~22 snapshots/s (200 boids) with physics pinned at 30.0 fps throughout. semstreams beta.137 fixed [#466](https://github.com/C360Studio/semstreams/issues/466) (predicate-level Graphable merge), verified live.
+Complete: the split screen — Canvas 2D flock on the left, the substrate's own graph on the right (sigma.js at real positions, LPA communities coloring flocks, a runtime load dial). semstreams beta.137 fixed [#466](https://github.com/C360Studio/semstreams/issues/466) (predicate-level Graphable merge), verified live.
 
-Roadmap: lifecycle spawn/despawn → the formal load-dial campaign.
+Complete (`load-dial`): the dial now outruns the thing it measures. The
+snapshot publisher batches a whole snapshot as one async publish
+([semstreams#470](https://github.com/C360Studio/semstreams/issues/470),
+adopted in beta.138), lifting the old ~22 snapshots/s *instrument* ceiling —
+200 boids at 30Hz now hits 30/30 with zero drops, and holds zero drops to
+2000 boids. With the instrument out of the way, the formal campaign
+([docs/perf/melt-campaign-2026-07-05.md](docs/perf/melt-campaign-2026-07-05.md))
+found the *substrate's* wall: graph-ingest saturates at ~500 entity/s,
+round-trip-latency bound with the box 92% idle — filed as
+[#480](https://github.com/C360Studio/semstreams/issues/480). JetStream
+consumer-lag + end-to-end ingest-latency metrics on :9090 and a `task sweep`
+harness make the attribution reproducible.
+
+Roadmap: lifecycle spawn/despawn (`add-lifecycle-population`).
 
 Upstream findings filed from this repo:
 [semstreams#452](https://github.com/C360Studio/semstreams/issues/452) (docs),
@@ -57,7 +70,11 @@ unreachable over HTTP — **fixed in beta.135**),
 [#459](https://github.com/C360Studio/semstreams/issues/459) (config bucket
 collision on shared NATS),
 [#461](https://github.com/C360Studio/semstreams/issues/461) (clustering
-virtual edges not configurable).
+virtual edges not configurable — **fixed in beta.136**),
+[#470](https://github.com/C360Studio/semstreams/issues/470) (async/pipelined
+publish — **landed beta.138**, adopted),
+[#480](https://github.com/C360Studio/semstreams/issues/480) (graph-ingest
+ingest caps ~500 msg/s — serial dispatch + 2-RTT CAS write).
 
 ## Development
 

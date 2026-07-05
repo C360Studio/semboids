@@ -68,11 +68,11 @@
       swap (no serial worker path). The 21.6/s serial baseline is already
       banked in `graph-dial-first-look.md`; the sweep tool was validated
       against the ingest-bound signature instead
-- [~] 5.2 200-boid dial: confirmed **30Hz achieves 30/30 snapshots/s with 0
-      drops** via async (spec scenario "Async publish raises the instrument
-      ceiling"); 200 boids × 30Hz saturates **ingest-bound** at ~530 entity/s
-      updated (e2e p99 32s, pending → 87k). Full grid {1,5,10,60,90} walk +
-      `graph-dial-first-look.md` addendum still TODO
+- [x] 5.2 200-boid dial: **30Hz achieves 30/30 snapshots/s with 0 drops** via
+      async (spec scenario "Async publish raises the instrument ceiling"); the
+      row saturates **ingest-bound** (characterized fully in the melt campaign,
+      §6). `graph-dial-first-look.md` addendum added. (Dials 60/90 clamp to
+      tick_hz=30; the healthy↔melt transition is the melt-line in §6.2.)
 - [x] 5.3 `task check:push` green (build, lint, `go vet -tags=integration`,
       race unit + integration) + linux/amd64 cross-compile of `./cmd/semboids`
 
