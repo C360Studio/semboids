@@ -40,3 +40,10 @@ tasks:
       - go vet -tags=integration ./...
       - go test -race ./...
       - go test -race -tags=integration ./...
+
+  sweep:
+    desc: "One load-dial sweep point against a running stack (HZ=<n> [WINDOW=90] [WARMUP=30] [BOIDS=200])"
+    requires:
+      vars: [HZ]
+    cmds:
+      - go run ./cmd/sweep -hz {{.HZ}} -window {{.WINDOW | default "90"}}s -warmup {{.WARMUP | default "30"}}s -boids {{.BOIDS | default "200"}} -json

@@ -36,7 +36,9 @@ go.work.sum
 
 # Per-cmd binaries (anchored so source dirs aren't ignored)
 cmd/semboids/semboids
+cmd/sweep/sweep
 /semboids
+/sweep
 /semboids-linux-amd64
 
 # UI (SvelteKit in ui/)
