@@ -11,13 +11,15 @@ SHALL publish each boid as a BaseMessage-wrapped Graphable
 position/velocity properties and `flock.neighbor` relationships) to the
 ENTITY stream consumed by graph-ingest.
 
-Within a snapshot, per-boid publishes SHALL fan out across a bounded worker
-pool (`graph_publish_workers`, default 16; 1 restores exact serial
-behavior). Snapshots SHALL be consumed strictly one at a time: every
-publish for snapshot N completes before snapshot N+1 begins, so no entity's
+Within a snapshot, per-boid publishes SHALL be dispatched as one async
+batch (semstreams `PublishBatchToStream`, gh#470) — pipelined past the
+per-ack RTT ceiling and joined on every ack before the snapshot completes.
+Snapshots SHALL be consumed strictly one at a time: every publish for
+snapshot N is acknowledged before snapshot N+1 begins, so no entity's
 updates can reorder across snapshots (each boid appears at most once per
-snapshot). Stateful bookkeeping (neighbor-empty tracking and removals)
-SHALL remain on the coordinator goroutine, outside the worker pool.
+snapshot, and all publish to one subject, in-order per connection).
+Stateful bookkeeping (neighbor-empty tracking and removals) SHALL remain on
+the coordinator goroutine, after the batch joins.
 
 #### Scenario: Physics unaffected by publisher pressure
 - **GIVEN** a publisher stalled (or a dial far beyond ingest budget)
@@ -31,26 +33,25 @@ SHALL remain on the coordinator goroutine, outside the worker pool.
   their current neighbor relationships
 
 #### Scenario: No cross-snapshot reordering per entity
-- **GIVEN** a publisher with `graph_publish_workers` > 1 and consecutive
-  snapshots N and N+1 both containing boid B
+- **GIVEN** async batch publishing and consecutive snapshots N and N+1 both
+  containing boid B
 - **WHEN** both snapshots publish
 - **THEN** B's snapshot-N publish is acknowledged before B's snapshot-N+1
   publish is issued
 
-#### Scenario: Fan-out raises the instrument ceiling
-- **GIVEN** a dial that saturates the serial publisher (drops counted at
-  `graph_publish_workers: 1`)
-- **WHEN** the same dial runs with the default worker count
+#### Scenario: Async publish raises the instrument ceiling
+- **GIVEN** a dial that saturated the old serial publisher (the ~21.6/s
+  ceiling at 200 boids)
+- **WHEN** the same dial runs with async batch publishing
 - **THEN** the achieved snapshot rate matches the dial and the drop counter
-  stays flat
+  stays flat (the instrument is no longer the bottleneck)
 
 ### Requirement: Snapshot pipeline is observable
 The pipeline SHALL expose Prometheus metrics: snapshots published, boid
-entities published, snapshots dropped, per-snapshot publish duration, the
-current cadence, and the configured worker count — sufficient for a sweep
-window to be classified as publisher-bound (drops rising) or not from :9090
-alone, and for achieved snapshot/entity rates to be derived without log
-scraping.
+entities published, snapshots dropped, per-snapshot publish duration, and
+the current cadence — sufficient for a sweep window to be classified as
+publisher-bound (drops rising) or not from :9090 alone, and for achieved
+snapshot/entity rates to be derived without log scraping.
 
 #### Scenario: Drops are visible
 - **WHEN** the dial exceeds what the publisher sustains

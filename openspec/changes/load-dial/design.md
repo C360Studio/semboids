@@ -51,34 +51,38 @@ interpretation only.
 
 ## Decisions
 
-### D1: Intra-snapshot fan-out with a coordinator/worker split
+### D1: Intra-snapshot async batch publish
 
-`publishSnapshot` dispatches the per-boid publishes to a bounded worker pool
-(`errgroup.SetLimit(publish_workers)`, config `graph_publish_workers`,
-default 16) and waits for the group before returning. The coordinator
-goroutine keeps everything stateful: it reads/writes `prevHadNeighbors`
-(stays single-goroutine, no locking) and issues neighbor-empty removals
-after the group completes; workers only marshal + publish.
+`publishSnapshot` marshals every boid entity, then dispatches the whole
+snapshot as one async batch via semstreams `PublishBatchToStream` (gh#470),
+which pipelines the publishes past the per-ack RTT ceiling and joins on
+every ack before returning. The coordinator goroutine keeps everything
+stateful: it reads/writes `prevHadNeighbors` (single-goroutine, no locking)
+and issues neighbor-empty removals after the batch joins.
 
-- Ceiling math: 16 workers × ~4.3k/s ≈ 69k entity publishes/s ≈ 345
-  snapshot/s at 200 boids — two orders above the 30Hz dial, and still ~14×
-  headroom at 1,000 boids × 30Hz (30k/s).
+- Ceiling: the batch dispatches all N boids without paying N× the ack RTT,
+  so the instrument achieves the dial (measured: 30Hz × 200 boids = 30/30
+  snapshots/s, 0 drops — the old serial path capped at 21.6/s). The
+  bottleneck moves entirely to the substrate.
 - Ordering: snapshots remain strictly sequential (the `Run` loop consumes
-  one at a time and `publishSnapshot` joins before the next), and each boid
-  appears once per snapshot — so no same-entity reordering is possible.
-  Cross-boid interleaving within a snapshot is harmless (independent
-  entities). This invariant gets a test.
+  one at a time and `publishSnapshot` joins before the next); each boid
+  appears once per snapshot and all publish to one subject (in-order per
+  connection) — so no same-entity reordering is possible. This invariant
+  gets a test.
 - Alternatives rejected: goroutine-per-entity (unbounded connection
   contention); N parallel snapshot consumers (breaks same-entity ordering);
-  blocking on #470 (timing not ours to control).
+  an app-side errgroup worker pool (an interim carried only while #470 was
+  unlanded — see D2).
 
-### D2: #470 adoption is a seam swap, not a redesign
+### D2: #470 landed in beta.138 — adopted, not deferred
 
-The fan-out lives entirely inside `publishSnapshot` behind the existing
-`StreamPublisher` interface. When #470 lands, adoption = injecting the async
-client call and collapsing the worker pool; `Offer`, ordering, and metrics
-contracts are untouched. Tracked as a follow-up task marked *(blocked on
-semstreams#470)*.
+The interim design shipped an app-side `errgroup` worker pool behind the
+`StreamPublisher` interface as headroom while #470 was open. #470 landed in
+semstreams beta.138 mid-change, so the pool was collapsed to
+`PublishBatchToStream` at the same seam: `Offer`, ordering, and drop/latency
+metrics contracts are byte-identical; only the fan-out mechanism changed.
+`graph_publish_workers` was dropped (no configurable async in-flight window
+to repurpose it to, and the field never shipped).
 
 ### D3: Consumer lag comes from natsclient's existing metrics — wire, don't build
 
@@ -146,10 +150,11 @@ control. (Decided against, not deferred.)
   note the effect in the campaign doc.
 - [30s metric poll granularity] → 60–120s windows; upstream interval option
   only if data shows we need it.
-- [Publish-side contention: 16 workers share one NATS connection] → the
-  RTT-bound math says connection write throughput is nowhere near limiting
-  at these sizes; if worker scaling stops paying off linearly, that finding
-  itself goes in the campaign doc (and possibly #470's thread).
+- [Publish-side contention: async in-flight window] → `PublishBatchToStream`
+  uses jetstream-go's default max-pending; at these sizes the stream ack
+  path is nowhere near limiting (the melt is on the ingest consumer, not the
+  publish path — see the campaign). If the async window ever bounds the
+  instrument, a `WithPublishAsyncMaxPending` option is the upstream ask.
 - [Boid counts ≥1000 change physics cost too (spatial hash density)] → the
   baseline profile showed physics at ~0.1% of a core at 200; capture tick
   duration metrics per window so physics cost is visible, and treat physics
@@ -157,9 +162,10 @@ control. (Decided against, not deferred.)
 
 ## Migration Plan
 
-Config-only rollout: `graph_publish_workers` defaults to 16; setting it to
-1 restores exact serial behavior (rollback path). Metrics wiring and the
-probe are additive. No data migration; no breaking config changes.
+Additive rollout: the async batch publisher, metrics wiring, and the probe
+require no config or data migration. The interim `graph_publish_workers`
+field never shipped (introduced and removed within this change), so its
+removal breaks nothing. Rollback is the git revert of the publisher swap.
 
 ## Open Questions
 
