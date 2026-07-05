@@ -50,6 +50,9 @@ type CLIConfig struct {
 	LogLevel        string
 	LogFormat       string
 	Debug           bool
+	// PProf starts the pprof server without forcing debug log level, so a
+	// profile isn't polluted by DEBUG logging (load-dial campaign 6.1).
+	PProf           bool
 	DebugPort       int
 	Validate        bool
 	ShowVersion     bool
@@ -91,7 +94,9 @@ func run() error {
 	}
 
 	// Start pprof before NATS so a wedged boot stays profilable (ADR-058).
-	service.MaybeStartPProf(cliCfg.Debug, cliCfg.DebugPort)
+	// Either --debug or --pprof arms it; --pprof leaves log level alone so a
+	// campaign profile isn't dominated by DEBUG-log write overhead.
+	service.MaybeStartPProf(cliCfg.Debug || cliCfg.PProf, cliCfg.DebugPort)
 
 	cfg, err := loadConfig(cliCfg.ConfigPath)
 	if err != nil {
@@ -197,8 +202,9 @@ func parseCLI() (*CLIConfig, bool) {
 	flag.StringVar(&cliCfg.ConfigPath, "config", "configs/flock.json", "Path to flow configuration")
 	flag.StringVar(&cliCfg.LogLevel, "log-level", "info", "Log level (debug|info|warn|error)")
 	flag.StringVar(&cliCfg.LogFormat, "log-format", "text", "Log format (text|json)")
-	flag.BoolVar(&cliCfg.Debug, "debug", false, "Enable debug mode (pprof server)")
-	flag.IntVar(&cliCfg.DebugPort, "debug-port", 6060, "pprof server port (with --debug)")
+	flag.BoolVar(&cliCfg.Debug, "debug", false, "Enable debug mode (debug logging + pprof server)")
+	flag.BoolVar(&cliCfg.PProf, "pprof", false, "Enable the pprof server WITHOUT debug logging (for representative profiles)")
+	flag.IntVar(&cliCfg.DebugPort, "debug-port", 6060, "pprof server port (with --debug or --pprof)")
 	flag.BoolVar(&cliCfg.Validate, "validate", false, "Validate configuration and exit")
 	flag.BoolVar(&cliCfg.ShowVersion, "version", false, "Show version and exit")
 	flag.DurationVar(&cliCfg.ShutdownTimeout, "shutdown-timeout", 10*time.Second, "Graceful shutdown timeout")
