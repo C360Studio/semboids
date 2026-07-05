@@ -25,6 +25,12 @@ stepped via `PUT /boids/graph/hz`, 10s windows.
    graph-ingest). Beyond it, the drop-oldest publisher sheds snapshots
    exactly as designed — graph state lags, drops are counted, and
    **physics holds 30.0 fps throughout** (ADR-001 isolation, measured).
+   *Post-hoc attribution (2026-07-05): this ceiling is the instrument's,
+   not the substrate's.* The publisher issues 200 serial synchronous
+   `PublishToStream` calls per snapshot; at the measured ~231µs ack RTT
+   that is 46ms/snapshot = 21.6/s exactly, and the ~28% drop rate at the
+   30Hz dial matches. graph-ingest melt remains uncharacterized beyond
+   4.3k entities/s — filed as semstreams#470 (async/pipelined publish).
 2. **beta.137's predicate-level merge (#466) verified live**: entity
    triple counts stable across tens of thousands of snapshot updates.
 3. Clustering at `detection_interval: 2s` finds 15–19 level-0 communities

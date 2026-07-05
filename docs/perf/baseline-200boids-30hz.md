@@ -24,7 +24,7 @@ toward tick rate).
   to inject `subject`/`timestamp`, then re-marshals (`appendCompact`,
   `decodeState.skip`, `structEncoder.encode` in the profile). At 30 msg/s
   this is noise; at load-dial rates it is the first upstream candidate to
-  watch (potential semstreams issue: a pass-through mode that skips the
+  watch — filed as semstreams#471 (pass-through mode that skips the
   envelope re-encode for pre-validated JSON).
 
 ## Top nodes (flat)
