@@ -20,6 +20,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"os"
 	"os/signal"
@@ -337,6 +338,13 @@ func quantile(start, end snapshot, metric string, q float64) float64 {
 	prevLe, prevCum := 0.0, 0.0
 	for _, b := range buckets {
 		if b.count >= target {
+			// Quantile lands in the overflow (+Inf) bucket: latency exceeds
+			// the histogram's top finite bound. Report that bound rather than
+			// interpolating toward infinity — the caller reads it as saturated
+			// (a severe melt where the backlog drain dwarfs the bucket range).
+			if math.IsInf(b.le, 1) {
+				return prevLe
+			}
 			if b.le == prevLe || b.count == prevCum {
 				return b.le
 			}
@@ -346,12 +354,12 @@ func quantile(start, end snapshot, metric string, q float64) float64 {
 		}
 		prevLe, prevCum = b.le, b.count
 	}
-	return buckets[len(buckets)-1].le
+	return prevLe // all mass in overflow → the top finite bound
 }
 
 func parseLe(s string) float64 {
 	if s == "+Inf" || s == "" {
-		return 1e9
+		return math.Inf(1)
 	}
 	v, _ := strconv.ParseFloat(s, 64)
 	return v

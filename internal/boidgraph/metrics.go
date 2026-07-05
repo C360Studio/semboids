@@ -128,7 +128,9 @@ func newE2ELatencyHistogram(reg *metric.MetricsRegistry) prometheus.Observer {
 		Subsystem: metricSubsystem,
 		Name:      "e2e_latency_seconds",
 		Help:      "End-to-end ingest latency (observation time − observed_at) for boid entities landing in ENTITY_STATES.",
-		Buckets:   prometheus.ExponentialBuckets(0.001, 2, 16),
+		// 1ms … ~524s: wide enough that a melt backlog (drain time can reach
+		// minutes) lands in a finite bucket rather than saturating +Inf.
+		Buckets: prometheus.ExponentialBuckets(0.001, 2, 20),
 	})
 	_ = reg.RegisterHistogram(metricService, "e2e_latency_seconds", h)
 	return h
