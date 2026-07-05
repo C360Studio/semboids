@@ -93,8 +93,9 @@
       (MergeEntity 1.14% CPU, 1 in-flight write) — it's I/O-RTT-bound. Folds
       in the processing-duration-histogram gap. Config levers ruled out
       (MaxAckPending not port-exposed, entityCache query-side only)
-- [ ] 6.4 `openspec validate load-dial --strict`; README status/roadmap
-      update; archive the change
+- [x] 6.4 `openspec validate load-dial --strict` (valid); README
+      status/roadmap + upstream ledger updated; `check:push` + linux
+      cross-compile green; change archived
 
 ## 7. Async publish adoption (semstreams#470 — landed beta.138)
 
