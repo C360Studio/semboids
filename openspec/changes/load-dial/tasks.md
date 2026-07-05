@@ -78,18 +78,21 @@
 
 ## 6. Melt campaign
 
-- [ ] 6.1 Boid-count rows {500, 1000, 2000} via config restart per row;
-      walk each row's dial until a sustained ingest-bound window (melt) or
-      the row tops out; pprof 30s CPU at each melt candidate and one dial
-      step below
-- [ ] 6.2 Results doc `docs/perf/melt-campaign-<date>.md`: per-row tables
-      (dial → achieved, drops, pending trend, e2e quantiles,
-      classification), pprof highlights, melt points stated with evidence.
-      First data point already in hand: 200 × 30Hz → ingest-bound, ~530/s
-- [ ] 6.3 File upstream from the evidence: graph-ingest
-      processing-duration histogram enhancement (gap verified in beta.137);
-      the 200-boid ingest melt (~530/s vs the assumed ~4.3k/s — likely CAS
-      contention on hot boid keys; component + profile + repro)
+- [x] 6.1 Boid rows {200, 500, 1000, 2000} at saturating dials (75s windows,
+      ≥2× the 30s pending poll — a first 15s pass misclassified on stale
+      pending and was discarded). All four cleanly ingest-bound; 30s CPU
+      profile captured at the 200-boid melt (backs #480)
+- [x] 6.2 Results doc `docs/perf/melt-campaign-2026-07-05.md`: per-row table
+      (dial → achieved, drops, pending trend, backlog drain, classification),
+      profile attribution, melt line stated. Key finding: ingest ceiling
+      ~350–590/s **flat across a 10× boid range** → serial per-message, not
+      key contention. `graph-dial-first-look.md` addendum added
+- [x] 6.3 Filed **semstreams#480** — graph-ingest ingest caps ~670 msg/s
+      (serial Consume dispatch × 2-RTT CAS write, box 92% idle). Grounded by
+      a clean `--pprof` profile: the "CAS contention" guess was refuted
+      (MergeEntity 1.14% CPU, 1 in-flight write) — it's I/O-RTT-bound. Folds
+      in the processing-duration-histogram gap. Config levers ruled out
+      (MaxAckPending not port-exposed, entityCache query-side only)
 - [ ] 6.4 `openspec validate load-dial --strict`; README status/roadmap
       update; archive the change
 

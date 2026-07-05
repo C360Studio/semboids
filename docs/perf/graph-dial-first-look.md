@@ -44,3 +44,15 @@ stepped via `PUT /boids/graph/hz`, 10s windows.
 
 The formal campaign (longer windows, pprof capture, boid-count sweep,
 ingest-side latency histograms) remains the `load-dial` change.
+
+## Addendum (2026-07-05, load-dial, beta.138)
+
+The 21.6/s ceiling was the instrument's, and `load-dial` removed it. The
+publisher now dispatches a whole snapshot as one async batch
+(`PublishBatchToStream`, semstreams#470, adopted in beta.138), so at 200
+boids the 30Hz dial achieves the full **30/30 snapshots/s with zero drops** —
+and holds 0 drops through 2000 boids. The bottleneck moved to the substrate,
+which the profile pins precisely: graph-ingest ingest is round-trip-latency
+bound (serial `consumer.Consume` dispatch × 2-RTT CAS write), ~670 entity/s
+with the box 92% idle — filed as **semstreams#480**. Full boid-count sweep
+and attribution live in `melt-campaign-2026-07-05.md`.
