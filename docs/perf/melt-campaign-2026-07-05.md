@@ -74,3 +74,22 @@ Filed **semstreams#480** (graph-ingest ingest ceiling: serial dispatch +
 batch-writes > server-side-merge; folds in the missing per-message
 processing-duration histogram). The clean 30s CPU profile backing it is the
 evidence attached there.
+
+## Addendum — beta.142 verification (2026-07-06)
+
+semstreams **beta.142 shipped the #480 fix**: keyed-concurrent entity ingest
+(ADR-072, `ingest_lanes` default 8 — same entity ID → one lane so ordering
+holds, different IDs run in parallel; `1` = the old serial path), plus the
+missing `processing_duration_seconds` and `ingest_lag_seconds` metrics and a
+configurable `max_ack_pending`.
+
+Re-measured live at the same point (200 boids × 30Hz, `ingest_lanes=8`
+default): ingest **670 → 2,331 entity/s (~3.5×)**. Confirmed but **short of
+the 8-lane theoretical headroom** — CPU only rose ~0.9 → ~1.6 of 12 cores and
+the profile stayed ~65% syscall/netpoll/cond-wait, i.e. **still
+round-trip-latency bound**. The keyed dispatch serialization #480 named is
+fixed; the remaining wall is the **shared NATS connection + single KV write
+path** the 8 lanes contend on (sublinear scaling). At 6k/s offered the row is
+still ingest-bound — the melt line just moved up ~3.5×. Secondary finding
+worth a note on #480; the lifecycle Manager's despawn/batch/watch-delete gaps
+are untouched by this release.

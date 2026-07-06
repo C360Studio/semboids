@@ -3,7 +3,7 @@ module github.com/c360studio/semboids
 go 1.26.3
 
 require (
-	github.com/c360studio/semstreams v1.0.0-beta.138
+	github.com/c360studio/semstreams v1.0.0-beta.142
 	github.com/joho/godotenv v1.5.1
 	github.com/nats-io/nats.go v1.48.0
 	github.com/prometheus/client_golang v1.23.2
