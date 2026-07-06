@@ -11,11 +11,12 @@ semteams) so a change authored in one repo reads the same in the next.
 
 ## Layout
 
-- `project.md` — standing project context: Purpose, **Product Boundary**,
+- `config.yaml` — the planning context OpenSpec injects into every request
+  (self-contained since 1.5), plus per-artifact `rules`. This is what the AI
+  actually sees when authoring artifacts.
+- `project.md` — the detailed human reference: Purpose, **Product Boundary**,
   architecture non-negotiables, and conventions. Read this first when scoping
-  anything.
-- `config.yaml` — machine context injected into artifact creation, plus
-  per-artifact rules. The human-readable source of truth is `project.md`.
+  anything; not auto-injected in 1.5+ (config.yaml's `context:` is).
 - `specs/<capability>/spec.md` — **current truth** for a capability:
   `Requirement` + `GIVEN/WHEN/THEN` scenarios describing what it does *today*.
 - `changes/<id>/proposal.md` — why the change exists, what changes (`## Why`,

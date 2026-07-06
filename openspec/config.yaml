@@ -1,13 +1,15 @@
 schema: spec-driven
 
-# Project context shown to AI when creating artifacts. Full context lives in
-# openspec/project.md (Purpose + Product Boundary + Conventions) and CLAUDE.md.
+# Planning context OpenSpec injects into every request (self-contained since
+# 1.5). Detailed human references: openspec/project.md (Purpose + Product
+# Boundary + Conventions) and CLAUDE.md.
 context: |
   SemBoids is a classic Reynolds boids simulator and SemStreams load-generator
   demo (Go 1.26, SemStreams by tag, NATS JetStream, SvelteKit/Svelte 5 ui/,
   Taskfile). It owns domain semantics only — physics, zones, flock UI; the
   substrate (graph, rules, lifecycle, websocket egress) is consumed from
-  SemStreams, never reimplemented. See openspec/project.md "Product Boundary".
+  SemStreams, never reimplemented; substrate gaps file upstream as SemStreams
+  issues, never app-side workarounds.
 
   Architecture non-negotiable: per-tick physics state never routes through
   NATS/rules/lifecycle/graph-ingest (hybrid split, decided 2026-07-04 —
