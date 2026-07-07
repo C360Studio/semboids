@@ -76,6 +76,16 @@ found it tops out at ~150–340 create/s and ~40–135 cull/s — ~7–15× belo
 2,331 entity/s *batched* snapshot ceiling, because lifecycle Create/Transition
 are single-entity synchronous request/reply (no batch API).
 
+Complete (`parallel-lifecycle-drain`): the sim's off-loop Create/delete drain
+now dispatches through a bounded worker pool (`lifecycle_drain_concurrency`,
+default 8 = graph-ingest's `ingest_lanes`; 1 = serial) instead of one blocking
+call at a time — physics hot path untouched (still 30fps under a concurrent
+burst). A/B on the isolated create drain: **928 → 1,424 create/s (~1.5×) at 8,
+flat at 16** — the ceiling moved off the app's serial dispatch onto the shared
+NATS connection + single KV write path (#480's sublinear wall), so the batch
+API ([#498](https://github.com/C360Studio/semstreams/issues/498)), not more
+concurrency, is the next lever.
+
 Roadmap: population-target controller (`GET/PUT /boids/population` with
 despawn-to-target), richer population UI, and wave-provenance entities — all
 deferred Non-goals of the lifecycle slice.

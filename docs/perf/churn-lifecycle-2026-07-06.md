@@ -108,3 +108,35 @@ output for the measurement.
   thousands/s, purely from single-entity request/reply.
 - **semstreams#500 (websocket concurrent-write panic)** — new crash bug found
   during this run, filed separately.
+
+## Addendum — parallel drain A/B (2026-07-07, `parallel-lifecycle-drain`)
+
+The serial drain was the app-side half of the ceiling. `createPending` now
+dispatches through a bounded pool (`lifecycle_drain_concurrency`, default 8 =
+`ingest_lanes`; `1` = the old serial path), and the cull watcher offloads its
+deletes the same way. A/B on the **isolated create drain** — one 5,000-boid
+spawn burst, `graph_hz=0` and culling off so nothing competes with or offsets
+it (this isolation is why the serial number here, ~930/s, is well above the
+§Results sustained figures, which ran under `graph_hz=1` + a growing flock):
+
+| `lifecycle_drain_concurrency` | create/s (5,000-boid burst) |
+|---|---|
+| 1 (serial) | 928 |
+| 8 (default) | 1,424 |
+| 16 | 1,426 |
+
+**Findings:**
+
+1. **~1.5× from parallelizing, then flat.** 8 lanes lift the drain 928 → 1,424
+   create/s; 16 adds nothing (1,426). The wall moved off the app's serial
+   dispatch onto the **shared NATS connection + single KV write path** — the
+   exact sublinear ceiling beta.142's `melt-campaign` addendum named for #480's
+   8-lane ingest. The sim's one client connection contends the same way.
+2. **Default 8 is validated:** it reaches the plateau and matches `ingest_lanes`;
+   raising it further is wasted. `=1` cleanly reproduces the pre-change path.
+3. **Batching (#498), not more concurrency, is the next lever.** Parallelism
+   overlaps round-trips but can't reduce their *count*; only a batch
+   Create/Transition API cuts N round-trips to 1 and beats the shared-connection
+   wall. This A/B is the quantified case for #498.
+4. **Physics unaffected:** 30.0 fps at rest and mid-burst (4,000 concurrent
+   creates in flight) — the tick loop never touches the pool (ADR-001).
