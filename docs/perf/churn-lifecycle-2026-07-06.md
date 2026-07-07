@@ -99,7 +99,10 @@ output's `pingClients` goroutine racing the frame-write path
 `nats: slow consumer, messages dropped`. Triggered under the ~4k-boid burst.
 Distinct from the already-filed #490 (duplicate-metrics panic on restart).
 Filed as **semstreams#500**; worked around here by disabling the websocket
-output for the measurement.
+output for the measurement. **Fixed in beta.143** (per-conn write mutex
+serializing the ping and frame paths) and verified live — the default
+websocket-enabled stack now survives the same slow-client + burst load that
+crashed it, so the workaround is no longer needed.
 
 ## Upstream
 

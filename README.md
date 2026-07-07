@@ -104,14 +104,17 @@ publish — **landed beta.138**, adopted),
 ingest caps ~500 msg/s — serial dispatch + 2-RTT CAS write; **keyed-concurrent
 fix in beta.142 lifts it ~3.5× to ~2,331/s**),
 [#497](https://github.com/C360Studio/semstreams/issues/497) (lifecycle has no
-despawn primitive; `Manager.Watch` skips deletes),
+despawn primitive; `Manager.Watch` skips deletes — **open**),
 [#498](https://github.com/C360Studio/semstreams/issues/498) (no batch
-lifecycle Create/Transition — the churn axis is N×RTT bound),
+lifecycle Create/Transition — the churn axis is N×RTT bound — **open**; the
+[parallel-lifecycle-drain](docs/perf/churn-lifecycle-2026-07-06.md) A/B is the
+evidence that batching, not concurrency, is the lever),
 [#499](https://github.com/C360Studio/semstreams/issues/499) (stale
 `$entity.lifecycle.*` O(N)-scan doc comment — actually O(workflows)+direct-key
-Get),
+Get — **fixed beta.143**),
 [#500](https://github.com/C360Studio/semstreams/issues/500) (websocket output
-concurrent-write panic under load).
+concurrent-write panic under load — **fixed beta.143**, verified live:
+per-conn write mutex now serializes the ping and frame paths).
 
 ## Development
 
