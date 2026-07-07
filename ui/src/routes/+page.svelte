@@ -47,6 +47,29 @@
       dialError = err instanceof Error ? err.message : String(err);
     }
   }
+
+  // Spawn wave: births N boids through the lifecycle Manager. The live count
+  // above rises as the frame catches up (add-lifecycle-population, minimal UI).
+  const spawnWaveSize = 25;
+  let spawning = $state(false);
+  let spawnError = $state<string | null>(null);
+
+  async function spawnWave() {
+    spawning = true;
+    spawnError = null;
+    try {
+      const res = await fetch("/boids/population/spawn", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ n: spawnWaveSize }),
+      });
+      if (!res.ok) throw new Error(`spawn: ${res.status}`);
+    } catch (err) {
+      spawnError = err instanceof Error ? err.message : String(err);
+    } finally {
+      spawning = false;
+    }
+  }
 </script>
 
 <div class="page">
@@ -71,6 +94,17 @@
     <div class="stats">
       <span class="status status-{conn.status}">{conn.status}</span>
       <span>{population} boids</span>
+      <button
+        class="spawn"
+        onclick={spawnWave}
+        disabled={spawning}
+        title="Spawn a wave of {spawnWaveSize} boids"
+      >
+        + spawn
+      </button>
+      {#if spawnError}
+        <span class="gate-error" title={spawnError}>spawn failed</span>
+      {/if}
       <span>tick {conn.frame?.tick ?? "—"}</span>
     </div>
   </header>
@@ -177,11 +211,32 @@
 
   .stats {
     display: flex;
+    align-items: center;
     gap: 1rem;
     margin-left: auto;
     font-size: 0.8rem;
     color: var(--ui-text-secondary);
     font-variant-numeric: tabular-nums;
+  }
+
+  .spawn {
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid var(--ui-border-subtle);
+    background: var(--ui-surface-primary);
+    color: var(--ui-text-secondary);
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+
+  .spawn:hover:not(:disabled) {
+    color: var(--ui-text-primary);
+    border-color: var(--ui-text-tertiary);
+  }
+
+  .spawn:disabled {
+    cursor: wait;
+    opacity: 0.6;
   }
 
   .status::before {
