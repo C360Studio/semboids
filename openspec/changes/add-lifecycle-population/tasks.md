@@ -47,7 +47,7 @@
 
 ## 4. Predator cull rule (`configs/rules/zone-steering`)
 
-- [ ] 4.1 `predator-cull` rule: conditions `event == lingered` &&
+- [x] 4.1 `predator-cull` rule: conditions `event == lingered` &&
       `zone_type == predator`, action `lifecycle_transition → culled` on the
       trigger `entity_id`; **disabled by default**, toggleable through the
       existing rule-toggle surface (wire a new kind in `internal/api`).

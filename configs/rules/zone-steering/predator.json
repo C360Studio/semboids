@@ -45,5 +45,25 @@
         }
       }
     ]
+  },
+  {
+    "id": "predator-cull",
+    "type": "expression",
+    "name": "Predator zone overstay → cull",
+    "description": "A boid that lingers in a predator zone past the grace window is culled: the sim observes phase=culled, removes it from physics, and reclaims its graph entity. Disabled by default; the flee modifier usually saves boids first, so a cull is the exception.",
+    "enabled": false,
+    "conditions": [
+      {"field": "zone_type", "operator": "eq", "value": "predator"},
+      {"field": "event", "operator": "eq", "value": "lingered"}
+    ],
+    "logic": "and",
+    "on_enter": [
+      {
+        "type": "lifecycle_transition",
+        "workflow": "flock.boid",
+        "phase": "culled",
+        "reason": "lingered in predator zone"
+      }
+    ]
   }
 ]

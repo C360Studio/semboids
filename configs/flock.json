@@ -105,7 +105,8 @@
             }
           ]
         },
-        "graph_hz": 1
+        "graph_hz": 1,
+        "cull_grace_ticks": 90
       }
     },
     "graph-ingest": {

@@ -28,7 +28,14 @@ var kindRules = map[string][]string{
 	"flee":    {"predator-flee", "predator-clear"},
 	"attract": {"food-attract", "food-clear"},
 	"wind":    {"wind-bias", "wind-clear"},
+	// cull is a lifecycle rule, not a steering pair: toggling it on/off
+	// enables the predator-cull transition (add-lifecycle-population). It has
+	// no TTL'd modifier to clear on disable.
+	"cull": {"predator-cull"},
 }
+
+// cullKind is the lifecycle rule kind — excluded from modifier clearing.
+const cullKind = "cull"
 
 // ruleReconfigurer is the slice of the rule processor the API needs — the
 // service.RuntimeConfigurable trio, resolved structurally so this package
@@ -301,8 +308,9 @@ func (s *Service) handleRuleToggle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Disabling stops new modifiers via the rules; clearing makes the
-	// existing ones stop influencing boids right now.
-	if !*req.Enabled {
+	// existing ones stop influencing boids right now. Cull has no lingering
+	// modifier (a terminal lifecycle transition), so skip the clearer for it.
+	if !*req.Enabled && kind != cullKind {
 		if c := s.clearer(); c != nil {
 			if err := c.ClearModifierKind(kind); err != nil {
 				s.logger.Warn("clear modifiers after disable", "kind", kind, "error", err)

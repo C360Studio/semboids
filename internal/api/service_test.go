@@ -174,10 +174,11 @@ func TestToggleFlipsRulePairAndClears(t *testing.T) {
 	if fake.validated != 1 || fake.applied != 1 {
 		t.Fatalf("validate/apply calls = %d/%d, want 1/1", fake.validated, fake.applied)
 	}
-	// Both rules of the pair flipped, full rule set round-tripped.
+	// Both rules of the pair flipped, full rule set round-tripped (6 steering
+	// rules + the predator-cull lifecycle rule).
 	rules := fake.lastChanges["rules"].(map[string]any)
-	if len(rules) != 6 {
-		t.Fatalf("changes carried %d rules, want the complete set of 6 (absent rules get deleted)", len(rules))
+	if len(rules) != 7 {
+		t.Fatalf("changes carried %d rules, want the complete set of 7 (absent rules get deleted)", len(rules))
 	}
 	for _, id := range kindRules["flee"] {
 		if rules[id].(map[string]any)["enabled"] != false {
@@ -283,5 +284,34 @@ func TestToggleWorksWithoutSim(t *testing.T) {
 		strings.NewReader(`{"enabled": false}`)))
 	if rec.Code != http.StatusOK {
 		t.Fatalf("toggle without sim = %d: %s", rec.Code, rec.Body)
+	}
+}
+
+func TestCullToggleSkipsModifierClear(t *testing.T) {
+	_, mux, fake, sim := newTestService(t, true, true)
+
+	// Enable cull: the predator-cull rule flips on.
+	rec := httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodPut, "/boids/rules/cull",
+		strings.NewReader(`{"enabled": true}`)))
+	if rec.Code != http.StatusOK {
+		t.Fatalf("enable cull = %d: %s", rec.Code, rec.Body)
+	}
+	rules := fake.lastChanges["rules"].(map[string]any)
+	if rules["predator-cull"].(map[string]any)["enabled"] != true {
+		t.Fatal("predator-cull not enabled by cull toggle")
+	}
+
+	// Disable cull: cull has no TTL'd modifier, so the clearer must be skipped.
+	rec = httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodPut, "/boids/rules/cull",
+		strings.NewReader(`{"enabled": false}`)))
+	if rec.Code != http.StatusOK {
+		t.Fatalf("disable cull = %d: %s", rec.Code, rec.Body)
+	}
+	for _, k := range sim.cleared {
+		if k == cullKind {
+			t.Fatal("ClearModifierKind called for cull — should be skipped")
+		}
 	}
 }
