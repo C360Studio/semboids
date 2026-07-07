@@ -1,6 +1,7 @@
 <script lang="ts">
   import FlockCanvas from "$lib/components/FlockCanvas.svelte";
   import GraphCanvas from "$lib/components/GraphCanvas.svelte";
+  import HelpModal from "$lib/components/HelpModal.svelte";
   import { getFlockConnection } from "$lib/stores/flock.svelte";
   import { getGraphStream } from "$lib/stores/graph.svelte";
   import { getRuleGates } from "$lib/stores/rules.svelte";
@@ -18,6 +19,9 @@
   });
 
   const population = $derived(conn.frame?.boids.length ?? 0);
+
+  // Help modal (explains the panes + controls).
+  let helpOpen = $state(false);
 
   // Zone types map to the modifier kinds their rules emit.
   const ruleChips = [
@@ -107,7 +111,17 @@
       {/if}
       <span>tick {conn.frame?.tick ?? "—"}</span>
     </div>
+    <button
+      class="help-btn"
+      onclick={() => (helpOpen = true)}
+      aria-label="What am I looking at?"
+      title="What am I looking at?"
+    >
+      ?
+    </button>
   </header>
+
+  <HelpModal open={helpOpen} onClose={() => (helpOpen = false)} />
 
   <main>
     <section class="pane" aria-label="Flock space">
@@ -237,6 +251,32 @@
   .spawn:disabled {
     cursor: wait;
     opacity: 0.6;
+  }
+
+  .help-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--ui-border-subtle);
+    background: var(--ui-surface-primary);
+    color: var(--ui-text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    flex: none;
+  }
+
+  .help-btn:hover {
+    color: var(--ui-text-primary);
+    border-color: var(--ui-text-tertiary);
+  }
+
+  .help-btn:focus-visible {
+    outline: 2px solid var(--ui-focus-ring);
+    outline-offset: 1px;
   }
 
   .status::before {
