@@ -50,8 +50,8 @@
     "id": "predator-cull",
     "type": "expression",
     "name": "Predator zone overstay → cull",
-    "description": "A boid that lingers in a predator zone past the grace window is culled: the sim observes phase=culled, removes it from physics, and reclaims its graph entity. Disabled by default; the flee modifier usually saves boids first, so a cull is the exception.",
-    "enabled": false,
+    "description": "A boid that lingers in a predator zone past the grace window is culled: the sim observes phase=culled, removes it from physics, and reclaims its graph entity. Enabled (the rule engine skips disabled rules at load, so it must load to be toggleable) — but the flee modifier usually pushes boids out before the grace window, so a cull is the exception. Toggle this rule off, or set cull_grace_ticks=0, to disable culling.",
+    "enabled": true,
     "conditions": [
       {"field": "zone_type", "operator": "eq", "value": "predator"},
       {"field": "event", "operator": "eq", "value": "lingered"}

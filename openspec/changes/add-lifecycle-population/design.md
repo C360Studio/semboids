@@ -152,10 +152,18 @@ lacks an atomic transition-then-delete / despawn on `Manager`, and
 
 ## Migration / Rollout
 
-Additive: the workflow, Manager, endpoints, and metrics are new; the cull rule
-is disabled-by-default in config (toggle like the other zone rules). With churn
-at 0 and the cull rule off, behavior is byte-identical to today. Rollback = the
-git revert; no data migration.
+Additive: the workflow, Manager, endpoints, and metrics are new. The cull rule
+ships **enabled** — the rule engine skips disabled rules at load
+(`rule_loader.go:124`), so a rule must load to be toggleable — but culling is
+gated by the flee modifier (which usually pushes boids out first) plus
+`cull_grace_ticks`; the rule toggle (`PUT /boids/rules/cull`) and
+`cull_grace_ticks=0` are the off switches. With churn at 0 and no boid
+lingering past the grace window, behavior is effectively today's flock.
+Rollback = the git revert; no data migration.
+
+Startup ordering: the initial seed population is registered as active
+participants at Start (not only spawned boids) — otherwise the seed flock has
+no phase triple and the cull rule fails "entity not lifecycle-managed."
 
 ## Open Questions
 

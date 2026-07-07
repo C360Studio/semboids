@@ -467,6 +467,14 @@ func (c *Component) Start(ctx context.Context) error {
 		go c.runSpawnCreator(ctx)
 		go c.runCullWatcher(ctx)
 		go c.runChurn(ctx)
+		// Record the initial population as active participants too — otherwise
+		// only spawned boids are lifecycle-managed and the seed flock can't be
+		// culled (the rule would hit "no phase triple").
+		initial := make([]uint32, 0, len(c.engine.Boids()))
+		for _, b := range c.engine.Boids() {
+			initial = append(initial, b.ID)
+		}
+		c.population.stageCreate(initial)
 	}
 
 	// Steering modifiers arrive from the rule engine; unit tests feed

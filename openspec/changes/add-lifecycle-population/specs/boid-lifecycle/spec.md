@@ -9,7 +9,9 @@ registered on one `lifecycle.Manager` in the host and reached by the rule
 processor and the sim through `Dependencies.LifecycleManager`. The
 participant's entity ID SHALL be the boid's existing 6-part graph ID, so the
 lifecycle phase triple lands in the same `ENTITY_STATES` entity as the boid's
-position/neighbor triples. Spawning a boid SHALL create it in `active`.
+position/neighbor triples. The initial seed population AND each spawned boid
+SHALL be created in `active` (the seed flock too, else it has no phase triple
+and cannot be culled).
 
 #### Scenario: Spawned boid enters the graph as active
 - **GIVEN** the boid workflow registered on the host Manager

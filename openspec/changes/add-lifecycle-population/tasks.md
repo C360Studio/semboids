@@ -49,8 +49,10 @@
 
 - [x] 4.1 `predator-cull` rule: conditions `event == lingered` &&
       `zone_type == predator`, action `lifecycle_transition → culled` on the
-      trigger `entity_id`; **disabled by default**, toggleable through the
-      existing rule-toggle surface (wire a new kind in `internal/api`).
+      trigger `entity_id`; ships **enabled** (the engine skips disabled rules
+      at load — `rule_loader.go:124` — so it must load to be toggleable),
+      gated by flee + `cull_grace_ticks`; toggle via a new `cull` kind in
+      `internal/api`.
 - [ ] 4.2 Integration (`-tags=integration`, testcontainer): boid lingers in a
       predator zone → rule fires → `phase=culled` lands in `ENTITY_STATES` →
       the sim removes it from physics and deletes the entity.
@@ -74,7 +76,7 @@
 
 - [ ] 7.1 `task check:push` green (lint, race unit + integration,
       cross-compile) + the UI workflow.
-- [ ] 7.2 Live: predator cull is visible (a lingering boid dies *through the
+- [x] 7.2 Live-verified 2026-07-06: predator cull is visible (a lingering boid dies *through the
       graph*); a spawn wave repopulates; the churn dial holds a rate; physics
       holds 30fps under churn (staged deltas never block the tick).
 - [ ] 7.3 Churn load run: crank `churn-hz`, characterize the create/delete
