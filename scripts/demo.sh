@@ -2,8 +2,8 @@
 # The semboids "easy button": one command from a fresh clone to a running demo.
 # Starts NATS (Docker), installs UI deps on first run, then runs the backend and
 # the SvelteKit dev server together and opens the browser. Ctrl-C stops the
-# backend + UI (NATS is left running for a fast restart — `task dev:nats:stop`
-# to stop it).
+# backend + UI (NATS is left running for a fast restart —
+# `docker stop semboids-demo-nats` to stop it).
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
