@@ -30,9 +30,11 @@ task demo
 ```
 
 Then open <http://localhost:5173>; Ctrl-C stops the backend and UI. Needs
-Docker, Go 1.26+, and Node 22+ (it installs UI deps on first run). The demo
-runs an **isolated** NATS on :24222 (container `semboids-demo-nats`) so it never
-collides with a sibling sem\* stack on :4222.
+[Task](https://taskfile.dev/installation/), Docker, Go 1.26+, and Node 22+ (it
+installs UI deps on first run). Don't have Task? Run the script directly — it's
+plain bash: `bash scripts/demo.sh`. The demo runs an **isolated** NATS on :24222
+(container `semboids-demo-nats`) so it never collides with a sibling sem\* stack
+on :4222.
 
 Or run the pieces yourself (three terminals):
 
