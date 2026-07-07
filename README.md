@@ -23,10 +23,23 @@ Prometheus). Substrate findings are filed upstream. Baseline profile:
 
 ## Quick start
 
+One command — starts NATS, the backend, and the UI, then opens the demo:
+
 ```bash
-task dev:nats:start        # NATS 2.12 with JetStream on :4222
-go run ./cmd/semboids --config configs/flock.json --debug
-cd ui && npm install && npm run dev   # UI on http://localhost:5173
+task demo
+```
+
+Then open <http://localhost:5173>; Ctrl-C stops the backend and UI. Needs
+Docker, Go 1.26+, and Node 22+ (it installs UI deps on first run). The demo
+runs an **isolated** NATS on :24222 (container `semboids-demo-nats`) so it never
+collides with a sibling sem\* stack on :4222.
+
+Or run the pieces yourself (three terminals):
+
+```bash
+task dev:nats:start                  # NATS 2.12 with JetStream on :4222
+task dev:backend                     # backend: API :8080, frames :8081, metrics :9090
+cd ui && npm install && npm run dev  # UI on http://localhost:5173
 ```
 
 Flags: `--boids N --tick-hz HZ --seed N` override the config;

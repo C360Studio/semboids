@@ -26,6 +26,11 @@ tasks:
     cmds:
       - task --list
 
+  demo:
+    desc: "Easy button — start NATS + backend + UI and open the demo (Ctrl-C to stop)"
+    cmds:
+      - bash scripts/demo.sh
+
   check:
     desc: Run all checks (lint + test)
     cmds:
