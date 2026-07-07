@@ -7,24 +7,24 @@
 
 ## 1. Boid lifecycle workflow + host wiring
 
-- [ ] 1.1 `BoidLifecycle` participant (co-located with `BoidEntityID` in
+- [x] 1.1 `BoidLifecycle` participant (co-located with `BoidEntityID` in
       `internal/boidgraph`): `ID string` (`lifecycle:"id"`, the 6-part boid
       ID), `Phase string` (`lifecycle:"phase,predicate=flock.lifecycle.phase"`);
       a `flock.boid` `lifecycle.Workflow` (`Transitions{active:{culled,expired},
       culled:{}, expired:{}}`, `EntityIDPattern`, `Schema`). Unit test:
       `Transitions.Validate()` passes; participant satisfies the interface.
-- [ ] 1.2 Wire one `lifecycle.NewManager(natsClient, logger)` in
+- [x] 1.2 Wire one `lifecycle.NewManager(natsClient, logger)` in
       `cmd/semboids`, `Register` the boid workflow, assign
       `svcDeps.LifecycleManager` (semdragons pattern) — reaches the rule
       processor and sim via `Dependencies`.
 
 ## 2. Engine population (`internal/flock`) — TDD
 
-- [ ] 2.1 Failing tests: monotonic `nextID` never reused; `AddBoids(n)` returns
+- [x] 2.1 Failing tests: monotonic `nextID` never reused; `AddBoids(n)` returns
       `n` fresh IDs and grows `Boids()` next tick; `RemoveBoids(ids)` shrinks
       without disturbing survivors' identity/position; grid rebuilds; a run
       with no population change stays bit-identical (determinism preserved).
-- [ ] 2.2 Implement `AddBoids`/`RemoveBoids` + the ID allocator; document the
+- [x] 2.2 Implement `AddBoids`/`RemoveBoids` + the ID allocator; document the
       between-ticks application contract.
 
 ## 3. Sim staging, cull observation, reclaim (`internal/sim`) — TDD

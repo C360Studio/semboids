@@ -28,6 +28,13 @@ type Engine struct {
 	ticks   uint64
 	grid    *grid
 	scratch []int32
+	// rng continues the seed sequence for spawn placement (AddBoids), so a
+	// given spawn sequence is reproducible. Untouched after seeding when the
+	// population never changes → fixed-population runs stay deterministic.
+	rng *rand.Rand
+	// nextID is the monotonic ID allocator; starts past the seeded IDs and
+	// never reuses, so a culled-then-respawned slot cannot collide.
+	nextID uint32
 	// external holds per-boid steering staged by the owner before Tick
 	// (zone modifiers per ADR-001's rules→physics contract). Read-only
 	// during Tick; nil or empty means no external influence.
@@ -40,21 +47,71 @@ type Engine struct {
 func NewEngine(n int, seed uint64, p Params) *Engine {
 	rng := rand.New(rand.NewPCG(seed, seed))
 	e := &Engine{
-		p:    p,
-		grid: newGrid(p.Width, p.Height, p.NeighborRadius),
+		p:      p,
+		grid:   newGrid(p.Width, p.Height, p.NeighborRadius),
+		rng:    rng,
+		nextID: uint32(n),
 	}
 	e.buf[0] = make([]Boid, n)
 	e.buf[1] = make([]Boid, n)
 	for i := range e.buf[0] {
-		angle := rng.Float64() * 2 * math.Pi
-		speed := p.MaxSpeed * (0.5 + 0.5*rng.Float64())
-		e.buf[0][i] = Boid{
-			ID:  uint32(i),
-			Pos: Vec2{rng.Float64() * p.Width, rng.Float64() * p.Height},
-			Vel: Vec2{math.Cos(angle), math.Sin(angle)}.Scale(speed),
-		}
+		e.buf[0][i] = e.spawnBoid(uint32(i))
 	}
 	return e
+}
+
+// spawnBoid draws one boid with the given ID from the seed sequence — uniform
+// position, random heading at 50–100% of MaxSpeed (the NewEngine placement,
+// factored so spawns match seeding).
+func (e *Engine) spawnBoid(id uint32) Boid {
+	angle := e.rng.Float64() * 2 * math.Pi
+	speed := e.p.MaxSpeed * (0.5 + 0.5*e.rng.Float64())
+	return Boid{
+		ID:  id,
+		Pos: Vec2{e.rng.Float64() * e.p.Width, e.rng.Float64() * e.p.Height},
+		Vel: Vec2{math.Cos(angle), math.Sin(angle)}.Scale(speed),
+	}
+}
+
+// AddBoids appends n freshly-placed boids with new monotonic IDs and returns
+// those IDs. Applied to the current buffer; the next Tick reconciles the
+// double buffer (population changes happen between ticks — the sim stages them
+// like steering modifiers). n <= 0 is a no-op.
+func (e *Engine) AddBoids(n int) []uint32 {
+	if n <= 0 {
+		return nil
+	}
+	ids := make([]uint32, n)
+	cur := e.buf[e.cur]
+	for i := range n {
+		id := e.nextID
+		e.nextID++
+		cur = append(cur, e.spawnBoid(id))
+		ids[i] = id
+	}
+	e.buf[e.cur] = cur
+	return ids
+}
+
+// RemoveBoids drops the given IDs from the current buffer, preserving the
+// order, identity, and state of every survivor. Unknown IDs are ignored. The
+// next Tick reconciles the double buffer.
+func (e *Engine) RemoveBoids(ids []uint32) {
+	if len(ids) == 0 {
+		return
+	}
+	drop := make(map[uint32]struct{}, len(ids))
+	for _, id := range ids {
+		drop[id] = struct{}{}
+	}
+	cur := e.buf[e.cur]
+	kept := cur[:0]
+	for _, b := range cur {
+		if _, gone := drop[b.ID]; !gone {
+			kept = append(kept, b)
+		}
+	}
+	e.buf[e.cur] = kept
 }
 
 // SetBoids replaces the population with an exact state (primarily for tests
@@ -105,6 +162,12 @@ func (e *Engine) Params() Params { return e.p }
 // Tick advances the simulation one fixed timestep.
 func (e *Engine) Tick() {
 	cur := e.buf[e.cur]
+	// Reconcile the back buffer to the current population — AddBoids/
+	// RemoveBoids resize only the front buffer between ticks. A no-op when the
+	// size is unchanged, so fixed-population trajectories are untouched.
+	if len(e.buf[1-e.cur]) != len(cur) {
+		e.buf[1-e.cur] = make([]Boid, len(cur))
+	}
 	next := e.buf[1-e.cur]
 	e.grid.rebuild(cur)
 	for i := range cur {

@@ -24,6 +24,7 @@ import (
 	"github.com/c360studio/semstreams/natsclient"
 	"github.com/c360studio/semstreams/payloadbuiltins"
 	"github.com/c360studio/semstreams/payloadregistry"
+	"github.com/c360studio/semstreams/pkg/lifecycle"
 	"github.com/c360studio/semstreams/service"
 	"github.com/c360studio/semstreams/types"
 	"github.com/joho/godotenv"
@@ -169,6 +170,15 @@ func run() error {
 		return fmt.Errorf("register boid payloads: %w", err)
 	}
 
+	// Boids are lifecycle participants (add-lifecycle-population): one Manager
+	// owns the flock.boid workflow; the framework fans it to the rule
+	// processor (lifecycle_* actions) and the sim (cull observation) via
+	// Dependencies. Ownership stays no-op (as in semdragons).
+	lifecycleMgr := lifecycle.NewManager(natsClient, logger)
+	if err := lifecycleMgr.Register(boidgraph.BoidWorkflow()); err != nil {
+		return fmt.Errorf("register boid lifecycle workflow: %w", err)
+	}
+
 	svcDeps := &service.Dependencies{
 		NATSClient:        natsClient,
 		MetricsRegistry:   metricsRegistry,
@@ -177,6 +187,7 @@ func run() error {
 		Manager:           configManager,
 		ComponentRegistry: componentRegistry,
 		PayloadRegistry:   payloadReg,
+		LifecycleManager:  lifecycleMgr,
 	}
 
 	if err := configureAndCreateServices(cfg, manager, svcDeps); err != nil {
