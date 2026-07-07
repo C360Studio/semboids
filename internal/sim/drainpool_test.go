@@ -46,8 +46,8 @@ func TestDrainPoolBoundsConcurrency(t *testing.T) {
 		t.Fatalf("in-flight while full = %d, want %d", got, n)
 	}
 
-	close(gate)  // release everyone; remaining closures drain n-at-a-time
-	<-submitted  // let the submit loop finish before wait() (no concurrent Add)
+	close(gate) // release everyone; remaining closures drain n-at-a-time
+	<-submitted // let the submit loop finish before wait() (no concurrent Add)
 	pool.wait()
 	if got := maxSeen.Load(); got != int32(n) {
 		t.Fatalf("max concurrent = %d, want exactly %d", got, n)
