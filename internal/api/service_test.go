@@ -65,10 +65,12 @@ func (f *fakeRules) ApplyConfigUpdate(changes map[string]any) error {
 	return nil
 }
 
-// fakeSim is a stub sim exposing ClearModifierKind + the graph dial.
+// fakeSim is a stub sim exposing ClearModifierKind + the graph/population dials.
 type fakeSim struct {
 	cleared []string
 	hz      float64
+	spawned int
+	churnHz float64
 }
 
 func (f *fakeSim) Meta() component.Metadata {
@@ -96,6 +98,16 @@ func (f *fakeSim) SetGraphHz(hz float64) error {
 }
 func (f *fakeSim) GraphHz() float64                                   { return f.hz }
 func (f *fakeSim) GraphCounts() (snapshots, entities, dropped uint64) { return 3, 30, 1 }
+
+func (f *fakeSim) SpawnBoids(n int) { f.spawned += n }
+func (f *fakeSim) ChurnHz() float64 { return f.churnHz }
+func (f *fakeSim) SetChurnHz(hz float64) error {
+	if hz < 0 {
+		return http.ErrAbortHandler
+	}
+	f.churnHz = hz
+	return nil
+}
 
 // newTestService wires the API service against a registry holding the fakes.
 func newTestService(t *testing.T, withRules, withSim bool) (*Service, *http.ServeMux, *fakeRules, *fakeSim) {
@@ -312,6 +324,49 @@ func TestCullToggleSkipsModifierClear(t *testing.T) {
 	for _, k := range sim.cleared {
 		if k == cullKind {
 			t.Fatal("ClearModifierKind called for cull — should be skipped")
+		}
+	}
+}
+
+func TestPopulationEndpoints(t *testing.T) {
+	_, mux, _, sim := newTestService(t, true, true)
+
+	// Spawn wave.
+	rec := httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/boids/population/spawn",
+		strings.NewReader(`{"n": 25}`)))
+	if rec.Code != http.StatusOK {
+		t.Fatalf("spawn = %d: %s", rec.Code, rec.Body)
+	}
+	if sim.spawned != 25 {
+		t.Fatalf("spawned = %d, want 25", sim.spawned)
+	}
+
+	// Churn dial.
+	rec = httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodPut, "/boids/population/churn-hz",
+		strings.NewReader(`{"hz": 4}`)))
+	if rec.Code != http.StatusOK {
+		t.Fatalf("churn = %d: %s", rec.Code, rec.Body)
+	}
+	if sim.churnHz != 4 {
+		t.Fatalf("churnHz = %v, want 4", sim.churnHz)
+	}
+
+	// Rejections.
+	for _, tc := range []struct {
+		method, path, body string
+		want               int
+	}{
+		{http.MethodPost, "/boids/population/spawn", `{"n": 0}`, http.StatusBadRequest},
+		{http.MethodPost, "/boids/population/spawn", `{}`, http.StatusBadRequest},
+		{http.MethodGet, "/boids/population/spawn", ``, http.StatusMethodNotAllowed},
+		{http.MethodPut, "/boids/population/churn-hz", `{"hz": -1}`, http.StatusBadRequest},
+	} {
+		rec := httptest.NewRecorder()
+		mux.ServeHTTP(rec, httptest.NewRequest(tc.method, tc.path, strings.NewReader(tc.body)))
+		if rec.Code != tc.want {
+			t.Fatalf("%s %s [%s] = %d, want %d", tc.method, tc.path, tc.body, rec.Code, tc.want)
 		}
 	}
 }

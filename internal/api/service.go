@@ -51,11 +51,15 @@ type modifierClearer interface {
 	ClearModifierKind(kind string) error
 }
 
-// graphDialer is the sim's load-dial surface (graph snapshot cadence).
+// graphDialer is the sim's runtime control surface — the snapshot load dial
+// plus the population controls (add-lifecycle-population).
 type graphDialer interface {
 	SetGraphHz(hz float64) error
 	GraphHz() float64
 	GraphCounts() (snapshots, entities, dropped uint64)
+	SpawnBoids(n int)
+	ChurnHz() float64
+	SetChurnHz(hz float64) error
 }
 
 // Service exposes the rule-toggle endpoints.
@@ -173,6 +177,8 @@ func (s *Service) RegisterHTTPHandlers(prefix string, mux *http.ServeMux) {
 	mux.HandleFunc(prefix+"graph", s.handleGraph)
 	mux.HandleFunc(prefix+"graph/hz", s.handleGraphHz)
 	mux.HandleFunc(prefix+"graph/stream", s.handleGraphStream)
+	mux.HandleFunc(prefix+"population/spawn", s.handleSpawn)
+	mux.HandleFunc(prefix+"population/churn-hz", s.handleChurnHz)
 	s.logger.Info("Boids API handlers registered", "prefix", prefix)
 }
 
@@ -231,6 +237,57 @@ func (s *Service) handleGraphHz(w http.ResponseWriter, r *http.Request) {
 	}
 	s.logger.Info("Graph dial set", "hz", d.GraphHz())
 	writeJSON(w, http.StatusOK, map[string]any{"hz": d.GraphHz()})
+}
+
+// handleSpawn serves POST <prefix>/population/spawn with body {"n": N}: stages
+// a spawn wave of N boids (add-lifecycle-population).
+func (s *Service) handleSpawn(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		N *int `json:"n"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.N == nil || *req.N <= 0 {
+		http.Error(w, `body must be {"n": <positive int>}`, http.StatusBadRequest)
+		return
+	}
+	d, err := s.dialer()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusServiceUnavailable)
+		return
+	}
+	d.SpawnBoids(*req.N)
+	s.logger.Info("Spawn wave requested", "n", *req.N)
+	writeJSON(w, http.StatusOK, map[string]any{"spawned": *req.N})
+}
+
+// handleChurnHz serves PUT <prefix>/population/churn-hz with body {"hz": N}:
+// the runtime spawn-churn dial (the create/delete load axis).
+func (s *Service) handleChurnHz(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		Hz *float64 `json:"hz"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Hz == nil {
+		http.Error(w, `body must be {"hz": <number>}`, http.StatusBadRequest)
+		return
+	}
+	d, err := s.dialer()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusServiceUnavailable)
+		return
+	}
+	if err := d.SetChurnHz(*req.Hz); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	s.logger.Info("Churn dial set", "hz", d.ChurnHz())
+	writeJSON(w, http.StatusOK, map[string]any{"churn_hz": d.ChurnHz()})
 }
 
 // handleRules serves GET <prefix>/rules: enabled state per modifier kind.

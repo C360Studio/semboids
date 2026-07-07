@@ -57,10 +57,10 @@
 
 ## 5. Population API + metrics (`internal/api`)
 
-- [ ] 5.1 `POST /boids/population/spawn {n}` → sim spawn hook;
+- [x] 5.1 `POST /boids/population/spawn {n}` → sim spawn hook;
       `PUT /boids/population/churn-hz {hz}` → sim churn ticker (clamped ≥ 0; 0
       disables). `OpenAPISpec` entries so the handlers mount.
-- [ ] 5.2 Metrics on :9090: `boids_lifecycle_spawns_total`,
+- [x] 5.2 Metrics on :9090: `boids_lifecycle_spawns_total`,
       `boids_lifecycle_culls_total`, `boids_lifecycle_active` gauge, spawn/cull
       publish-duration histogram — a churn sweep attributable from :9090.
 
