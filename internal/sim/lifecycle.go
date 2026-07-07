@@ -26,6 +26,10 @@ const (
 	churnBase       = 100 * time.Millisecond
 	// churnWaveSize is the boids per churn-driven spawn wave.
 	churnWaveSize = 5
+	// defaultDrainConcurrency is the default in-flight lifecycle IO cap when
+	// lifecycle_drain_concurrency is unset — matches graph-ingest's ingest_lanes
+	// default (beta.142 ADR-072) so the drain uses every lane the substrate has.
+	defaultDrainConcurrency = 8
 )
 
 // boidSpawner is the slice of lifecycle.Manager the sim uses to record a
@@ -126,9 +130,14 @@ func (c *Component) runCullWatcher(ctx context.Context) {
 				continue
 			}
 			seen[id] = struct{}{}
+			// The boid leaves physics and the cull is counted the moment we
+			// observe it — synchronous, so `active` tracks live population,
+			// not reclaim completion. Only the delete IO is offloaded, so a
+			// slow reclaim never stalls observing the next cull.
 			c.population.stageRemoval(id)
-			c.deleteEntity(ctx, entry.Key())
 			c.metrics.observeCull()
+			key := entry.Key()
+			c.drainPool.submit(ctx, func() { c.deleteEntity(ctx, key) })
 		}
 	}
 }
@@ -162,16 +171,21 @@ func (c *Component) runSpawnCreator(ctx context.Context) {
 }
 
 // createPending drains the pending-create queue and records each boid as an
-// active participant. Separated from the poll loop so it is unit-testable.
+// active participant through the drain pool — distinct boids run concurrently
+// across graph-ingest's lanes, bounded by lifecycle_drain_concurrency. submit
+// backpressures this goroutine when the pool is full, so a burst never fans out
+// into unbounded goroutines. Separated from the poll loop so it is unit-testable.
 func (c *Component) createPending(ctx context.Context) {
 	for _, id := range c.population.drainCreates() {
-		start := time.Now()
-		entityID := boidgraph.BoidEntityID(c.org, c.platform, id)
-		if err := c.spawner.Create(ctx, boidgraph.NewBoidLifecycle(entityID)); err != nil {
-			c.logger.Warn("create boid lifecycle", slog.Uint64("boid", uint64(id)), slog.String("error", err.Error()))
-			continue
-		}
-		c.metrics.observeSpawn(time.Since(start))
+		c.drainPool.submit(ctx, func() {
+			start := time.Now()
+			entityID := boidgraph.BoidEntityID(c.org, c.platform, id)
+			if err := c.spawner.Create(ctx, boidgraph.NewBoidLifecycle(entityID)); err != nil {
+				c.logger.Warn("create boid lifecycle", slog.Uint64("boid", uint64(id)), slog.String("error", err.Error()))
+				return
+			}
+			c.metrics.observeSpawn(time.Since(start))
+		})
 	}
 }
 

@@ -51,6 +51,11 @@ type Config struct {
 	// before the sim emits a lingered fact for the cull rule. 0 disables
 	// culling (add-lifecycle-population).
 	CullGraceTicks int `json:"cull_grace_ticks,omitempty"`
+	// LifecycleDrainConcurrency bounds concurrent off-loop lifecycle IO
+	// (Manager.Create for spawns + graph.mutation.entity.delete for reclaims)
+	// across graph-ingest's keyed-concurrent lanes. 0/unset = 8 (matches
+	// ingest_lanes); 1 = the serial path (parallel-lifecycle-drain).
+	LifecycleDrainConcurrency int `json:"lifecycle_drain_concurrency,omitempty"`
 	// GraphProbeSampleN is the e2e-latency probe's 1-in-N sampling rate
 	// (load-dial D4). 0/unset = 10; 1 samples every boid update.
 	GraphProbeSampleN int `json:"graph_probe_sample_n,omitempty"`
@@ -124,6 +129,10 @@ type Component struct {
 	churnHzBits    atomic.Uint64
 	metrics        *lifecycleMetrics
 	cullGraceTicks int
+	// drainPool bounds concurrent off-loop Create/delete IO so distinct-boid
+	// ops run across graph-ingest's lanes without unbounded goroutines
+	// (parallel-lifecycle-drain). Never touches the tick loop.
+	drainPool *drainPool
 
 	natsClient interface {
 		Subscribe(ctx context.Context, subject string,
@@ -205,6 +214,11 @@ func NewComponent(rawConfig json.RawMessage, deps component.Dependencies) (compo
 	c.population = newPopulationState()
 	c.metrics = newLifecycleMetrics(deps.MetricsRegistry)
 	c.cullGraceTicks = config.CullGraceTicks
+	drainConcurrency := config.LifecycleDrainConcurrency
+	if drainConcurrency == 0 {
+		drainConcurrency = defaultDrainConcurrency // unset → match ingest_lanes
+	}
+	c.drainPool = newDrainPool(drainConcurrency) // clamps <1 → 1 (serial)
 
 	if deps.NATSClient != nil {
 		c.publish = deps.NATSClient.Publish
@@ -371,6 +385,11 @@ func (c *Component) ConfigSchema() component.ConfigSchema {
 				Description: "Neighbor radius for graph snapshots (0 = physics neighbor radius)",
 				Default:     0,
 			},
+			"lifecycle_drain_concurrency": {
+				Type:        "integer",
+				Description: "Concurrent off-loop lifecycle IO cap (Create + delete); 0 = 8 (match ingest_lanes), 1 = serial",
+				Default:     defaultDrainConcurrency,
+			},
 		},
 		Required: []string{},
 	}
@@ -524,6 +543,17 @@ func (c *Component) Stop(timeout time.Duration) error {
 	case <-done:
 	case <-time.After(timeout):
 		return fmt.Errorf("sim: tick loop did not stop within %s", timeout)
+	}
+	// Join in-flight lifecycle IO. ctx is cancelled, so in-flight Create/delete
+	// Requests error out fast; this only avoids leaking their goroutines past
+	// Stop. Bounded by the same timeout so a wedged Request can't hang Stop.
+	if c.drainPool != nil {
+		drained := make(chan struct{})
+		go func() { c.drainPool.wait(); close(drained) }()
+		select {
+		case <-drained:
+		case <-time.After(timeout):
+		}
 	}
 	c.logger.Info("Sim component stopped")
 	return nil

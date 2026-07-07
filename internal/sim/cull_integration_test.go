@@ -16,9 +16,9 @@ import (
 	"github.com/c360studio/semstreams/natsclient"
 	"github.com/c360studio/semstreams/payloadbuiltins"
 	"github.com/c360studio/semstreams/payloadregistry"
+	"github.com/c360studio/semstreams/pkg/lifecycle"
 	graphingest "github.com/c360studio/semstreams/processor/graph-ingest"
 	rule "github.com/c360studio/semstreams/processor/rule"
-	"github.com/c360studio/semstreams/pkg/lifecycle"
 	"github.com/c360studio/semstreams/types"
 	natspkg "github.com/nats-io/nats.go"
 
