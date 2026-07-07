@@ -47,6 +47,10 @@ type Config struct {
 	// GraphHz is the graph snapshot cadence (the load dial, ADR-001 §4).
 	// 0 disables snapshots. Runtime-adjustable via the boids API.
 	GraphHz float64 `json:"graph_hz,omitempty"`
+	// CullGraceTicks is how many ticks a boid may dwell in a predator zone
+	// before the sim emits a lingered fact for the cull rule. 0 disables
+	// culling (add-lifecycle-population).
+	CullGraceTicks int `json:"cull_grace_ticks,omitempty"`
 	// GraphProbeSampleN is the e2e-latency probe's 1-in-N sampling rate
 	// (load-dial D4). 0/unset = 10; 1 samples every boid update.
 	GraphProbeSampleN int `json:"graph_probe_sample_n,omitempty"`
@@ -109,6 +113,17 @@ type Component struct {
 	graphHzBits    atomic.Uint64
 	setDialMetric  func(hz float64) // updates boids_graph_dial_hz; never nil
 	snapshotRadius float64
+
+	// Lifecycle population (add-lifecycle-population). population stages
+	// spawn/despawn deltas off the tick loop; churnHzBits is the runtime churn
+	// dial. spawner/reclaimer are nil when NATS/lifecycle is absent (unit
+	// tests) — the population still stages, but no Create/watch runs.
+	population     *populationState
+	spawner        boidSpawner
+	reclaimer      entityReclaimer
+	churnHzBits    atomic.Uint64
+	metrics        *lifecycleMetrics
+	cullGraceTicks int
 
 	natsClient interface {
 		Subscribe(ctx context.Context, subject string,
@@ -174,7 +189,7 @@ func NewComponent(rawConfig json.RawMessage, deps component.Dependencies) (compo
 		logger:   logger,
 		subject:  subject,
 		steering: newSteeringState(logger),
-		tracker:  newZoneTracker(config.Zones),
+		tracker:  newZoneTracker(config.Zones, config.CullGraceTicks),
 		org:      org,
 		platform: platform,
 		outputPorts: []component.Port{
@@ -187,16 +202,26 @@ func NewComponent(rawConfig json.RawMessage, deps component.Dependencies) (compo
 	}
 	c.setDialMetric = boidgraph.NewDialHzSetter(deps.MetricsRegistry)
 	c.setGraphHz(config.GraphHz)
+	c.population = newPopulationState()
+	c.metrics = newLifecycleMetrics(deps.MetricsRegistry)
+	c.cullGraceTicks = config.CullGraceTicks
 
 	if deps.NATSClient != nil {
 		c.publish = deps.NATSClient.Publish
 		c.natsClient = deps.NATSClient
+		c.reclaimer = deps.NATSClient
 		c.publisher = boidgraph.NewPublisher(
 			deps.NATSClient, deps.NATSClient, org, platform,
 			deps.MetricsRegistry, logger)
 		c.snapshots = c.publisher
 		c.probe = boidgraph.NewLatencyProbe(
 			deps.NATSClient, deps.MetricsRegistry, config.GraphProbeSampleN, logger)
+	}
+	// The lifecycle Manager fans in via Dependencies; nil in unit tests and
+	// when no host wired it. Only spawn-create/cull run when both it and NATS
+	// are present.
+	if deps.LifecycleManager != nil {
+		c.spawner = deps.LifecycleManager
 	}
 	return c, nil
 }
@@ -228,6 +253,31 @@ func (c *Component) SetGraphHz(hz float64) error {
 	}
 	c.setGraphHz(hz)
 	c.logger.Info("Graph snapshot cadence set", slog.Float64("graph_hz", c.GraphHz()))
+	return nil
+}
+
+// SpawnBoids stages a spawn wave of n boids (add-lifecycle-population). The
+// tick loop adds them to physics next tick and the spawn-create goroutine
+// records each as an active lifecycle participant. Non-blocking; n <= 0 no-ops.
+func (c *Component) SpawnBoids(n int) {
+	if c.population != nil {
+		c.population.stageSpawn(n)
+	}
+}
+
+// ChurnHz reports the current spawn-churn dial (spawn waves/sec).
+func (c *Component) ChurnHz() float64 {
+	return math.Float64frombits(c.churnHzBits.Load())
+}
+
+// SetChurnHz sets the runtime spawn-churn rate — the second load axis
+// (create/delete churn, distinct from the snapshot update dial). 0 disables.
+func (c *Component) SetChurnHz(hz float64) error {
+	if hz < 0 {
+		return fmt.Errorf("churn hz must be >= 0, got %v", hz)
+	}
+	c.churnHzBits.Store(math.Float64bits(hz))
+	c.logger.Info("Churn dial set", slog.Float64("churn_hz", hz))
 	return nil
 }
 
@@ -409,6 +459,16 @@ func (c *Component) Start(ctx context.Context) error {
 		}()
 	}
 
+	// Lifecycle population (add-lifecycle-population): the spawn-create loop
+	// records spawned boids as active participants, the cull watcher observes
+	// phase=culled and reclaims, and the churn ticker drives the load axis.
+	// All off the tick loop; only when a Manager and NATS are wired.
+	if c.spawner != nil && c.reclaimer != nil {
+		go c.runSpawnCreator(ctx)
+		go c.runCullWatcher(ctx)
+		go c.runChurn(ctx)
+	}
+
 	// Steering modifiers arrive from the rule engine; unit tests feed
 	// handleSteering directly instead of subscribing.
 	if c.natsClient != nil {
@@ -478,6 +538,9 @@ func (c *Component) run(ctx context.Context) {
 			// Modifiers staged since last tick take effect now; TTLs
 			// advance; external vectors derive from current positions.
 			c.steering.advance()
+			// Staged spawns/despawns apply between ticks (add-lifecycle-
+			// population) — same discipline as modifiers, no NATS on the loop.
+			c.applyPopulation()
 			c.engine.SetExternalSteering(
 				c.steering.external(c.engine.Boids(), c.config.Zones, params))
 			c.engine.Tick()
@@ -494,6 +557,10 @@ func (c *Component) run(ctx context.Context) {
 			// Edge-triggered zone transition events (event rate).
 			for _, tr := range c.tracker.transitions(boids) {
 				c.publishTransition(ctx, tr)
+			}
+			// Predator-zone overstays → lingered facts for the cull rule.
+			for _, lg := range c.tracker.lingered() {
+				c.publishLingered(ctx, lg)
 			}
 
 			// Graph snapshot at the dial cadence (drop-oldest, non-blocking).
@@ -544,6 +611,49 @@ func (c *Component) publishTransition(ctx context.Context, tr transition) {
 	if err := c.publish(ctx, EventsSubject, data); err != nil {
 		c.logger.Warn("publish transition event",
 			slog.String("zone", tr.zone.ID),
+			slog.String("error", err.Error()))
+	}
+}
+
+// applyPopulation drains staged spawn/despawn deltas and applies them to the
+// engine between ticks (add-lifecycle-population). Spawned IDs are queued for
+// the off-loop Manager.Create; despawned IDs are pruned from the tracker. A
+// no-op when nothing is staged, so fixed-population ticks are untouched.
+func (c *Component) applyPopulation() {
+	if c.population == nil {
+		return
+	}
+	spawns, removals := c.population.drain()
+	if spawns > 0 {
+		c.population.stageCreate(c.engine.AddBoids(spawns))
+	}
+	if len(removals) > 0 {
+		c.engine.RemoveBoids(removals)
+		c.tracker.forget(removals)
+	}
+}
+
+// publishLingered emits a boid's predator-zone overstay as a zone event with
+// event="lingered" on the same stream the transition events ride — the
+// predator-cull rule keys off event==lingered (add-lifecycle-population D3).
+func (c *Component) publishLingered(ctx context.Context, lg linger) {
+	payload := message.NewGenericJSON(map[string]any{
+		"entity_id": boidgraph.BoidEntityID(c.org, c.platform, lg.boidID),
+		"boid_id":   lg.boidID,
+		"zone_id":   lg.zone.ID,
+		"zone_type": lg.zone.Type,
+		"event":     "lingered",
+		"tick":      c.engine.TickCount(),
+	})
+	baseMsg := message.NewBaseMessage(payload.Schema(), payload, "semboids-sim")
+	data, err := json.Marshal(baseMsg)
+	if err != nil {
+		c.logger.Error("marshal lingered event", slog.String("error", err.Error()))
+		return
+	}
+	if err := c.publish(ctx, EventsSubject, data); err != nil {
+		c.logger.Warn("publish lingered event",
+			slog.String("zone", lg.zone.ID),
 			slog.String("error", err.Error()))
 	}
 }

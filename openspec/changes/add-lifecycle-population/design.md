@@ -77,8 +77,10 @@ sim owns the spatial truth. Split:
 
 1. **Sim → fact.** The zone tracker already knows membership; extend it to
    count dwell ticks and, when a boid exceeds `cull_grace_ticks` in a predator
-   zone, publish a `boids.zone.lingered` event (`entity_id`, `zone_id`) — the
-   same edge-triggered event shape as transitions, one per boid per crossing.
+   zone, publish a lingered event (`event="lingered"`, `entity_id`, `zone_id`)
+   on the existing `boids.zone.events` stream — the same edge-triggered shape
+   as transitions (one per boid per crossing), so the rule processor consumes
+   it with zero new wiring.
 2. **Rule → decision.** A `predator-cull` rule (conditions
    `event == lingered`, `zone_type == predator`) fires
    `lifecycle_transition → culled` on the trigger `entity_id`.

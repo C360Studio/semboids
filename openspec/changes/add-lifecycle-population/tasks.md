@@ -29,19 +29,19 @@
 
 ## 3. Sim staging, cull observation, reclaim (`internal/sim`) — TDD
 
-- [ ] 3.1 Failing tests: a `populationState` (mirroring `steeringState`) stages
+- [x] 3.1 Failing tests: a `populationState` (mirroring `steeringState`) stages
       add/remove off-loop under a mutex and the tick loop drains it once per
       tick *before* `Tick()`; staged deltas apply between ticks; the staging
       path is untouched when idle (determinism).
-- [ ] 3.2 Cull watcher: `ENTITY_STATES` watch (reuse `watchBucket`) filtered to
+- [x] 3.2 Cull watcher: `ENTITY_STATES` watch (reuse `watchBucket`) filtered to
       boid keys → on `flock.lifecycle.phase == culled`, stage removal and fire
       `graph.mutation.entity.delete`. Unit-test the pure observe/decode split;
       lifecycle observed via KV watch (not `Manager.Watch` — it skips deletes).
-- [ ] 3.3 Lingered emission: the zone tracker counts per-boid dwell ticks and
+- [x] 3.3 Lingered emission: the zone tracker counts per-boid dwell ticks and
       emits `boids.zone.lingered` (`entity_id`, `zone_id`) past
       `cull_grace_ticks`. Test: fires only past grace; never for a boid that
       exits first.
-- [ ] 3.4 Spawn orchestration: a spawn wave stages `n` adds AND calls
+- [x] 3.4 Spawn orchestration: a spawn wave stages `n` adds AND calls
       `Manager.Create` (active) per new boid; a churn ticker fires waves at the
       dial rate. Test spawn stages adds + `Create` is invoked per boid.
 

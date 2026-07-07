@@ -3,7 +3,8 @@
 ## ADDED Requirements
 
 ### Requirement: Predator zones cull lingering boids
-The sim SHALL emit a `boids.zone.lingered` event for a boid that dwells in a
+The sim SHALL emit a lingered zone event (`event="lingered"`) on the
+zone-transition stream (`boids.zone.events`) for a boid that dwells in a
 predator zone beyond a configurable grace window (a sim-side tick count, so
 the rule stays stateless). A `predator-cull` rule SHALL fire
 `lifecycle_transition → culled` on that boid via the rule engine's lifecycle
