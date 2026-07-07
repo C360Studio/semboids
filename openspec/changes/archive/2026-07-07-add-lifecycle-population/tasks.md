@@ -53,9 +53,10 @@
       at load — `rule_loader.go:124` — so it must load to be toggleable),
       gated by flee + `cull_grace_ticks`; toggle via a new `cull` kind in
       `internal/api`.
-- [ ] 4.2 Integration (`-tags=integration`, testcontainer): boid lingers in a
+- [x] 4.2 Integration (`-tags=integration`, testcontainer): boid lingers in a
       predator zone → rule fires → `phase=culled` lands in `ENTITY_STATES` →
       the sim removes it from physics and deletes the entity.
+      (`internal/sim/cull_integration_test.go`: full-chain + disabled control.)
 
 ## 5. Population API + metrics (`internal/api`)
 
@@ -68,24 +69,30 @@
 
 ## 6. UI (`ui/`)
 
-- [ ] 6.1 Live boid-count readout (from the frame already streamed) + a
+- [x] 6.1 Live boid-count readout (from the frame already streamed) + a
       spawn-wave button (`POST /boids/population/spawn`). eslint / svelte-check
       / vitest green.
 
 ## 7. Verify + churn characterization + upstream
 
-- [ ] 7.1 `task check:push` green (lint, race unit + integration,
+- [x] 7.1 `task check:push` green (lint, race unit + integration,
       cross-compile) + the UI workflow.
 - [x] 7.2 Live-verified 2026-07-06: predator cull is visible (a lingering boid dies *through the
       graph*); a spawn wave repopulates; the churn dial holds a rate; physics
       holds 30fps under churn (staged deltas never block the tick).
-- [ ] 7.3 Churn load run: crank `churn-hz`, characterize the create/delete
+- [x] 7.3 Churn load run: crank `churn-hz`, characterize the create/delete
       ceiling on beta.142's keyed-concurrent ingest and contrast with the
       snapshot dial's update ceiling; short note in `docs/perf/`.
-- [ ] 7.4 File upstream the lifecycle gaps re-verified in beta.142, each with
+      (`docs/perf/churn-lifecycle-2026-07-06.md`: create ~150–340/s, cull
+      ~40–135/s, both ~7–15× below the 2,331/s batched snapshot ceiling.)
+- [x] 7.4 File upstream the lifecycle gaps re-verified in beta.142, each with
       this slice as the repro: (1) no `Manager` despawn primitive +
-      `Manager.Watch` skips `KeyValueDelete`/`Purge`; (2) no batch
-      `Create`/`Transition` (one graph-ingest round-trip per entity);
-      (3) O(workflows × bucket-size) `$entity.lifecycle.*` rule lookups.
-- [ ] 7.5 `openspec validate add-lifecycle-population --strict`; README
+      `Manager.Watch` skips `KeyValueDelete`/`Purge` → **semstreams#497**;
+      (2) no batch `Create`/`Transition` (one graph-ingest round-trip per
+      entity), with churn evidence → **semstreams#498**; (3) the
+      `$entity.lifecycle.*` O(N)-scan gap was already CLOSED in beta.142
+      (`LookupByEntityID` is O(workflows)+direct-key Get) — the finding is a
+      stale doc comment → **semstreams#499**. Bonus crash found in the churn
+      run: websocket concurrent-write panic → **semstreams#500**.
+- [x] 7.5 `openspec validate add-lifecycle-population --strict`; README
       status/roadmap update; archive the change.

@@ -33,7 +33,11 @@ below were re-verified still-open in beta.142. What the substrate gives us
   `Action` struct (`workflow`/`phase`/`reason`/`set`), resolved through a
   narrowed `LifecycleManager` interface that **excludes raw `Transition`**
   (`processor/rule/actions.go:495`). `$entity.lifecycle.phase` conditions
-  exist but cost O(workflows × bucket-size) per fire (`lifecycle_substitution.go:14`).
+  exist; the `lifecycle_substitution.go:14` comment warns of an
+  O(workflows × bucket-size) per-fire scan — but **implementation review
+  (task 7.4) found that already closed in beta.142**: `LookupByEntityID` is
+  O(workflows) + a direct-key `bucket.Get` (`manager_query.go:391`). The
+  remaining defect is the stale comment → filed as semstreams#499.
 
 ## Goals / Non-Goals
 
@@ -139,10 +143,13 @@ lacks an atomic transition-then-delete / despawn on `Manager`, and
   boids until the backlog drains. Illustrative for the demo; measured via the
   new substrate `ingest_lag_seconds` metric alongside the app-side e2e probe,
   not hidden.
-- **O(N) rule lifecycle lookups.** The `predator-cull` rule keys off the
-  `lingered` event fields, NOT `$entity.lifecycle.*`, specifically to dodge the
-  per-fire full-bucket scan. If a future rule needs the phase condition, that
-  scan is the finding.
+- **~~O(N) rule lifecycle lookups.~~** The `predator-cull` rule keys off the
+  `lingered` event fields, NOT `$entity.lifecycle.*` — originally to dodge a
+  presumed per-fire full-bucket scan. **Correction (task 7.4):** that scan is
+  already gone in beta.142 — `LookupByEntityID` is O(workflows)+direct-key Get,
+  so the phase condition is actually cheap. The rule still uses event fields
+  (edge-trigger semantics), but not for the perf reason. Stale-comment fix
+  filed as semstreams#499.
 - **Entity accumulation if a delete fails.** Deletes are best-effort
   request/reply; a dropped delete leaks a `culled` entity. The `active_boids`
   gauge vs `ENTITY_STATES` count surfaces drift; retry is out of slice scope.
