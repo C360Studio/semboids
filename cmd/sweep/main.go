@@ -4,8 +4,10 @@
 // It sets the graph dial via the boids API, subscribes to the frame stream to
 // measure real physics fps, warms up, then scrapes :9090 at the window's
 // start and end to derive achieved snapshot/entity rates, snapshot drops,
-// graph-ingest consumer lag, and end-to-end latency quantiles. The window is
-// classified per the D5 attribution matrix (publisher-bound / ingest-bound /
+// graph-ingest consumer lag, end-to-end latency quantiles, and graph-index
+// write amplification (index KV puts/s per bucket vs entities ingested — the
+// gh#474 / semstreams#524 signal). The window is classified per the D5
+// attribution matrix (publisher-bound / ingest-bound / index-bound /
 // downstream-lag / rejection-loss) with the raw signals printed so the
 // campaign doc can quote them.
 //
@@ -298,6 +300,29 @@ func (s snapshot) sumSeries(metric string, labelKey, labelVal string) float64 {
 	return total
 }
 
+// sumSeriesWhere totals every series named metric whose labels match all of
+// the given key=value pairs — the multi-label form of sumSeries (e.g.
+// operation=put AND kv_bucket=incoming). An empty match sums the whole family.
+func (s snapshot) sumSeriesWhere(metric string, match map[string]string) float64 {
+	total := 0.0
+	for _, smp := range s.samples {
+		if smp.name != metric {
+			continue
+		}
+		ok := true
+		for k, v := range match {
+			if smp.labels[k] != v {
+				ok = false
+				break
+			}
+		}
+		if ok {
+			total += smp.value
+		}
+	}
+	return total
+}
+
 // quantile linearly interpolates q over a histogram's window-delta buckets
 // (end minus start), matching Prometheus histogram_quantile semantics.
 func quantile(start, end snapshot, metric string, q float64) float64 {
@@ -369,22 +394,34 @@ func parseLe(s string) float64 {
 
 // windowSummary is the classified result of one sweep point.
 type windowSummary struct {
-	DialHz         float64 `json:"dial_hz"`
-	Boids          int     `json:"boids"`
-	WindowSeconds  float64 `json:"window_seconds"`
-	SnapshotsPerS  float64 `json:"snapshots_per_s"`
-	EntitiesPerS   float64 `json:"entities_per_s"`
-	DropsDelta     float64 `json:"drops_delta"`
-	PhysicsFPS     float64 `json:"physics_fps"`
-	PendingStart   float64 `json:"consumer_pending_start"`
-	PendingEnd     float64 `json:"consumer_pending_end"`
-	PendingTrend   float64 `json:"consumer_pending_trend"`
-	IngestedPerS   float64 `json:"entities_updated_per_s"`
-	RejectionsDlt  float64 `json:"mutation_rejections_delta"`
-	E2EP50Seconds  float64 `json:"e2e_p50_seconds"`
-	E2EP99Seconds  float64 `json:"e2e_p99_seconds"`
-	Classification string  `json:"classification"`
-	ValidWindow    bool    `json:"valid_window"`
+	DialHz        float64 `json:"dial_hz"`
+	Boids         int     `json:"boids"`
+	WindowSeconds float64 `json:"window_seconds"`
+	SnapshotsPerS float64 `json:"snapshots_per_s"`
+	EntitiesPerS  float64 `json:"entities_per_s"`
+	DropsDelta    float64 `json:"drops_delta"`
+	PhysicsFPS    float64 `json:"physics_fps"`
+	PendingStart  float64 `json:"consumer_pending_start"`
+	PendingEnd    float64 `json:"consumer_pending_end"`
+	PendingTrend  float64 `json:"consumer_pending_trend"`
+	IngestedPerS  float64 `json:"entities_updated_per_s"`
+	RejectionsDlt float64 `json:"mutation_rejections_delta"`
+	E2EP50Seconds float64 `json:"e2e_p50_seconds"`
+	E2EP99Seconds float64 `json:"e2e_p99_seconds"`
+	// Graph-index maintenance load (semstreams_graph_index_*). IndexPutsPerS
+	// is total KV puts/s across all index buckets; IncomingPutsPerS isolates
+	// the INCOMING bucket (the gh#474 O(in-degree²) hot path #524 shards).
+	// IndexWriteAmp = index puts per entity graph-index actually processed
+	// (events_processed, NOT the ingest rate — graph-index reads ENTITY_STATES
+	// by KV-watch, a different consumer that lags independently). It's the
+	// per-entity fan-out cost (~incoming edges + outgoing + predicates), so it
+	// stays roughly constant with load — a cost-structure signal, not an alarm.
+	IndexEventsPerS  float64 `json:"index_events_per_s"`
+	IndexPutsPerS    float64 `json:"index_puts_per_s"`
+	IncomingPutsPerS float64 `json:"incoming_index_puts_per_s"`
+	IndexWriteAmp    float64 `json:"index_write_amp"`
+	Classification   string  `json:"classification"`
+	ValidWindow      bool    `json:"valid_window"`
 }
 
 const entityStream = "ENTITY"
@@ -398,6 +435,13 @@ func summarize(cfg config, start, end snapshot, framesDelta int64) windowSummary
 
 	pendStart := start.sumSeries("semstreams_jetstream_consumer_pending_messages", "stream", entityStream)
 	pendEnd := end.sumSeries("semstreams_jetstream_consumer_pending_messages", "stream", entityStream)
+
+	// graph-index maintenance load. kv_operations_total fans out over
+	// {operation, kv_bucket}; puts are the write pressure #524 targets, and
+	// the incoming bucket is the gh#474 hot path specifically.
+	const idxKV = "semstreams_graph_index_kv_operations_total"
+	putAll := map[string]string{"operation": "put"}
+	putIncoming := map[string]string{"operation": "put", "kv_bucket": "incoming"}
 
 	s := windowSummary{
 		DialHz:        cfg.hz,
@@ -419,6 +463,19 @@ func summarize(cfg config, start, end snapshot, framesDelta int64) windowSummary
 			start.sumSeries("semstreams_datamanager_mutation_rejections_total", "", ""),
 		E2EP50Seconds: quantile(start, end, "boids_graph_e2e_latency_seconds", 0.50),
 		E2EP99Seconds: quantile(start, end, "boids_graph_e2e_latency_seconds", 0.99),
+		IndexEventsPerS: perS(start.sumSeries("semstreams_graph_index_events_processed_total", "", ""),
+			end.sumSeries("semstreams_graph_index_events_processed_total", "", "")),
+		IndexPutsPerS: perS(start.sumSeriesWhere(idxKV, putAll),
+			end.sumSeriesWhere(idxKV, putAll)),
+		IncomingPutsPerS: perS(start.sumSeriesWhere(idxKV, putIncoming),
+			end.sumSeriesWhere(idxKV, putIncoming)),
+	}
+	// Index puts per entity graph-index processed — the per-entity fan-out cost.
+	// Denominator is the index's own event rate (not ingest): the two consumers
+	// sit at different backlog depths, so dividing by ingest understates it
+	// badly during an ingest-bound melt. Guarded against a zero-event window.
+	if s.IndexEventsPerS > 0 {
+		s.IndexWriteAmp = s.IndexPutsPerS / s.IndexEventsPerS
 	}
 	// Allow 5% jitter: fps is frames counted over a wall-clock window whose
 	// boundaries don't align to tick edges, so a healthy 30Hz loop measures a
@@ -444,7 +501,7 @@ func classify(s windowSummary) string {
 	case s.RejectionsDlt > 0 && s.EntitiesPerS-s.IngestedPerS > 1:
 		return "rejection-loss (check mutation_rejections_total)"
 	case s.PendingTrend < pendingGrow && s.E2EP99Seconds > 0.25:
-		return "downstream-lag (index/clustering — check their consumers)"
+		return "downstream-lag (index/clustering — check kv_operations_total{kv_bucket} + amp)"
 	default:
 		return "healthy (dial within capacity)"
 	}
@@ -460,6 +517,7 @@ func printSummary(s windowSummary) {
  ingest pending  %.0f → %.0f  (Δ %+.0f)
  ingested        %.1f entities/s updated   rejections Δ %.0f
  e2e latency     p50 %.1fms   p99 %.1fms
+ index writes    %.1f puts/s (incoming %.1f)   %.1f events/s   amp %.1f puts/idx-entity
  ──
  classification  %s
 ──────────────────────────────────────────────────────────────
@@ -471,6 +529,7 @@ func printSummary(s windowSummary) {
 		s.PendingStart, s.PendingEnd, s.PendingTrend,
 		s.IngestedPerS, s.RejectionsDlt,
 		s.E2EP50Seconds*1000, s.E2EP99Seconds*1000,
+		s.IndexPutsPerS, s.IncomingPutsPerS, s.IndexEventsPerS, s.IndexWriteAmp,
 		s.Classification)
 }
 
