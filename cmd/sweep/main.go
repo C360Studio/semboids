@@ -406,8 +406,14 @@ type windowSummary struct {
 	PendingTrend  float64 `json:"consumer_pending_trend"`
 	IngestedPerS  float64 `json:"entities_updated_per_s"`
 	RejectionsDlt float64 `json:"mutation_rejections_delta"`
-	E2EP50Seconds float64 `json:"e2e_p50_seconds"`
-	E2EP99Seconds float64 `json:"e2e_p99_seconds"`
+	// Canonical-contract rejections (beta.147+ fail-closed at graph-ingest). A
+	// non-zero delta means entities are being dropped for a non-3-part predicate
+	// or non-6-part entity ID — the migration's proof-of-clean signal, expected
+	// flat at zero on a conforming corpus.
+	PredicateRejectDlt   float64 `json:"predicate_contract_rejections_delta"`
+	EntityStateRejectDlt float64 `json:"entity_state_contract_rejections_delta"`
+	E2EP50Seconds        float64 `json:"e2e_p50_seconds"`
+	E2EP99Seconds        float64 `json:"e2e_p99_seconds"`
 	// Graph-index maintenance load (semstreams_graph_index_*). IndexPutsPerS
 	// is total KV puts/s across all index buckets; IncomingPutsPerS isolates
 	// the INCOMING bucket (the gh#474 O(in-degree²) hot path #524 shards).
@@ -459,8 +465,12 @@ func summarize(cfg config, start, end snapshot, framesDelta int64) windowSummary
 		PendingTrend: pendEnd - pendStart,
 		IngestedPerS: perS(start.sumSeries("semstreams_datamanager_entities_updated_total", "", ""),
 			end.sumSeries("semstreams_datamanager_entities_updated_total", "", "")),
-		RejectionsDlt: end.sumSeries("semstreams_datamanager_mutation_rejections_total", "", "") -
-			start.sumSeries("semstreams_datamanager_mutation_rejections_total", "", ""),
+		RejectionsDlt: end.sumSeries("semstreams_graph_ingest_mutation_rejections_total", "", "") -
+			start.sumSeries("semstreams_graph_ingest_mutation_rejections_total", "", ""),
+		PredicateRejectDlt: end.sumSeries("semstreams_graph_ingest_predicate_contract_rejections_total", "", "") -
+			start.sumSeries("semstreams_graph_ingest_predicate_contract_rejections_total", "", ""),
+		EntityStateRejectDlt: end.sumSeries("semstreams_graph_ingest_entity_state_contract_rejections_total", "", "") -
+			start.sumSeries("semstreams_graph_ingest_entity_state_contract_rejections_total", "", ""),
 		E2EP50Seconds: quantile(start, end, "boids_graph_e2e_latency_seconds", 0.50),
 		E2EP99Seconds: quantile(start, end, "boids_graph_e2e_latency_seconds", 0.99),
 		IndexEventsPerS: perS(start.sumSeries("semstreams_graph_index_events_processed_total", "", ""),
@@ -494,6 +504,8 @@ func classify(s windowSummary) string {
 	switch {
 	case !s.ValidWindow:
 		return "invalid (physics fps < 30 — raise headroom or lower boids)"
+	case s.PredicateRejectDlt > 0 || s.EntityStateRejectDlt > 0:
+		return "contract-reject (non-canonical predicate/entity-id dropped fail-closed — check *_contract_rejections_total{reason})"
 	case s.DropsDelta > 0 && s.PendingTrend < pendingGrow:
 		return "publisher-bound (instrument ceiling — invalid melt window, raise workers)"
 	case s.DropsDelta == 0 && s.PendingTrend >= pendingGrow:
@@ -516,6 +528,7 @@ func printSummary(s windowSummary) {
  physics fps     %.1f  (%s)
  ingest pending  %.0f → %.0f  (Δ %+.0f)
  ingested        %.1f entities/s updated   rejections Δ %.0f
+ contract-reject predicate Δ %.0f   entity-id Δ %.0f
  e2e latency     p50 %.1fms   p99 %.1fms
  index writes    %.1f puts/s (incoming %.1f)   %.1f events/s   amp %.1f puts/idx-entity
  ──
@@ -528,6 +541,7 @@ func printSummary(s windowSummary) {
 		s.PhysicsFPS, validLabel(s.ValidWindow),
 		s.PendingStart, s.PendingEnd, s.PendingTrend,
 		s.IngestedPerS, s.RejectionsDlt,
+		s.PredicateRejectDlt, s.EntityStateRejectDlt,
 		s.E2EP50Seconds*1000, s.E2EP99Seconds*1000,
 		s.IndexPutsPerS, s.IncomingPutsPerS, s.IndexEventsPerS, s.IndexWriteAmp,
 		s.Classification)
