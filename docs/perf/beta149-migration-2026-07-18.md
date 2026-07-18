@@ -156,3 +156,71 @@ ingest-ceiling reduction** (contract validation on the serialized write path).
 Favorable overall — far less redundant index maintenance — but the ingest cost
 is real, attributed, and worth an upstream optimization (drop the redundant
 read-path re-validation in graph-ingest's own RMW).
+
+## Update: beta.151 (gh#562 read-side fix) — no macro recovery, true cause found
+
+semstreams shipped the gh#562 fix in **beta.151** (`UnmarshalEntityStateTrusted`
+on the five owner RMW reads; validating decode kept for external readers;
+micro-bench 33.0→29.7µs/RMW decode, 163→114 allocs). We re-measured. semboids
+now pins beta.151 (builds/boots clean, zero contract rejections — passes
+beta.150's new triple-lane structural gate too).
+
+### The fix did not recover the ingest ceiling
+
+Clean interleaved three-way (fresh NATS per run, settle-waited, alternating
+order — within-session; absolute numbers drift ~10% across sessions, so only
+within-session comparisons are trusted):
+
+| | drain | vs b146 |
+|---|---:|---|
+| beta.146 | 2771/s | — |
+| beta.149 | 2520/s | −9.1% |
+| beta.151 | 2519/s | −9.1% |
+
+**b151 is identical to b149** (<0.1%; per-mutation processing 2593 vs 2592µs).
+The fix landed structurally (profile: `MergeEntity` → `UnmarshalEntityStateTrusted`,
+read-side `ValidateDecodedEntityState` 550ms→~0 on the hot path) but produced no
+macro recovery — the read-side re-validation, though genuinely redundant, was not
+the bottleneck.
+
+### Index-contention hypothesis: refuted
+
+Four-cell isolation `{b146, b151} × {index-on, index-off}` (does the index side's
+ADR-077 owner-discovery LIST traffic on the shared NATS connection cause it?):
+
+| | index-on | index-off | index cost |
+|---|---:|---:|---:|
+| beta.146 | 2533/s | 2781/s | +248/s |
+| beta.151 | 2352/s | 2610/s | +258/s |
+
+The b146→b151 gap **persists with the index off** (−6.2% vs −7.2%), and the index
+cost is **identical** for both versions (+248 vs +258/s). So it is *not* a
+second-degree index effect — the regression lives in graph-ingest's own
+per-mutation write path.
+
+### The cause: write-side contract validation, ~3× per mutation
+
+`MergeEntity` diff, beta.146 → beta.151 (code-definitive):
+
+- beta.146: plain `json.Marshal` / `json.Unmarshal` — **zero validation**.
+- beta.149+: `graph.ValidateEntityStateContract(entity)` at the top **and**
+  `graph.MarshalEntityState` (which itself calls `ValidateEntityStateContract`
+  before marshaling) at **two** sites (the candidate and the merged result). So
+  every mutation runs the canonical-contract validation ~3× — each pass
+  `ParsePredicate`-ing every triple. Our boids carry ~15–30 triples, so the cost
+  scales with fan-out.
+
+On the per-key-serialized ingest lane (ADR-072), this per-mutation CPU extends
+each lane's cycle, dropping the ceiling ~6–9% for high-fan-out producers. The
+gh#562 fix removed one of the ~3–4 passes (the read-side), which is why it did not
+move the macro number; the merged-marshal re-validation (the safety invariant that
+*lets* the read be trusted) and the top-level contract check remain — inherent to
+the fail-closed contract. A `MergeEntity` micro-bench with/without the contract
+validation would give the clean per-op number; reducing redundant re-validation of
+already-validated resident triples on the merged-marshal path is the analogous
+follow-up to gh#562, at semstreams' discretion given the safety invariant.
+
+**Bottom line:** the wave's net for semboids is unchanged — ~14× lower index
+write amplification, ~6–9% lower ingest ceiling from per-mutation contract
+validation (not the read-side redundancy, not index contention). Favorable
+overall.
