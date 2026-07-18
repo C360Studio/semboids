@@ -106,23 +106,53 @@ adds 550 ms**. Across the process the canonical-contract validation appears as
 `ValidateEntityPredicates` + `vocabulary.ParsePredicate` (~0.9 % each), plus
 graph-clustering re-validating on its own contract watch (~1.85 %).
 
-**Caveat — this is not yet a clean, filable regression.** Two gaps:
-1. **The box was heavily loaded** (`load ~10` on 12 cores throughout — a
-   `semconnect-conformance` semstreams+NATS stack and a second AI agent were
-   running), so absolute numbers are depressed and the −13 % is likely
-   *amplified* by CPU/IO contention on the shared Docker/NATS path the ingest
-   ceiling is bottlenecked on (#480, I/O-RTT-bound).
-2. **The measured new-validation CPU (~4–5 %) is smaller than the −13 %
-   throughput gap**, so validation alone does not fully explain it on this box —
-   contention amplification and/or other write-path serialization is implicated.
+### Confirmed on a quiet box (sibling stacks stopped)
 
-**To close it:** re-run on a quiet box (pause the sibling stacks) with a
-b146↔b149 CPU-profile diff, to get clean absolute numbers and a full attribution
-before filing the verified upstream issue the checklist asks for. The **direction
-is established** (beta.149 ingests measurably slower for a high-fanout snapshot
-firehose); the **magnitude and full cause are pending a quiet-box run**.
+Re-ran the same isolated A/B with the `semconnect-conformance` stack gone
+(rest-load ~2.5, though the semboids stack itself drives it to ~7–9 during a run):
 
-Net trade-off for semboids: beta.149 buys a ~14× cut in index write
-amplification at the cost of a ~10–15 %-ish ingest-ceiling reduction (validation
-on the write path). Both are the substrate doing more correctness work per
-mutation while doing far less redundant index maintenance.
+| Run | beta.146 | beta.149 | Δ |
+|---|---:|---:|---|
+| Round 1 (b149 first) | 2492 | 2158 | −13.4% |
+| Round 2 (b146 first) | 2529 | 2326 | −8.0% |
+| **Aggregate mean** | **~2511** | **~2242** | **−10.7%** |
+| Best window | ~2640 | ~2405 | −8.9% |
+
+The gap barely moved from the loaded box (−13 %) to the quiet box (−11 %), so
+contention was *not* the driver — it added a couple of points of variance, no
+more. Across 8 measurements and both run orders the effect is stable:
+**beta.149 ingests ~9–11 % slower** for semboids' high-fanout snapshot firehose.
+
+### Attribution (b146↔b149 profile diff): validation on the serialized RMW path
+
+- **beta.146 ingest path has no validation.** `processIngest → ingestEntity →
+  MergeEntity`, with a plain `json.Unmarshal` of the stored entity — no
+  `UnmarshalEntityState`, no `Validate*`, no `ParsePredicate` (they do not exist
+  at beta.146).
+- **beta.149 swaps the plain decode for the validating `UnmarshalEntityState`**
+  (8.35 % cum): `json.Unmarshal` 2.77 s (pre-wave) **+ `ValidateDecodedEntityState`
+  550 ms (new)**, plus `validateEntityStateGuardEntry` 1.94 %, `ValidateEntityStateContract`
+  1.89 %, `ParsePredicate` per triple.
+- **Both are I/O-bound** — `syscall.Write` (NATS/KV) ~20 % of CPU on each — and
+  ingest is **per-key serialized** (ADR-072 keyed lanes). So each mutation's
+  cycle is `read → decode+validate → merge → CAS-write`, serialized per entity
+  ID. The new validation is only ~4–5 % of aggregate CPU, but it sits *on that
+  serialized critical path*, extending every cycle's latency, which is why a
+  small CPU cost yields a ~10 % per-key throughput drop.
+
+**Sharp point for upstream:** `UnmarshalEntityState` re-validates ENTITY_STATES
+that **graph-ingest itself wrote and already validated on the way in** (via the
+candidate-side `ValidateEntityPredicates` + guard). For the sole writer's own
+read-modify-write, that read-path re-validation is redundant — the bucket can't
+have gone non-canonical since graph-ingest is its only writer. A non-validating
+fast-path decoder for the RMW read (keeping the validating decoder for external
+graph-view consumers) would remove the 550 ms from the hot cycle. That is the
+verified-regression the sister-repo checklist asks us to file.
+
+### Net trade-off
+
+beta.149 buys a **~14× cut in index write amplification** for a **~10 %
+ingest-ceiling reduction** (contract validation on the serialized write path).
+Favorable overall — far less redundant index maintenance — but the ingest cost
+is real, attributed, and worth an upstream optimization (drop the redundant
+read-path re-validation in graph-ingest's own RMW).
