@@ -224,3 +224,47 @@ follow-up to gh#562, at semstreams' discretion given the safety invariant.
 write amplification, ~6–9% lower ingest ceiling from per-mutation contract
 validation (not the read-side redundancy, not index contention). Favorable
 overall.
+
+## Update 2: the −9% cause localized — ~1 extra read per mutation (semstreams#562)
+
+semstreams proposed a sharper hypothesis: the wave routes per-mutation work
+through *existing* foreign-edge helpers (partition triples by subject → foreign
+lane: claims/birth-stubs/restamps = an extra CAS write to a different entity per
+edge), which an edge-heavy boid workload would multiply — I/O round trips, not
+CPU (explaining the profile-invisible, fan-out-scaled shape). Measured it
+directly (index-off, at overload):
+
+| | ops/entity (NATS `varz` msgs ÷ entities) |
+|---|---:|
+| beta.146 | ~41 |
+| beta.151 | ~44 |
+
+**+5–6% more round trips per entity** — robust (a per-entity ratio, load-independent)
+and roughly accounts for the −6–9% throughput drop on the serialized lane. The
+foreign-edge helpers are present in both tags (327 vs 331 grep hits), consistent
+with "existing helpers."
+
+**But the extra ops are reads, not writes.** Per-bucket writes/entity (jsz
+`last_seq` deltas) are identical:
+
+| bucket | beta.146 | beta.151 |
+|---|---:|---:|
+| KV_ENTITY_STATES | 1.0 | 1.0 |
+| KV_ENTITY_SUFFIX_INDEX | 2.0 | 2.0 |
+| KV_GRAPH_INGEST_APPLIED_SEQ | 1.0 | 1.0 |
+| **graph-ingest writes/entity** | **4.0** | **4.0** |
+
+`ENTITY_STATES` grows ~1:1 with boid snapshots — so the "extra CAS *write* per
+foreign edge" doesn't multiply for semboids, because our neighbor references are
+**resident** boids (fixed 200-flock; births only at spawn), so the birth-stub /
+restamp path finds every target present and writes nothing. The +5–6% is
+therefore ~**1 extra read per mutation** (writes flat, total ops up).
+
+**Complete cause:** the −6–9% regression = ~1 extra KV read per mutation (I/O,
+~+5–6%) + the per-mutation write-side contract-validation CPU (Update 1, a few %),
+both on the per-key-serialized ADR-072 lane. semstreams' round-trips *direction*
+is confirmed; their write-multiplication *mechanism* would bite a workload that
+births/restamps foreign targets, but semboids (resident targets) sees it as a
+fixed extra read instead. The exact read isn't localizable from metrics (jsz seq
+counts only writes) — handed to semstreams with the `OWNER_CLAIMS`-reader-absent
+observe-only-seam lead (semstreams#562). Reported: comment 5012453853.
