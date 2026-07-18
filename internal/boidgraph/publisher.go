@@ -186,7 +186,7 @@ func (p *Publisher) removeNeighborTriples(ctx context.Context, id uint32) {
 	}
 	req, err := json.Marshal(map[string]any{
 		"subject":   BoidEntityID(p.orgID, p.platform, id),
-		"predicate": "flock.neighbor",
+		"predicate": "flock.neighbor.of",
 	})
 	if err != nil {
 		p.logger.Error("marshal triple remove", slog.Any("error", err))

@@ -166,8 +166,8 @@ func TestSnapshotsLandAndReplace(t *testing.T) {
 			t.Fatalf("predicate %s count = %d, want exactly 1 (merge must replace)", p, counts[p])
 		}
 	}
-	if counts["flock.neighbor"] >= 20 {
-		t.Fatalf("flock.neighbor triples = %d — accumulating instead of replacing", counts["flock.neighbor"])
+	if counts["flock.neighbor.of"] >= 20 {
+		t.Fatalf("flock.neighbor triples = %d — accumulating instead of replacing", counts["flock.neighbor.of"])
 	}
 
 	// Physics cadence held while the graph pipeline ran: ≥ 20 frames/s

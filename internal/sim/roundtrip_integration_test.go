@@ -30,8 +30,8 @@ func predatorRuleFile(t *testing.T, enabled bool) string {
 		"type":    "expression",
 		"enabled": enabled,
 		"conditions": []map[string]any{
-			{"field": "zone_type", "operator": "eq", "value": "predator"},
-			{"field": "event", "operator": "eq", "value": "entered"},
+			{"field": "$message.zone_type", "operator": "eq", "value": "predator"},
+			{"field": "$message.event", "operator": "eq", "value": "entered"},
 		},
 		"logic": "and",
 		"on_enter": []map[string]any{{
@@ -85,6 +85,7 @@ func startRoundTrip(t *testing.T, ctx context.Context, ruleEnabled bool) <-chan 
 	}
 
 	ruleCfg := map[string]any{
+		"pack_id":                  "semboids-test",
 		"rules_files":              []string{predatorRuleFile(t, ruleEnabled)},
 		"enable_graph_integration": false,
 		"ports": map[string]any{

@@ -75,7 +75,7 @@ func publishTwoClusters(t *testing.T, ctx context.Context, tc *natsclient.TestCl
 					continue
 				}
 				triples = append(triples, map[string]any{
-					"subject": boidID(m), "predicate": "flock.neighbor",
+					"subject": boidID(m), "predicate": "flock.neighbor.of",
 					"object": boidID(other), "source": "spike", "confidence": 1.0,
 				})
 			}

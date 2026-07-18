@@ -1,5 +1,5 @@
 // Package boidgraph publishes flock state into the SemStreams graph: boid
-// Graphable payloads (position/velocity properties + flock.neighbor
+// Graphable payloads (position/velocity properties + flock.neighbor.of
 // relationships), snapshot derivation types, and the decoupled publisher
 // that keeps JetStream pressure off the physics loop (ADR-001; design D1/D2
 // of add-graph-pane).
@@ -49,7 +49,7 @@ func (e *Entity) EntityID() string {
 
 // Triples returns the boid's facts: position/velocity properties, the
 // always-present neighbor count (keeps predicate-level merge firing every
-// snapshot — spike 1.1), and flock.neighbor relationships.
+// snapshot — spike 1.1), and flock.neighbor.of relationships.
 func (e *Entity) Triples() []message.Triple {
 	entityID := e.EntityID()
 	mk := func(predicate string, object any) message.Triple {
@@ -70,7 +70,7 @@ func (e *Entity) Triples() []message.Triple {
 		mk("flock.neighbor.count", float64(len(e.Boid.Neighbors))),
 	}
 	for _, n := range e.Boid.Neighbors {
-		triples = append(triples, mk("flock.neighbor", BoidEntityID(e.OrgID, e.Platform, n)))
+		triples = append(triples, mk("flock.neighbor.of", BoidEntityID(e.OrgID, e.Platform, n)))
 	}
 	return triples
 }

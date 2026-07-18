@@ -82,7 +82,7 @@ func (b *bridgeState) applyEntity(key string, value []byte, deleted bool) {
 			if v, ok := tr.Object.(float64); ok {
 				e.Y = v
 			}
-		case "flock.neighbor":
+		case "flock.neighbor.of":
 			if v, ok := tr.Object.(string); ok {
 				e.Neighbors = append(e.Neighbors, v)
 			}

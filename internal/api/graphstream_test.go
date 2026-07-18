@@ -13,7 +13,7 @@ func entityValue(t *testing.T, x, y float64, neighbors ...string) []byte {
 		{"predicate": "flock.neighbor.count", "object": float64(len(neighbors))},
 	}
 	for _, n := range neighbors {
-		triples = append(triples, map[string]any{"predicate": "flock.neighbor", "object": n})
+		triples = append(triples, map[string]any{"predicate": "flock.neighbor.of", "object": n})
 	}
 	data, err := json.Marshal(map[string]any{"triples": triples})
 	if err != nil {
@@ -55,10 +55,10 @@ func TestBridgeDuplicateTriplesLastWriteWins(t *testing.T) {
 	value := []byte(`{"triples":[
 		{"predicate":"flock.position.x","object":1},
 		{"predicate":"flock.neighbor.count","object":1},
-		{"predicate":"flock.neighbor","object":"boid.9"},
+		{"predicate":"flock.neighbor.of","object":"boid.9"},
 		{"predicate":"flock.position.x","object":5},
 		{"predicate":"flock.neighbor.count","object":1},
-		{"predicate":"flock.neighbor","object":"boid.2"}
+		{"predicate":"flock.neighbor.of","object":"boid.2"}
 	]}`)
 	b := newBridgeState()
 	b.applyEntity("boid.1", value, false)

@@ -195,7 +195,7 @@ func TestPublisherRemovesEmptiedNeighborSets(t *testing.T) {
 	req := remover.requests[0]
 	if req["_subject"] != "graph.mutation.triple.remove" ||
 		req["subject"] != "c360.semboids.sim.flock.boid.0" ||
-		req["predicate"] != "flock.neighbor" {
+		req["predicate"] != "flock.neighbor.of" {
 		t.Fatalf("remove request = %v", req)
 	}
 }
