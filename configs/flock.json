@@ -138,6 +138,7 @@
       "name": "rule-processor",
       "enabled": true,
       "config": {
+        "pack_id": "semboids",
         "rules_files": [
           "configs/rules/zone-steering/predator.json",
           "configs/rules/zone-steering/food.json",

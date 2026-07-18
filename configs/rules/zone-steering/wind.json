@@ -6,8 +6,8 @@
     "description": "Boid enters a wind zone: apply the zone's constant directional push while inside.",
     "enabled": true,
     "conditions": [
-      {"field": "zone_type", "operator": "eq", "value": "wind"},
-      {"field": "event", "operator": "eq", "value": "entered"}
+      {"field": "$message.zone_type", "operator": "eq", "value": "wind"},
+      {"field": "$message.event", "operator": "eq", "value": "entered"}
     ],
     "logic": "and",
     "on_enter": [
@@ -29,8 +29,8 @@
     "name": "Wind zone exit → cancel modifier",
     "enabled": true,
     "conditions": [
-      {"field": "zone_type", "operator": "eq", "value": "wind"},
-      {"field": "event", "operator": "eq", "value": "exited"}
+      {"field": "$message.zone_type", "operator": "eq", "value": "wind"},
+      {"field": "$message.event", "operator": "eq", "value": "exited"}
     ],
     "logic": "and",
     "on_enter": [

@@ -36,8 +36,8 @@ func cullRuleFile(t *testing.T, enabled bool) string {
 		"type":    "expression",
 		"enabled": enabled,
 		"conditions": []map[string]any{
-			{"field": "zone_type", "operator": "eq", "value": "predator"},
-			{"field": "event", "operator": "eq", "value": "lingered"},
+			{"field": "$message.zone_type", "operator": "eq", "value": "predator"},
+			{"field": "$message.event", "operator": "eq", "value": "lingered"},
 		},
 		"logic": "and",
 		"on_enter": []map[string]any{{
@@ -156,6 +156,7 @@ func startCullChain(
 	// from deps.LifecycleManager (factory.go). lifecycle_transition publishes
 	// nothing, so only the zone-events input port is needed.
 	startLifecycleComponent(t, ctx, registry, deps, "rule-processor-t", "rule-processor", map[string]any{
+		"pack_id":                  "semboids-test",
 		"rules_files":              []string{cullRuleFile(t, ruleEnabled)},
 		"enable_graph_integration": false,
 		"ports": map[string]any{

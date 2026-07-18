@@ -36,7 +36,7 @@ func TestBoidTriples(t *testing.T) {
 		if tr.Subject != e.EntityID() {
 			t.Fatalf("triple %q subject = %q, want %q", tr.Predicate, tr.Subject, e.EntityID())
 		}
-		if tr.Predicate == "flock.neighbor" {
+		if tr.Predicate == "flock.neighbor.of" {
 			neighborObjects = append(neighborObjects, tr.Object.(string))
 			continue
 		}
@@ -75,7 +75,7 @@ func TestNeighborCountAlwaysPresent(t *testing.T) {
 				t.Fatalf("neighbor.count = %v, want 0", tr.Object)
 			}
 		}
-		if tr.Predicate == "flock.neighbor" {
+		if tr.Predicate == "flock.neighbor.of" {
 			t.Fatal("unexpected flock.neighbor triple with no neighbors")
 		}
 	}

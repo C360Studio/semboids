@@ -6,8 +6,8 @@
     "description": "Boid enters a food zone: pull it toward the zone center while inside.",
     "enabled": true,
     "conditions": [
-      {"field": "zone_type", "operator": "eq", "value": "food"},
-      {"field": "event", "operator": "eq", "value": "entered"}
+      {"field": "$message.zone_type", "operator": "eq", "value": "food"},
+      {"field": "$message.event", "operator": "eq", "value": "entered"}
     ],
     "logic": "and",
     "on_enter": [
@@ -29,8 +29,8 @@
     "name": "Food zone exit → cancel modifier",
     "enabled": true,
     "conditions": [
-      {"field": "zone_type", "operator": "eq", "value": "food"},
-      {"field": "event", "operator": "eq", "value": "exited"}
+      {"field": "$message.zone_type", "operator": "eq", "value": "food"},
+      {"field": "$message.event", "operator": "eq", "value": "exited"}
     ],
     "logic": "and",
     "on_enter": [
