@@ -129,7 +129,13 @@ evidence that batching, not concurrency, is the lever),
 Get — **fixed beta.143**),
 [#500](https://github.com/C360Studio/semstreams/issues/500) (websocket output
 concurrent-write panic under load — **fixed beta.143**, verified live:
-per-conn write mutex now serializes the ping and frame paths).
+per-conn write mutex now serializes the ping and frame paths),
+[#562](https://github.com/C360Studio/semstreams/issues/562) (the pre-v1
+canonical-contract wave cost ~9% ingest throughput — localized via the firehose
+A/B to three live `ENTITY_STATES` contract-guard watchers fanning every write
+back over the shared connection, ~+3 msgs/entity read tax — **fixed beta.152**
+via #570 write-path collapse + #572 watcher retirement; read tax → 0 verified
+live, ~14× lower index write amplification the offsetting win).
 
 ## Development
 
