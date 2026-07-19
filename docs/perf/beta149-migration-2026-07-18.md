@@ -321,3 +321,11 @@ beta.151 in the PR — `7485c785` is untagged main; adopt the tag once it carrie
 read-side redundancy and the "residual = write-path CPU" call were both plausible
 from the profile and both wrong at the macro level — resolved only by the
 firehose rig (op-count parity, index on/off isolation), not by reading code.
+
+## Update 4: adopted — beta.152
+
+The fixes tagged as **beta.152** (= beta.151 + #570 + #572 + one openspec doc-tick,
+`4568b8de`; code byte-identical to `7485c785`). semboids pins beta.152: `task
+check:push` green, live boot clean (entities landing, zero contract rejections,
+`KV_ENTITY_STATES` consumers = 3 — watchers retired). Update 3's recovery
+measurement stands as the beta.152 result. Migration PR moves 146 → beta.152.
