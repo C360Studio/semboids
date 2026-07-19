@@ -48,8 +48,11 @@ func (e *Entity) EntityID() string {
 }
 
 // Triples returns the boid's facts: position/velocity properties, the
-// always-present neighbor count (keeps predicate-level merge firing every
-// snapshot — spike 1.1), and flock.neighbor.of relationships.
+// always-present neighbor count (a real degree property and the graph pane's
+// neighbor-set reset sentinel — api/graphstream.go), and flock.neighbor.of
+// relationships. The neighbor set is cleared on emptying via an explicit
+// triple.remove, not the count: the stream merge cannot express now-zero (see
+// publisher.go / TestNeighborEmptyGate, verified beta.152; semstreams#578).
 func (e *Entity) Triples() []message.Triple {
 	entityID := e.EntityID()
 	mk := func(predicate string, object any) message.Triple {
