@@ -22,7 +22,7 @@
 - [x] 0.1 `v1.0.0-beta.149` tagged on `main` at `7db0cdcb` (2026-07-18). It is
       beta.148 + Stop-idempotency (#550) + agentic-tools (#552); the predicate/
       entity contracts arrived earlier in the beta.147 wave and are live in the tag.
-- [ ] 0.2 Capture the beta.146 baseline for A/B (freeze `docs/perf/` or re-run
+- [x] 0.2 Capture the beta.146 baseline for A/B (freeze `docs/perf/` or re-run
       fresh on the same box; record dials + boid counts).
 
 ## 1. Predicate rename `flock.neighbor` → `flock.neighbor.of` — DONE
@@ -94,7 +94,7 @@
 
 ## 7. Destructive wipe + canonical reseed (the one window)
 
-- [ ] 7.1 Boot beta.149 on a fresh NATS volume (isolated :24222 per `task demo`);
+- [x] 7.1 Boot beta.149 on a fresh NATS volume (isolated :24222 per `task demo`);
       let one snapshot land. Prove: config loads with `pack_id`, boids/zones appear
       in `ENTITY_STATES`, `PREDICATE_INDEX` holds raw `predicate3.entity6` keys, no
       `PREDICATE_CATALOG`, INCOMING edges + graph-clustering communities render, and
@@ -103,24 +103,24 @@
 
 ## 8. Performance A/B + evidence
 
-- [ ] 8.1 Run the matched sweep on beta.149 vs the beta.146 baseline (same dials/
+- [x] 8.1 Run the matched sweep on beta.149 vs the beta.146 baseline (same dials/
       boid counts); record `index_write_amp`, `index_puts_per_s`,
       `incoming_index_puts_per_s`, events/s, `consumer_pending` inflection, and
       e2e-latency quantiles. Report amp's components (raw-key vs replacement vs
       sharding), not just the total.
-- [ ] 8.2 Write the A/B to `docs/perf/` (baseline vs beta.149, per-metric delta,
+- [x] 8.2 Write the A/B to `docs/perf/` (baseline vs beta.149, per-metric delta,
       watcher-ordering finding). File a verified semstreams issue for any
       regression, sweep JSON attached.
-- [ ] 8.3 Complete the checklist evidence envelope (dependency transition,
+- [x] 8.3 Complete the checklist evidence envelope (dependency transition,
       composition + `pack_id`s, wipe, reseed/replay parity, event-consumer = none,
       verification commands + result).
 
 ## 9. Close out
 
-- [ ] 9.1 `openspec validate migrate-semstreams-beta149 --strict` (update the
+- [x] 9.1 `openspec validate migrate-semstreams-beta149 --strict` (update the
       proposal/design enforcement framing to match the corrected reality above,
       and the ingest-telemetry delta to the real metric names).
-- [ ] 9.2 Refresh the README semstreams-pin line + memory (beta.146 → beta.149;
+- [x] 9.2 Refresh the README semstreams-pin line + memory (beta.146 → beta.149;
       the four fixes; the amp/throughput finding). Commit in conventional splits;
       archive the change.
 - [ ] 9.3 Follow-up (separate change): ADR-077 replacement semantics may now
