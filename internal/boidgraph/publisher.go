@@ -31,8 +31,12 @@ type StreamPublisher interface {
 }
 
 // TripleRemover issues graph.mutation.triple.remove requests — used on a
-// boid's non-empty→empty neighbor transition, which predicate-level merge
-// cannot express (spike 1.1).
+// boid's non-empty→empty neighbor transition. The stream-upsert path
+// (MergeEntity/MergeTriples) is add/merge-only and cannot express now-zero: an
+// arrival carrying no flock.neighbor.of triple leaves the resident edges in
+// place (correct multi-writer merge). Verified-necessary on beta.152
+// (TestNeighborEmptyGate); a substrate-native replacement is tracked upstream
+// as semstreams#578.
 type TripleRemover interface {
 	Request(ctx context.Context, subject string, data []byte, timeout time.Duration) ([]byte, error)
 }
@@ -179,7 +183,9 @@ func (p *Publisher) publishSnapshot(ctx context.Context, s Snapshot) {
 }
 
 // removeNeighborTriples issues one idempotent predicate removal for a boid
-// whose neighbor set transitioned to empty.
+// whose neighbor set transitioned to empty — the only way to clear an emptied
+// predicate on beta.152, since the stream merge preserves absent predicates
+// (see TripleRemover; semstreams#578 tracks retiring this).
 func (p *Publisher) removeNeighborTriples(ctx context.Context, id uint32) {
 	if p.remover == nil {
 		return
