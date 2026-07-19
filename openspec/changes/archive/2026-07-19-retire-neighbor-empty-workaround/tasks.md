@@ -19,7 +19,7 @@
   (the `TripleRemover` doc, `removeNeighborTriples`) and `payload.go`
   (the `flock.neighbor.count` rationale) cite the beta.152 verification +
   `semstreams#578` instead of the beta.146 "spike 1.1" framing.
-- [ ] 2.3 Apply the `graph-snapshots` spec delta (this change's
+- [x] 2.3 Apply the `graph-snapshots` spec delta (this change's
   `specs/graph-snapshots/spec.md`) into `openspec/specs/graph-snapshots/spec.md`
   at archive time (the modified "Neighbor sets replace on each snapshot"
   requirement + the empty-set scenario).
