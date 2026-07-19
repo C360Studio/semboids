@@ -268,3 +268,56 @@ births/restamps foreign targets, but semboids (resident targets) sees it as a
 fixed extra read instead. The exact read isn't localizable from metrics (jsz seq
 counts only writes) — handed to semstreams with the `OWNER_CLAIMS`-reader-absent
 observe-only-seam lead (semstreams#562). Reported: comment 5012453853.
+
+## Update 3: the fix (semstreams main@7485c785) — read tax → 0, ingest recovers
+
+semstreams localized the +3 msgs/entity precisely: the wave (`cba784ea`, beta.147)
+added **three live `WatchAll` contract validators** on ENTITY_STATES —
+`startEntityStateGuard` (graph-ingest self-watch), `startGraphStateGuard` (rule
+processor, unconditional even with zero patterns), `startEntityContractWatch`
+(graph-clustering). Each fans every write back full-payload over the shared
+connection with a validating decode, on **watcher goroutines** (why the CPU
+profile stayed quiet; the bytes land in `syscall.Write`). My `OWNER_CLAIMS` guess
+was the wrong seam, but the read-shaped round-trips shape was right. Fixed by
+**#570** (write-path validation collapse) + **#572 / `7485c785`** (retire all
+three watchers; per-entity poison response, ADR-079). semboids builds + passes
+`task check:push` on `7485c785`.
+
+**Consumer-report confirmation:** `KV_ENTITY_STATES` consumers **6 → 3**
+(beta.151 → `7485c785`) — the three guard watchers retired.
+
+**Read-shaped delta → zero.** Ops/entity (`varz` msgs ÷ entities, index-off):
+
+| | ops/entity |
+|---|---:|
+| beta.146 | 39.77 |
+| main@`7485c785` | 39.78 |
+
+Identical — the +5–6% fan-out tax is gone.
+
+**Macro recovery (interleaved, settle-waited, same-session):**
+
+| | drain (index-on) | drain (index-off) |
+|---|---:|---:|
+| beta.146 | 2828/s | 3187/s |
+| beta.151 | 2571/s (−9.1%) | — |
+| main@`7485c785` | 2712/s (−4.1%) | 3171/s (−0.5%) |
+
+**Index-off, graph-ingest fully recovers** to baseline (−0.5%, noise) — so the
+write/merge path carries no residual. Index-on, ~55% of the −9.1% is back and a
+**~4% residual** remains — and it appears *only* with the index-side consumers
+running (index-off it is zero), so it is **index-side, not the merge path**.
+Likely graph-clustering's validation, now folded into its polled read seam (#572),
+doing per-read work beta.146's clustering did not — a hypothesis, not measured;
+pinnable with a clustering on/off isolation, filed separately if worth it.
+
+**Decomposition of the original −9.1%:** dominant share = three-watcher fan-out
+reads (fixed by #572, read delta → 0); graph-ingest write path fully recovers; a
+small ~4% index-side residual remains (index-on only). semboids stays pinned to
+beta.151 in the PR — `7485c785` is untagged main; adopt the tag once it carries
+#570 + #572.
+
+**Method note (two attribution near-misses, both caught by measuring):** the
+read-side redundancy and the "residual = write-path CPU" call were both plausible
+from the profile and both wrong at the macro level — resolved only by the
+firehose rig (op-count parity, index on/off isolation), not by reading code.
