@@ -6,7 +6,7 @@ TBD - created by archiving change add-graph-pane. Update Purpose after archive.
 ### Requirement: Sigma.js graph view of the substrate state
 The right pane SHALL render the boid graph with sigma.js (WebGL): nodes at
 the boids' real world positions (normalized from graph data — no force
-layout), edges from `flock.neighbor` relationships, node color derived from
+layout), edges from `flock.neighbor.of` relationships, node color derived from
 the entity's community assignment via the categorical palette (a neutral
 color for unassigned). The pane SHALL reflect the SSE stream — the
 substrate's view of the flock, including its lag relative to the canvas
