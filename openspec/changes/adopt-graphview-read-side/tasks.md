@@ -61,26 +61,26 @@
 
 ## 6. Tests — one per spec scenario
 
-- [ ] 6.1 `Consumer count is flat in client count`: N clients connect, assert
+- [x] 6.1 `Consumer count is flat in client count`: N clients connect, assert
       JetStream consumer counts on both buckets equal the zero-client baseline
       for any N.
-- [ ] 6.2 `Disconnect leaves the shared view running`: all clients disconnect,
+- [x] 6.2 `Disconnect leaves the shared view running`: all clients disconnect,
       a later client is served an initial sync with no new watcher opened.
-- [ ] 6.3 `Snapshot and stream do not overlap or gap`: write continuously while
+- [x] 6.3 `Snapshot and stream do not overlap or gap`: write continuously while
       a client attaches; assert no missed entity change and no redelivery of a
       change already in the snapshot.
 - [x] 6.4 `Initial sync then increments` and `Bounded browser traffic`: preserve
       the existing assertions in `graphstream_integration_test.go`.
-- [ ] 6.5 `Slow client does not stall its peers`: write-gated slow reader beside
+- [x] 6.5 `Slow client does not stall its peers`: write-gated slow reader beside
       a fast reader; fast client keeps receiving current batches, slow client
       receives coalesced latest-state rather than a backlog.
-- [ ] 6.6 `Stale projection is not served silently`: induce watcher loss, assert
+- [x] 6.6 `Stale projection is not served silently`: induce watcher loss, assert
       the response ends rather than continuing to emit last-known state.
-- [ ] 6.7 `Stream starts before clustering has ever run`: no COMMUNITY_INDEX
+- [x] 6.7 `Stream starts before clustering has ever run`: no COMMUNITY_INDEX
       bucket, connection healthy, entity data flowing, no community values.
-- [ ] 6.8 `Assignments appear mid-connection`: create the bucket after a client
+- [x] 6.8 `Assignments appear mid-connection`: create the bucket after a client
       has connected; the same connection begins carrying assignments.
-- [ ] 6.9 Run the suite under `-race`; no sleeps for synchronization — gate on
+- [x] 6.9 Run the suite under `-race`; no sleeps for synchronization — gate on
       Hooks callbacks or channel signals.
 
 ## 7. Live verification

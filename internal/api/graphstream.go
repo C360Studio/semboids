@@ -189,18 +189,40 @@ func (s *Service) handleGraphStream(w http.ResponseWriter, r *http.Request) {
 	// COMMUNITY_INDEX is optional: it may not exist until clustering runs, and
 	// clustering can be starved indefinitely. A nil channel blocks forever in
 	// select, which is exactly the "no communities" behavior we want.
-	var communityDeltas <-chan []graphview.Delta[[]string]
-	if cv := s.views.communityView(); cv != nil {
+	//
+	// Attachment is retried on the flush tick rather than attempted only once at
+	// connect: the bucket can appear long after a client connected, and the spec
+	// requires assignments to start flowing on the SAME connection without a
+	// reconnect. The retry is a nil check plus a method call, so it costs
+	// nothing once attached.
+	var (
+		communityDeltas <-chan []graphview.Delta[[]string]
+		communitySub    *graphview.Subscription[[]string]
+	)
+	defer func() {
+		if communitySub != nil {
+			communitySub.Unsubscribe()
+		}
+	}()
+	attachCommunities := func() {
+		if communityDeltas != nil {
+			return
+		}
+		cv := s.views.communityView()
+		if cv == nil {
+			return
+		}
 		csnap, csub, cerr := cv.SnapshotAndSubscribe(ctx)
 		if cerr != nil {
-			s.logger.Info("community view unavailable; streaming without communities",
+			s.logger.Debug("community view not subscribable yet; retrying",
 				"error", cerr.Error())
-		} else {
-			defer csub.Unsubscribe()
-			state.seedCommunities(csnap)
-			communityDeltas = csub.Deltas()
+			return
 		}
+		communitySub = csub
+		state.seedCommunities(csnap)
+		communityDeltas = csub.Deltas()
 	}
+	attachCommunities()
 
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
@@ -240,6 +262,7 @@ func (s *Service) handleGraphStream(w http.ResponseWriter, r *http.Request) {
 			state.applyCommunityDeltas(deltas)
 
 		case <-ticker.C:
+			attachCommunities()
 			batch := state.flush()
 			if batch == nil {
 				continue
