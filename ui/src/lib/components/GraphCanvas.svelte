@@ -51,6 +51,15 @@
       $effect(() => {
         const nodes = stream.nodes;
         const communities = stream.communities;
+        // Subscribe to node changes BEFORE the readiness guard. sigma/graphology
+        // load asynchronously, so the first run of this effect bails below; if it
+        // bails having only read `stream.nodes` (a plain field — reading it does
+        // not subscribe, only touching the map's contents does), its sole
+        // dependency is `communities`. When clustering has not run, COMMUNITY_INDEX
+        // is empty, batches carry no `communities` key, that state is never
+        // reassigned, and the effect never re-runs — leaving the pane permanently
+        // empty even though entities are streaming fine.
+        void nodes.size;
         if (!graph || !sigma) return;
 
         // Plain Set: a per-run local working set, deliberately not reactive.
