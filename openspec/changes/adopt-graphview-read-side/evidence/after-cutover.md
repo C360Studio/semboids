@@ -140,3 +140,66 @@ The store therefore re-arms itself when it observes `readyState === CLOSED`,
 which also covers proxy 502s during a backend outage. Three unit tests pin it:
 re-arm on CLOSED, leave a still-retrying stream alone, and never reconnect
 after an explicit disconnect.
+
+## 8.1 / 8.2 / 8.3 Close-out
+
+**8.1** `task check:push` green: build, vet, gofmt, revive, `-race` unit and
+integration. UI gate green too: eslint, svelte-check (0 errors), 24 vitest
+tests, build.
+
+**8.2 No performance win is claimed.** The proposal recorded the pre-change
+measurement as below the noise floor (interleaved A/B: +1824 / +1830 / −919
+msgs/s, mean +912, stdev 1585) and nothing measured during implementation
+contradicts it. What this change delivers is structural:
+
+- JetStream consumers went from `3 + N` and `N` to a flat `4` and `1`
+- decode and contract validation happen once per write instead of once per
+  write per client
+- snapshot capture costs ~27ms at a 48x larger projection and never stalls
+  the watcher
+
+At the single-viewer scale semboids is actually used at, the expected runtime
+gain remains zero. Anyone reading a perf story into this change is reading it
+wrong.
+
+**8.3 No substrate gaps found.** `pkg/graphview` behaved as ADR-081 describes
+throughout — atomic snapshot-and-subscribe, per-subscriber coalescing,
+fail-closed watcher loss, typed poison, and the Hooks seam all worked without
+an app-side shim. Nothing to file upstream from this change.
+
+Two defects WERE found, both app-side and both fixed here rather than worked
+around: the GraphCanvas reactivity race that left the pane blank whenever
+clustering had never run, and the handler resolving the community view only
+once at connect.
+
+## Functional verification — does semboids still work?
+
+Fresh stack, default config, after the full change:
+
+| check | result |
+|---|---|
+| physics | 30fps (tick 4429 → 4489 over 2s) |
+| frames → canvas | boids, zones, and flee-tinted boids all painting |
+| graph pane | nodes and edges rendering from the shared views |
+| SSE | 7 batches / 6s |
+| rules API | all four kinds readable; flee toggled off and back on |
+| dial | 1 → 5 → 1 Hz accepted |
+| spawn | +50 accepted, population 253 |
+| graphview health | `caught_up` 1/1, `poison_total` 0, `watcher_lost_total` 0 |
+
+`evidence/semboids-working-after-change.png` is the visual record.
+
+Note on method: an intermediate screenshot appeared to show a blank flock
+pane. Sampling the canvas pixels directly disproved it — background `#161616`
+plus boid blue `120,169,255` and the zone tints were all present. It was a
+screenshot capture artifact, not a defect.
+
+## Owed but deferred: the semstreams#590 soak
+
+semstreams is owed a longer soak run to settle whether graph-index lag
+plateaus or climbs without bound — the caveat stated openly in that issue,
+and the thing its validity hinges on. **Not run:** this laptop is carrying
+four other projects in parallel, and a soak measured under that contention
+would be worse than no data (the beta.149 arc already established that only
+within-session, quiet-box comparisons are trustworthy here). Deferred until
+the box is quiet, not dropped.
