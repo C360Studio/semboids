@@ -56,6 +56,24 @@ func TestDecodeBoidEntity(t *testing.T) {
 			wantNeighbors: []string{"c360.semboids-001.sim.flock.boid.9"},
 		},
 		{
+			// Upstream gh#466 appends duplicate predicates with the newest at
+			// the tail; the count marker resets the neighbor list, so only the
+			// latest set survives.
+			name: "duplicate predicates resolve last-write-wins",
+			key:  testBoidID,
+			value: boidStateJSON(
+				triple("flock.position.x", "1") + "," +
+					triple("flock.neighbor.count", "1") + "," +
+					triple("flock.neighbor.of", `"c360.semboids-001.sim.flock.boid.9"`) + "," +
+					triple("flock.position.x", "5") + "," +
+					triple("flock.neighbor.count", "1") + "," +
+					triple("flock.neighbor.of", `"c360.semboids-001.sim.flock.boid.2"`),
+			),
+			wantKeep:      true,
+			wantX:         5,
+			wantNeighbors: []string{"c360.semboids-001.sim.flock.boid.2"},
+		},
+		{
 			name:     "non-boid key maps to absence",
 			key:      "c360.semboids-001.sim.flock.zone.1",
 			value:    boidStateJSON(triple("flock.position.x", "1")),

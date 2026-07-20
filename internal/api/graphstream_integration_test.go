@@ -14,6 +14,7 @@ import (
 
 	"github.com/c360studio/semstreams/component"
 	"github.com/c360studio/semstreams/natsclient"
+	"github.com/c360studio/semstreams/pkg/graphview"
 	"github.com/c360studio/semstreams/service"
 	"github.com/nats-io/nats.go/jetstream"
 )
@@ -31,11 +32,15 @@ func TestGraphStreamOverKV(t *testing.T) {
 		t.Fatalf("create ENTITY_STATES: %v", err)
 	}
 	boidKey := "c360.semboids.sim.flock.boid.0"
+	// The payload must satisfy the graph entity-state contract: the view decodes
+	// with the validating graph.UnmarshalEntityState (ADR-081 forbids the
+	// trusted decode outside graph-ingest), so id and triple subjects are
+	// required, as is 3-part predicate arity.
 	entity := func(x float64) []byte {
-		data, _ := json.Marshal(map[string]any{"triples": []map[string]any{
-			{"predicate": "flock.position.x", "object": x},
-			{"predicate": "flock.position.y", "object": 50.0},
-			{"predicate": "flock.neighbor.count", "object": 0.0},
+		data, _ := json.Marshal(map[string]any{"id": boidKey, "triples": []map[string]any{
+			{"subject": boidKey, "predicate": "flock.position.x", "object": x},
+			{"subject": boidKey, "predicate": "flock.position.y", "object": 50.0},
+			{"subject": boidKey, "predicate": "flock.neighbor.count", "object": 0.0},
 		}})
 		return data
 	}
@@ -51,6 +56,22 @@ func TestGraphStreamOverKV(t *testing.T) {
 		t.Fatalf("New: %v", err)
 	}
 	s := svc.(*Service)
+
+	// The stream is fed by process-shared views owned by the service, so the
+	// real lifecycle has to run — the handler answers 503 until the entity view
+	// attaches.
+	if err := s.Start(ctx); err != nil {
+		t.Fatalf("Start: %v", err)
+	}
+	defer func() { _ = s.Stop(5 * time.Second) }()
+
+	// Explicit synchronization rather than a sleep: wait for the supervisor to
+	// attach the view, then for its initial replay to complete, so the initial
+	// sync deterministically contains the seeded boid.
+	view := waitEntityView(t, s, 15*time.Second)
+	if err := view.WaitCaughtUp(ctx); err != nil {
+		t.Fatalf("entity view not caught up: %v", err)
+	}
 
 	// Serve the stream on a real HTTP server (httptest.NewRecorder can't
 	// stream).
@@ -114,6 +135,21 @@ func TestGraphStreamOverKV(t *testing.T) {
 	// Late-created COMMUNITY_INDEX: assignments flow once it exists…
 	// (the handler warns and streams without communities when the bucket is
 	// absent at connect — this asserts the graceful half: entities flowed.)
+}
+
+// waitEntityView blocks until the service's supervisor has attached the shared
+// ENTITY_STATES view.
+func waitEntityView(t *testing.T, s *Service, timeout time.Duration) *graphview.View[graphEntity] {
+	t.Helper()
+	deadline := time.Now().Add(timeout)
+	for time.Now().Before(deadline) {
+		if view := s.views.entityView(); view != nil {
+			return view
+		}
+		time.Sleep(20 * time.Millisecond)
+	}
+	t.Fatal("entity view never attached")
+	return nil
 }
 
 func waitBatch(t *testing.T, ch <-chan graphBatch, timeout time.Duration, ok func(graphBatch) bool) {

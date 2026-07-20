@@ -38,18 +38,18 @@
 
 ## 4. Handler rewrite
 
-- [ ] 4.1 Replace `watchBucket` usage in `handleGraphStream` with
+- [x] 4.1 Replace `watchBucket` usage in `handleGraphStream` with
       `SnapshotAndSubscribe` on each available view; seed `bridgeState` from the
       snapshots before entering the flush loop.
-- [ ] 4.2 Rewrite the connection loop as a single goroutine selecting over both
+- [x] 4.2 Rewrite the connection loop as a single goroutine selecting over both
       `Deltas()` channels, the 500ms flush ticker, and `r.Context()`.
-- [ ] 4.3 Convert `bridgeState.applyEntity` / `applyCommunity` to consume typed
+- [x] 4.3 Convert `bridgeState.applyEntity` / `applyCommunity` to consume typed
       `Delta[T]` (upsert / delete / poison) instead of raw `(key, value,
       deleted)`; keep the coalescing and wire-shape logic intact.
-- [ ] 4.4 Handle `Deltas()` closure: inspect `Subscription.Err()` and end the
+- [x] 4.4 Handle `Deltas()` closure: inspect `Subscription.Err()` and end the
       response on `ErrWatcherLost` / `ErrViewStopped`; clean unsubscribe on
       client disconnect.
-- [ ] 4.5 Delete the `watchBucket` helper once no callers remain.
+- [x] 4.5 Delete the `watchBucket` helper once no callers remain.
 
 ## 5. Observability
 
@@ -69,7 +69,7 @@
 - [ ] 6.3 `Snapshot and stream do not overlap or gap`: write continuously while
       a client attaches; assert no missed entity change and no redelivery of a
       change already in the snapshot.
-- [ ] 6.4 `Initial sync then increments` and `Bounded browser traffic`: preserve
+- [x] 6.4 `Initial sync then increments` and `Bounded browser traffic`: preserve
       the existing assertions in `graphstream_integration_test.go`.
 - [ ] 6.5 `Slow client does not stall its peers`: write-gated slow reader beside
       a fast reader; fast client keeps receiving current batches, slow client
@@ -85,11 +85,11 @@
 
 ## 7. Live verification
 
-- [ ] 7.1 Re-run the 1.1 measurement post-change and record the result in the
+- [x] 7.1 Re-run the 1.1 measurement post-change and record the result in the
       change: consumer counts MUST be flat in N. This is the falsifiable claim.
-- [ ] 7.2 Diff live SSE output against the 1.2 golden reference — wire format
+- [x] 7.2 Diff live SSE output against the 1.2 golden reference — wire format
       byte-compatible.
-- [ ] 7.3 Compare the pane against the 1.3 screenshot at dial 1Hz — no visible
+- [x] 7.3 Compare the pane against the 1.3 screenshot at dial 1Hz — no visible
       change.
 - [ ] 7.4 `Recovery needs no reload`: with the pane open in a browser, induce
       watcher loss and confirm `EventSource` reconnects and the pane resumes

@@ -3,13 +3,14 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/nats-io/nats.go/jetstream"
+	"github.com/c360studio/semstreams/pkg/graphview"
 )
 
 // graphEntity is one boid as streamed to the graph pane.
@@ -29,8 +30,13 @@ type graphBatch struct {
 	Communities map[string]string `json:"communities,omitempty"`
 }
 
-// bridgeState coalesces KV events between SSE flushes: latest wins per
+// bridgeState coalesces view deltas between SSE flushes: latest wins per
 // entity, communities invert Members[] to entity→community at flush.
+//
+// The views coalesce once across all subscribers at their tick; this second
+// stage builds the per-client wire batch at the flush cadence. Both stages are
+// needed: the first amortizes decode across N clients, the second bounds
+// browser traffic by the flush interval rather than the dial rate.
 type bridgeState struct {
 	mu          sync.Mutex
 	dirty       map[string]graphEntity // entity ID → latest state
@@ -47,73 +53,67 @@ func newBridgeState() *bridgeState {
 	}
 }
 
-// applyEntity ingests an ENTITY_STATES event for a boid key.
-func (b *bridgeState) applyEntity(key string, value []byte, deleted bool) {
+// seedEntities loads a view snapshot as the client's initial full sync. The
+// snapshot is consistent at one view sequence and the subscription delivers
+// exactly the changes after it, so there is no gap and no duplicate between
+// this seed and the deltas that follow.
+func (b *bridgeState) seedEntities(snap graphview.Snapshot[graphEntity]) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
-	if deleted {
-		delete(b.dirty, key)
-		b.removed[key] = struct{}{}
-		return
+	for key, entry := range snap.Entries {
+		b.dirty[key] = entry.Value
 	}
-	var es struct {
-		Triples []struct {
-			Predicate string `json:"predicate"`
-			Object    any    `json:"object"`
-		} `json:"triples"`
-	}
-	if err := json.Unmarshal(value, &es); err != nil {
-		return
-	}
-	e := graphEntity{ID: key}
-	// Later triples win within one state (upstream #466 appends duplicates;
-	// newest values sit at the tail, so last-write-wins reads correctly
-	// either way).
-	for _, tr := range es.Triples {
-		switch tr.Predicate {
-		case "flock.position.x":
-			if v, ok := tr.Object.(float64); ok {
-				e.X = v
-			}
-		case "flock.neighbor.count":
-			// Marks the start of a fresh neighbor set in append order.
-			e.Neighbors = e.Neighbors[:0]
-		case "flock.position.y":
-			if v, ok := tr.Object.(float64); ok {
-				e.Y = v
-			}
-		case "flock.neighbor.of":
-			if v, ok := tr.Object.(string); ok {
-				e.Neighbors = append(e.Neighbors, v)
-			}
-		}
-	}
-	delete(b.removed, key)
-	b.dirty[key] = e
 }
 
-// applyCommunity ingests a COMMUNITY_INDEX event (level-0 entries only;
-// hierarchy levels legitimately contain everything).
-func (b *bridgeState) applyCommunity(key string, value []byte, deleted bool) {
-	if !strings.HasPrefix(key, "0.") {
-		return
-	}
+// seedCommunities loads the community snapshot, marking the map dirty so the
+// first flush carries assignments even when none change afterwards.
+func (b *bridgeState) seedCommunities(snap graphview.Snapshot[[]string]) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
-	if deleted {
-		delete(b.communities, key)
-		b.commDirty = true
-		return
+	for key, entry := range snap.Entries {
+		b.communities[key] = entry.Value
 	}
-	var c struct {
-		Level   int      `json:"level"`
-		Members []string `json:"members"`
-	}
-	if err := json.Unmarshal(value, &c); err != nil || c.Level != 0 {
-		return
-	}
-	b.communities[key] = c.Members
 	b.commDirty = true
+}
+
+// applyEntityDeltas folds one coalesced delta batch into the pending state.
+//
+// Poison is deliberately NOT treated as removal: graphview heals a poisoned key
+// on the next valid write, so holding last-known-good state beats dropping a
+// boid out of the pane because one write failed to decode.
+func (b *bridgeState) applyEntityDeltas(deltas []graphview.Delta[graphEntity]) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	for _, d := range deltas {
+		switch d.Op {
+		case graphview.DeltaUpsert:
+			delete(b.removed, d.Key)
+			b.dirty[d.Key] = d.Value
+		case graphview.DeltaDelete:
+			delete(b.dirty, d.Key)
+			b.removed[d.Key] = struct{}{}
+		case graphview.DeltaPoison:
+			// Keep the last known good value; heals on a newer valid write.
+		}
+	}
+}
+
+// applyCommunityDeltas folds one coalesced community delta batch in.
+func (b *bridgeState) applyCommunityDeltas(deltas []graphview.Delta[[]string]) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	for _, d := range deltas {
+		switch d.Op {
+		case graphview.DeltaUpsert:
+			b.communities[d.Key] = d.Value
+			b.commDirty = true
+		case graphview.DeltaDelete:
+			delete(b.communities, d.Key)
+			b.commDirty = true
+		case graphview.DeltaPoison:
+			// Keep the last known good membership.
+		}
+	}
 }
 
 // flush drains coalesced state into a batch; nil when nothing changed.
@@ -149,11 +149,14 @@ func isBoidKey(key string) bool {
 	return strings.Contains(key, ".flock.boid.")
 }
 
-// handleGraphStream serves GET <prefix>/graph/stream: an SSE stream of
-// graph batches from KV watchers on ENTITY_STATES and COMMUNITY_INDEX.
-// Watchers deliver current values first (the initial sync), then live
-// updates; the ~500ms flush loop coalesces per entity so browser traffic
-// is bounded by flush rate, not dial rate.
+// handleGraphStream serves GET <prefix>/graph/stream: an SSE stream of graph
+// batches fed by the process-shared graph views. Each client attaches as a
+// view subscriber rather than opening its own bucket watchers, so the
+// JetStream consumer count does not grow with connected clients.
+//
+// The client receives a snapshot-derived initial sync, then the ~500ms flush
+// loop coalesces per entity so browser traffic is bounded by flush rate, not
+// dial rate.
 func (s *Service) handleGraphStream(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -164,8 +167,9 @@ func (s *Service) handleGraphStream(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "streaming unsupported", http.StatusInternalServerError)
 		return
 	}
-	if s.deps.NATSClient == nil {
-		http.Error(w, "NATS unavailable", http.StatusServiceUnavailable)
+	entityView := s.views.entityView()
+	if entityView == nil {
+		http.Error(w, "graph view unavailable", http.StatusServiceUnavailable)
 		return
 	}
 
@@ -173,19 +177,29 @@ func (s *Service) handleGraphStream(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 
 	state := newBridgeState()
-	if err := s.watchBucket(ctx, "ENTITY_STATES", func(key string, value []byte, deleted bool) {
-		if isBoidKey(key) {
-			state.applyEntity(key, value, deleted)
-		}
-	}); err != nil {
-		http.Error(w, fmt.Sprintf("watch ENTITY_STATES: %v", err), http.StatusServiceUnavailable)
+
+	snap, sub, err := entityView.SnapshotAndSubscribe(ctx)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("subscribe %s: %v", entityStatesBucket, err), http.StatusServiceUnavailable)
 		return
 	}
-	// COMMUNITY_INDEX may not exist until clustering runs — degrade
-	// gracefully (pane shows neutral colors until assignments arrive).
-	if err := s.watchBucket(ctx, "COMMUNITY_INDEX", state.applyCommunity); err != nil {
-		s.logger.Info("COMMUNITY_INDEX not watchable yet; streaming without communities",
-			"error", err.Error())
+	defer sub.Unsubscribe()
+	state.seedEntities(snap)
+
+	// COMMUNITY_INDEX is optional: it may not exist until clustering runs, and
+	// clustering can be starved indefinitely. A nil channel blocks forever in
+	// select, which is exactly the "no communities" behavior we want.
+	var communityDeltas <-chan []graphview.Delta[[]string]
+	if cv := s.views.communityView(); cv != nil {
+		csnap, csub, cerr := cv.SnapshotAndSubscribe(ctx)
+		if cerr != nil {
+			s.logger.Info("community view unavailable; streaming without communities",
+				"error", cerr.Error())
+		} else {
+			defer csub.Unsubscribe()
+			state.seedCommunities(csnap)
+			communityDeltas = csub.Deltas()
+		}
 	}
 
 	w.Header().Set("Content-Type", "text/event-stream")
@@ -201,6 +215,30 @@ func (s *Service) handleGraphStream(w http.ResponseWriter, r *http.Request) {
 		case <-ctx.Done():
 			s.logger.Info("Graph stream client disconnected")
 			return
+
+		case deltas, open := <-sub.Deltas():
+			if !open {
+				// Fail closed: the view can no longer guarantee the projection
+				// is current, so end the response rather than keep emitting the
+				// last known state as though it were live. EventSource
+				// reconnects and the next attach restarts the view.
+				if err := sub.Err(); err != nil && !errors.Is(err, context.Canceled) {
+					s.logger.Info("Graph stream ended; view no longer current",
+						"error", err.Error())
+				}
+				return
+			}
+			state.applyEntityDeltas(deltas)
+
+		case deltas, open := <-communityDeltas:
+			if !open {
+				// Losing communities is not fatal — the pane falls back to
+				// neutral colors. Stop selecting on the dead channel.
+				communityDeltas = nil
+				continue
+			}
+			state.applyCommunityDeltas(deltas)
+
 		case <-ticker.C:
 			batch := state.flush()
 			if batch == nil {
@@ -217,38 +255,4 @@ func (s *Service) handleGraphStream(w http.ResponseWriter, r *http.Request) {
 			flusher.Flush()
 		}
 	}
-}
-
-// watchBucket attaches a KV watcher and pumps its events into apply until
-// ctx is cancelled. Initial values arrive before live updates (jetstream
-// WatchAll semantics), giving new clients a full sync.
-func (s *Service) watchBucket(ctx context.Context, bucket string, apply func(key string, value []byte, deleted bool)) error {
-	kv, err := s.deps.NATSClient.GetKeyValueBucket(ctx, bucket)
-	if err != nil {
-		return err
-	}
-	watcher, err := kv.WatchAll(ctx)
-	if err != nil {
-		return err
-	}
-	go func() {
-		defer func() { _ = watcher.Stop() }()
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case entry, ok := <-watcher.Updates():
-				if !ok {
-					return
-				}
-				if entry == nil {
-					continue // initial-sync completion marker
-				}
-				deleted := entry.Operation() == jetstream.KeyValueDelete ||
-					entry.Operation() == jetstream.KeyValuePurge
-				apply(entry.Key(), entry.Value(), deleted)
-			}
-		}
-	}()
-	return nil
 }
