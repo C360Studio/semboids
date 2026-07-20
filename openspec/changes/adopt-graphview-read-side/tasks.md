@@ -53,10 +53,10 @@
 
 ## 5. Observability
 
-- [ ] 5.1 Wire `graphview.Hooks` to the existing Prometheus registry: caught-up,
+- [x] 5.1 Wire `graphview.Hooks` to the existing Prometheus registry: caught-up,
       applied-revision watermark, subscriber count, coalesced/pending drops,
       poison, watcher-lost. Callbacks must be non-blocking counter/gauge sets.
-- [ ] 5.2 Confirm the new series appear on `:9090` and carry sane values under a
+- [x] 5.2 Confirm the new series appear on `:9090` and carry sane values under a
       live run.
 
 ## 6. Tests — one per spec scenario

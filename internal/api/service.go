@@ -115,7 +115,7 @@ func (s *Service) Start(ctx context.Context) error {
 	}
 	s.views = startGraphViews(func(ctx context.Context, bucket string) (graphview.WatcherSource, error) {
 		return s.deps.NATSClient.GetKeyValueBucket(ctx, bucket)
-	}, s.logger)
+	}, s.logger, newViewMetrics(s.deps.MetricsRegistry))
 	return nil
 }
 

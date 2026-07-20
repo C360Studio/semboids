@@ -45,3 +45,27 @@ No throughput claim is made — see the proposal's Non-goals. The measured
 effect at demo scale was below the noise floor before the change and nothing
 here contradicts that. The win recorded above is structural (consumer count),
 not performance.
+
+## 5.2 Read-side metrics on :9090
+
+All seven series exposed, labeled by bucket:
+
+```
+boids_graphview_applied_revision{bucket="ENTITY_STATES"} 2803
+boids_graphview_caught_up{bucket="ENTITY_STATES"} 1
+boids_graphview_caught_up{bucket="COMMUNITY_INDEX"} 1
+boids_graphview_subscribers{bucket="ENTITY_STATES"} 0   -> 3 with three clients
+boids_graphview_coalesced_drops_total{...} 0
+boids_graphview_max_pending_deltas{...} 0
+boids_graphview_poison_total{...} 0
+boids_graphview_watcher_lost_total{...} 0
+```
+
+`subscribers` tracks connected clients (0 → 3), and `caught_up` is 1 for both
+views. `applied_revision` advances on ENTITY_STATES and stays 0 on
+COMMUNITY_INDEX because nothing has ever been written there (semstreams#590).
+
+**`poison_total` = 0 against live production data** is the meaningful one: the
+cutover swapped a bespoke `json.Unmarshal` for the validating
+`graph.UnmarshalEntityState`, and this confirms real boid states satisfy the
+entity-state contract rather than silently poisoning.
