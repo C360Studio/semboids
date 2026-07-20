@@ -1,32 +1,34 @@
 package api
 
 import (
-	"encoding/json"
 	"testing"
+
+	"github.com/c360studio/semstreams/pkg/graphview"
 )
 
-func entityValue(t *testing.T, x, y float64, neighbors ...string) []byte {
-	t.Helper()
-	triples := []map[string]any{
-		{"predicate": "flock.position.x", "object": x},
-		{"predicate": "flock.position.y", "object": y},
-		{"predicate": "flock.neighbor.count", "object": float64(len(neighbors))},
+// Triple decoding is covered by graphstream_decode_test.go. These tests cover
+// what bridgeState still owns after the graphview cutover: coalescing typed
+// deltas into the per-client wire batch.
+
+func entityUpsert(key string, x, y float64, neighbors ...string) graphview.Delta[graphEntity] {
+	return graphview.Delta[graphEntity]{
+		Op:    graphview.DeltaUpsert,
+		Key:   key,
+		Value: graphEntity{ID: key, X: x, Y: y, Neighbors: neighbors},
 	}
-	for _, n := range neighbors {
-		triples = append(triples, map[string]any{"predicate": "flock.neighbor.of", "object": n})
-	}
-	data, err := json.Marshal(map[string]any{"triples": triples})
-	if err != nil {
-		t.Fatalf("marshal entity: %v", err)
-	}
-	return data
+}
+
+func communityUpsert(key string, members ...string) graphview.Delta[[]string] {
+	return graphview.Delta[[]string]{Op: graphview.DeltaUpsert, Key: key, Value: members}
 }
 
 func TestBridgeCoalescesLatestWins(t *testing.T) {
 	b := newBridgeState()
-	b.applyEntity("boid.1", entityValue(t, 1, 1), false)
-	b.applyEntity("boid.1", entityValue(t, 2, 2, "boid.2"), false)
-	b.applyEntity("boid.2", entityValue(t, 9, 9), false)
+	b.applyEntityDeltas([]graphview.Delta[graphEntity]{
+		entityUpsert("boid.1", 1, 1),
+		entityUpsert("boid.1", 2, 2, "boid.2"),
+		entityUpsert("boid.2", 9, 9),
+	})
 
 	batch := b.flush()
 	if batch == nil {
@@ -49,39 +51,34 @@ func TestBridgeCoalescesLatestWins(t *testing.T) {
 	}
 }
 
-func TestBridgeDuplicateTriplesLastWriteWins(t *testing.T) {
-	// Simulates upstream #466 append behavior: duplicated predicates with
-	// newest at the tail; the count marker resets the neighbor list.
-	value := []byte(`{"triples":[
-		{"predicate":"flock.position.x","object":1},
-		{"predicate":"flock.neighbor.count","object":1},
-		{"predicate":"flock.neighbor.of","object":"boid.9"},
-		{"predicate":"flock.position.x","object":5},
-		{"predicate":"flock.neighbor.count","object":1},
-		{"predicate":"flock.neighbor.of","object":"boid.2"}
-	]}`)
+func TestBridgeSeedFromSnapshotIsTheInitialSync(t *testing.T) {
 	b := newBridgeState()
-	b.applyEntity("boid.1", value, false)
+	b.seedEntities(graphview.Snapshot[graphEntity]{
+		Entries: map[string]graphview.Entry[graphEntity]{
+			"boid.1": {Value: graphEntity{ID: "boid.1", X: 1, Y: 2}},
+			"boid.2": {Value: graphEntity{ID: "boid.2", X: 3, Y: 4}},
+		},
+	})
+
 	batch := b.flush()
-	e := batch.Entities[0]
-	if e.X != 5 {
-		t.Fatalf("X = %v, want 5 (last write wins)", e.X)
+	if batch == nil || len(batch.Entities) != 2 {
+		t.Fatalf("initial sync = %+v, want both snapshot entities", batch)
 	}
-	if len(e.Neighbors) != 1 || e.Neighbors[0] != "boid.2" {
-		t.Fatalf("neighbors = %v, want latest set only", e.Neighbors)
+
+	// A delta after the seed coalesces on top of it rather than duplicating.
+	b.applyEntityDeltas([]graphview.Delta[graphEntity]{entityUpsert("boid.1", 9, 9)})
+	batch = b.flush()
+	if len(batch.Entities) != 1 || batch.Entities[0].X != 9 {
+		t.Fatalf("post-seed delta = %+v, want only the changed entity", batch.Entities)
 	}
 }
 
 func TestBridgeCommunityInversion(t *testing.T) {
 	b := newBridgeState()
-	comm := func(members ...string) []byte {
-		data, _ := json.Marshal(map[string]any{"level": 0, "members": members})
-		return data
-	}
-	b.applyCommunity("0.boid.1", comm("boid.1", "boid.2"), false)
-	b.applyCommunity("0.boid.5", comm("boid.5"), false)
-	b.applyCommunity("1.boid.1", comm("boid.1", "boid.2", "boid.5"), false) // higher level: ignored
-	b.applyCommunity("entity.0.boid.1", []byte(`"junk"`), false)            // reverse-lookup keys: ignored
+	b.applyCommunityDeltas([]graphview.Delta[[]string]{
+		communityUpsert("0.boid.1", "boid.1", "boid.2"),
+		communityUpsert("0.boid.5", "boid.5"),
+	})
 
 	batch := b.flush()
 	if batch == nil || batch.Communities == nil {
@@ -95,7 +92,9 @@ func TestBridgeCommunityInversion(t *testing.T) {
 	}
 
 	// Deletion (clustering Clear before re-detection) marks dirty and drops.
-	b.applyCommunity("0.boid.5", nil, true)
+	b.applyCommunityDeltas([]graphview.Delta[[]string]{
+		{Op: graphview.DeltaDelete, Key: "0.boid.5"},
+	})
 	batch = b.flush()
 	if batch == nil {
 		t.Fatal("delete did not mark dirty")
@@ -107,11 +106,35 @@ func TestBridgeCommunityInversion(t *testing.T) {
 
 func TestBridgeEntityRemoval(t *testing.T) {
 	b := newBridgeState()
-	b.applyEntity("boid.3", entityValue(t, 1, 2), false)
+	b.applyEntityDeltas([]graphview.Delta[graphEntity]{entityUpsert("boid.3", 1, 2)})
 	_ = b.flush()
-	b.applyEntity("boid.3", nil, true)
+	b.applyEntityDeltas([]graphview.Delta[graphEntity]{
+		{Op: graphview.DeltaDelete, Key: "boid.3"},
+	})
 	batch := b.flush()
 	if len(batch.Removed) != 1 || batch.Removed[0] != "boid.3" {
 		t.Fatalf("removed = %v, want [boid.3]", batch.Removed)
+	}
+}
+
+func TestBridgePoisonKeepsLastKnownGood(t *testing.T) {
+	// graphview heals a poisoned key on the next valid write, so dropping the
+	// boid out of the pane because one write failed to decode would be worse
+	// than briefly showing its previous position.
+	b := newBridgeState()
+	b.applyEntityDeltas([]graphview.Delta[graphEntity]{entityUpsert("boid.4", 7, 8)})
+	_ = b.flush()
+
+	b.applyEntityDeltas([]graphview.Delta[graphEntity]{
+		{Op: graphview.DeltaPoison, Key: "boid.4"},
+	})
+	if batch := b.flush(); batch != nil {
+		t.Fatalf("poison produced a batch %+v, want no wire change", batch)
+	}
+
+	b.applyEntityDeltas([]graphview.Delta[graphEntity]{entityUpsert("boid.4", 1, 1)})
+	batch := b.flush()
+	if len(batch.Entities) != 1 || batch.Entities[0].X != 1 {
+		t.Fatalf("healed entity = %+v, want the newer valid write", batch.Entities)
 	}
 }
