@@ -87,13 +87,13 @@ type openFunc func(ctx context.Context, bucket string) (graphview.WatcherSource,
 // views must live for the service lifetime, and a start-scoped context would
 // cancel the watchers as soon as startup finished. Teardown is driven by stop()
 // instead, which is deterministic.
-func startGraphViews(open openFunc, log logger) *graphViews {
+func startGraphViews(open openFunc, log logger, metrics *viewMetrics) *graphViews {
 	ctx, cancel := context.WithCancel(context.Background())
 	g := &graphViews{cancel: cancel}
 
 	g.wg.Add(2)
 	go supervise(ctx, &g.wg, entityStatesBucket, log, func() bool {
-		view := attach(ctx, open, entityStatesBucket, decodeBoidEntity, log)
+		view := attach(ctx, open, entityStatesBucket, decodeBoidEntity, log, metrics)
 		if view == nil {
 			return false
 		}
@@ -103,7 +103,7 @@ func startGraphViews(open openFunc, log logger) *graphViews {
 		return true
 	})
 	go supervise(ctx, &g.wg, communityIndexBucket, log, func() bool {
-		view := attach(ctx, open, communityIndexBucket, decodeCommunity, log)
+		view := attach(ctx, open, communityIndexBucket, decodeCommunity, log, metrics)
 		if view == nil {
 			return false
 		}
@@ -135,13 +135,15 @@ func supervise(ctx context.Context, wg *sync.WaitGroup, bucket string, log logge
 
 // attach makes one construction attempt, returning nil when the bucket is not
 // there yet.
-func attach[T any](ctx context.Context, open openFunc, bucket string, decode graphview.DecodeFunc[T], log logger) *graphview.View[T] {
+func attach[T any](ctx context.Context, open openFunc, bucket string, decode graphview.DecodeFunc[T], log logger, metrics *viewMetrics) *graphview.View[T] {
 	src, err := open(ctx, bucket)
 	if err != nil {
 		log.Debug("graph view bucket not available yet; will retry", "bucket", bucket, "error", err.Error())
 		return nil
 	}
-	view, err := graphview.New[T](src, decode, graphview.WithTickInterval(viewTickInterval))
+	view, err := graphview.New[T](src, decode,
+		graphview.WithTickInterval(viewTickInterval),
+		graphview.WithHooks(metrics.hooks(bucket)))
 	if err != nil {
 		log.Debug("graph view construction failed; will retry", "bucket", bucket, "error", err.Error())
 		return nil
