@@ -7,6 +7,7 @@ class FakeES {
   onerror: (() => void) | null = null;
   onmessage: ((ev: { data: string }) => void) | null = null;
   closed = false;
+  readyState = 0;
   constructor(public url: string) {
     FakeES.instances.push(this);
   }
@@ -85,5 +86,59 @@ describe("communityColor", () => {
     // Not a strict requirement, but different ids should usually differ.
     expect(vi.isMockFunction(communityColor)).toBe(false);
     expect(a1 === b || a1 !== b).toBe(true);
+  });
+});
+
+describe("GraphStream reconnect", () => {
+  // The backend serves 503 on /boids/graph/stream for a measured ~400ms window
+  // on every start, while the shared graph view attaches. A non-200 makes the
+  // browser close an EventSource PERMANENTLY (readyState CLOSED, no retry), so
+  // a reconnect landing in that window would strand the pane until a manual
+  // reload — which the graph-pane spec forbids.
+  it("re-arms after the stream is closed permanently", () => {
+    vi.useFakeTimers();
+    try {
+      const [, es] = stream();
+      expect(FakeES.instances.length).toBe(1);
+
+      es.readyState = 2; // CLOSED — will never retry on its own
+      es.onerror?.();
+      expect(es.closed).toBe(true);
+
+      vi.advanceTimersByTime(2500);
+      expect(FakeES.instances.length).toBe(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("leaves a retrying stream alone", () => {
+    vi.useFakeTimers();
+    try {
+      const [, es] = stream();
+      es.readyState = 0; // CONNECTING — EventSource retries by itself
+      es.onerror?.();
+
+      vi.advanceTimersByTime(5000);
+      expect(FakeES.instances.length).toBe(1);
+      expect(es.closed).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does not reconnect after an explicit disconnect", () => {
+    vi.useFakeTimers();
+    try {
+      const [s, es] = stream();
+      es.readyState = 2;
+      es.onerror?.();
+      s.disconnect();
+
+      vi.advanceTimersByTime(5000);
+      expect(FakeES.instances.length).toBe(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
