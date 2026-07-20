@@ -91,14 +91,14 @@
       byte-compatible.
 - [x] 7.3 Compare the pane against the 1.3 screenshot at dial 1Hz — no visible
       change.
-- [ ] 7.4 `Recovery needs no reload`: with the pane open in a browser, induce
+- [x] 7.4 `Recovery needs no reload`: with the pane open in a browser, induce
       watcher loss and confirm `EventSource` reconnects and the pane resumes
       without user action. This is the D7 risk to `graph-pane`'s "never an error
       state that requires reload" requirement — verify, do not assume.
-- [ ] 7.5 Measure snapshot-capture cost at a high boid count (spawn to ~14k):
+- [x] 7.5 Measure snapshot-capture cost at a high boid count (spawn to ~14k):
       confirm client connect latency stays acceptable and the watcher is not
       blocked meaningfully. Named as a risk in design; measure rather than assume.
-- [ ] 7.6 Resolve design Open Question 1 with the 7.5 data: keep 250ms tick or
+- [x] 7.6 Resolve design Open Question 1 with the 7.5 data: keep 250ms tick or
       adjust, and record the reason.
 
 ## 8. Close out
