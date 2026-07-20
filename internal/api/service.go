@@ -9,12 +9,15 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
+	"time"
 
+	"github.com/c360studio/semstreams/pkg/graphview"
 	"github.com/c360studio/semstreams/service"
 )
 
@@ -67,6 +70,11 @@ type Service struct {
 	*service.BaseService
 	deps   *service.Dependencies
 	logger *slog.Logger
+
+	// views holds the shared read-side graph subscriptions. One view per bucket
+	// for the whole process — SSE clients attach as subscribers rather than
+	// opening their own bucket watchers (ADR-081).
+	views *graphViews
 }
 
 // New creates the boids API service (service.Constructor compatible).
@@ -88,6 +96,34 @@ func New(_ json.RawMessage, deps *service.Dependencies) (service.Service, error)
 		service.WithNATS(deps.NATSClient),
 	)
 	return &Service{BaseService: base, deps: deps, logger: logger}, nil
+}
+
+// Start brings the service up and launches the shared graph views.
+//
+// View construction is supervised, not required: neither bucket is guaranteed
+// to exist at this point (graph-ingest creates ENTITY_STATES shortly after
+// start, and COMMUNITY_INDEX may never appear if clustering is starved), so a
+// missing bucket must not fail startup. The stream endpoint answers 503 until
+// the entity view attaches, matching the pre-change behavior.
+func (s *Service) Start(ctx context.Context) error {
+	if err := s.BaseService.Start(ctx); err != nil {
+		return err
+	}
+	if s.deps.NATSClient == nil {
+		// No NATS: graph streaming is unavailable and handled per request.
+		return nil
+	}
+	s.views = startGraphViews(func(ctx context.Context, bucket string) (graphview.WatcherSource, error) {
+		return s.deps.NATSClient.GetKeyValueBucket(ctx, bucket)
+	}, s.logger)
+	return nil
+}
+
+// Stop tears the shared views down before the base service stops. Idempotent,
+// per the service.Service contract.
+func (s *Service) Stop(timeout time.Duration) error {
+	s.views.stop()
+	return s.BaseService.Stop(timeout)
 }
 
 // rules resolves the rule processor lazily: the component manager creates
