@@ -1,0 +1,51 @@
+{
+  "entities": [
+    {
+      "id": "c360.semboids-001.sim.flock.boid.155",
+      "neighbors": [
+        "c360.semboids-001.sim.flock.boid.26",
+        "c360.semboids-001.sim.flock.boid.41",
+        "c360.semboids-001.sim.flock.boid.0",
+        "c360.semboids-001.sim.flock.boid.73",
+        "c360.semboids-001.sim.flock.boid.87",
+        "c360.semboids-001.sim.flock.boid.187",
+        "c360.semboids-001.sim.flock.boid.1",
+        "c360.semboids-001.sim.flock.boid.20",
+        "c360.semboids-001.sim.flock.boid.90",
+        "c360.semboids-001.sim.flock.boid.176",
+        "c360.semboids-001.sim.flock.boid.191",
+        "c360.semboids-001.sim.flock.boid.195",
+        "c360.semboids-001.sim.flock.boid.66",
+        "c360.semboids-001.sim.flock.boid.55",
+        "c360.semboids-001.sim.flock.boid.99",
+        "c360.semboids-001.sim.flock.boid.139",
+        "c360.semboids-001.sim.flock.boid.165",
+        "c360.semboids-001.sim.flock.boid.14",
+        "c360.semboids-001.sim.flock.boid.45"
+      ],
+      "x": 1034.0424859621014,
+      "y": 633.5886340863632
+    },
+    {
+      "id": "c360.semboids-001.sim.flock.boid.167",
+      "neighbors": [
+        "c360.semboids-001.sim.flock.boid.24",
+        "c360.semboids-001.sim.flock.boid.35",
+        "c360.semboids-001.sim.flock.boid.105",
+        "c360.semboids-001.sim.flock.boid.177",
+        "c360.semboids-001.sim.flock.boid.16",
+        "c360.semboids-001.sim.flock.boid.47",
+        "c360.semboids-001.sim.flock.boid.63",
+        "c360.semboids-001.sim.flock.boid.64",
+        "c360.semboids-001.sim.flock.boid.180",
+        "c360.semboids-001.sim.flock.boid.15",
+        "c360.semboids-001.sim.flock.boid.86",
+        "c360.semboids-001.sim.flock.boid.28",
+        "c360.semboids-001.sim.flock.boid.76",
+        "c360.semboids-001.sim.flock.boid.74"
+      ],
+      "x": 1509.5821239135093,
+      "y": 144.6676891456657
+    }
+  ]
+}
