@@ -103,11 +103,11 @@
 
 ## 8. Close out
 
-- [ ] 8.1 `task check:push` green (build, vet, gofmt, revive, `-race` unit +
+- [x] 8.1 `task check:push` green (build, vet, gofmt, revive, `-race` unit +
       integration).
-- [ ] 8.2 Record in the change that the measured throughput effect remains at or
+- [x] 8.2 Record in the change that the measured throughput effect remains at or
       below the noise floor — the proposal's non-goal must survive contact with
       the implementation, and a perf win MUST NOT be claimed.
-- [ ] 8.3 File any substrate gap found while adopting as a SemStreams issue —
+- [x] 8.3 File any substrate gap found while adopting as a SemStreams issue —
       no app-side shims.
-- [ ] 8.4 Commit in conventional splits; `openspec validate --strict` green.
+- [x] 8.4 Commit in conventional splits; `openspec validate --strict` green.
