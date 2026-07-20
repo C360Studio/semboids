@@ -1,21 +1,71 @@
 version: '3'
 
 # Development workflow tasks for local development
+#
+# NOTE ON DOCKER --format: Task renders `{{...}}` as its OWN Go template
+# before the shell runs, so a bare `docker ps --format '{{.Names}}'` reaches
+# docker as `--format ''` and matches nothing. That silently broke every name
+# check here: nats:start always fell through to `docker run`, hit a name
+# conflict, and still printed "[OK] NATS running". Use template-free
+# `-q --filter` forms for logic; where a human-readable name is needed, escape
+# the template as {{"{{.Names}}"}}.
 
 tasks:
   # NATS Server Management (canonical sem* dev NATS; container name is
   # semboids-nats so it can run beside sibling repos' instances)
-  nats:start:
-    desc: Start NATS server for local development
+
+  nats:_assert-port:
+    internal: true
+    desc: Fail loudly when :4222 is held by a container that is not ours
     cmds:
       - |
-        echo "[DEV] Starting NATS server with JetStream..."
-        if docker ps -a --format '{{.Names}}' | grep -q '^semboids-nats$'; then
-          docker start semboids-nats 2>/dev/null || true
-        else
-          docker run -d --name semboids-nats -p 4222:4222 -p 8222:8222 nats:2.12-alpine -js -m 8222
+        PORT_ID=$(docker ps -q -f publish=4222 | head -1)
+        OURS_ID=$(docker ps -q -f name=^semboids-nats$ | head -1)
+        if [ -n "$PORT_ID" ] && [ "$PORT_ID" != "$OURS_ID" ]; then
+          OWNER=$(docker ps -f publish=4222 --format '{{"{{.Names}}"}}' | head -1)
+          echo "[FAIL] :4222 is held by container '$OWNER', not semboids-nats." >&2
+          echo "" >&2
+          echo "       Sibling sem* stacks bind the same port. If semboids starts anyway" >&2
+          echo "       it connects to THAT NATS and looks perfectly healthy doing it —" >&2
+          echo "       wrong buckets, wrong data, and no error to tell you." >&2
+          echo "" >&2
+          echo "       Either stop it:  docker stop $OWNER" >&2
+          echo "       or use the isolated demo stack:  task demo   (binds :24222)" >&2
+          exit 1
         fi
-        echo "[OK] NATS running at nats://localhost:4222"
+
+  nats:start:
+    desc: Start NATS server for local development
+    deps: [nats:_assert-port]
+    cmds:
+      - |
+        if [ -n "$(docker ps -q -f name=^semboids-nats$)" ]; then
+          echo "[OK] NATS already running (container semboids-nats)"
+          exit 0
+        fi
+        echo "[DEV] Starting NATS server with JetStream..."
+        if [ -n "$(docker ps -aq -f name=^semboids-nats$)" ]; then
+          docker start semboids-nats >/dev/null \
+            || { echo "[FAIL] could not start existing semboids-nats (docker logs semboids-nats)" >&2; exit 1; }
+        else
+          docker run -d --name semboids-nats -p 4222:4222 -p 8222:8222 \
+            nats:2.12-alpine -js -m 8222 >/dev/null \
+            || { echo "[FAIL] could not create semboids-nats (is :4222 or :8222 taken?)" >&2; exit 1; }
+        fi
+        # Do not claim success until it actually answers. A start that loses a
+        # port race can exit 0 with the container dead, which is exactly what
+        # made the old silent failure look like a healthy boot.
+        for i in $(seq 1 30); do
+          curl -sf http://localhost:8222/varz >/dev/null 2>&1 && break
+          sleep 1
+        done
+        if [ -z "$(docker ps -q -f name=^semboids-nats$)" ]; then
+          echo "[FAIL] semboids-nats is not running after start (docker logs semboids-nats)" >&2
+          exit 1
+        fi
+        curl -sf http://localhost:8222/varz >/dev/null 2>&1 \
+          || { echo "[FAIL] NATS monitor on :8222 is not answering" >&2; exit 1; }
+        echo "[OK] NATS running at nats://localhost:4222 (container semboids-nats)"
         echo "     Monitor at http://localhost:8222"
 
   nats:stop:
@@ -39,9 +89,17 @@ tasks:
     desc: Check NATS server status
     cmds:
       - |
-        if docker ps --format '{{.Names}}' | grep -q '^semboids-nats$'; then
+        PORT_ID=$(docker ps -q -f publish=4222 | head -1)
+        OURS_ID=$(docker ps -q -f name=^semboids-nats$ | head -1)
+        if [ -n "$PORT_ID" ] && [ "$PORT_ID" != "$OURS_ID" ]; then
+          OWNER=$(docker ps -f publish=4222 --format '{{"{{.Names}}"}}' | head -1)
+          echo "[!!] :4222 is held by '$OWNER', NOT semboids-nats."
+          echo "     semboids would talk to the wrong NATS. Stop it, or use: task demo"
+          exit 1
+        fi
+        if [ -n "$OURS_ID" ]; then
           echo "[OK] NATS is running"
-          docker ps --filter name=semboids-nats --format "table {{.Status}}\t{{.Ports}}"
+          docker ps -f name=^semboids-nats$ --format 'table {{"{{.Status}}"}}\t{{"{{.Ports}}"}}'
         else
           echo "[--] NATS is not running"
           echo "     Start with: task dev:nats:start"
@@ -49,7 +107,13 @@ tasks:
 
   backend:
     desc: Run the semboids backend against local NATS (debug pprof on :6060)
+    deps: [nats:_assert-port]
     cmds:
+      - |
+        if [ -z "$(docker ps -q -f name=^semboids-nats$)" ]; then
+          echo "[FAIL] semboids-nats is not running — start it with: task dev:nats:start" >&2
+          exit 1
+        fi
       - go run ./cmd/semboids --config configs/flock.json --debug
 
   ui:
