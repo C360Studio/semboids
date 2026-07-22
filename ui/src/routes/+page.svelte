@@ -130,6 +130,10 @@
     <section class="pane graph" aria-label="Graph view">
       <div class="pane-header">
         <span>substrate graph</span>
+        <!-- The zone chips in the app header read as a global colour legend, so
+             without this the graph pane's community hues look like they mean
+             predator/food/wind too. Say what colour means here, in place. -->
+        <span class="legend">colour = flock community</span>
         <label>
           dial
           <select
@@ -329,6 +333,12 @@
     color: var(--ui-text-tertiary);
     border-bottom: 1px solid var(--ui-border-subtle);
     background: var(--ui-surface-secondary);
+  }
+
+  /* Reads as an annotation, not a control — it sits beside the dial. */
+  .pane-header .legend {
+    opacity: 0.75;
+    font-style: italic;
   }
 
   .pane-header label {

@@ -66,6 +66,15 @@
             positions. Node colors are flock communities the substrate detects
             live (label-propagation clustering).
           </dd>
+          <dt>The two panes color things differently</dt>
+          <dd>
+            On the left, color means <em>what is acting on a boid</em> — it takes
+            the zone's color while that zone's rule is steering it. On the right,
+            color means <em>which flock the substrate grouped it into</em>; the
+            particular hue is arbitrary and changes as flocks merge and split.
+            The palettes are kept separate on purpose, so a community is never
+            drawn in a zone's color.
+          </dd>
         </dl>
 
         <h3>The controls</h3>
