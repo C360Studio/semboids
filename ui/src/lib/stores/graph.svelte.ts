@@ -142,7 +142,15 @@ export function getGraphStream(): GraphStream {
  * communityColor maps a community id to a stable categorical color.
  * Unassigned entities get the neutral color.
  */
-const PALETTE = ["#a56eff", "#08bdba", "#ff7eb6", "#4589ff", "#f1c21b", "#42be65", "#fa4d56", "#d12771"];
+// Community colours are categorical — they identify a flock, they do not carry
+// meaning. They therefore deliberately EXCLUDE the three zone-kind colours the
+// canvas pane uses semantically (predator #fa4d56, food #42be65, wind #f1c21b):
+// a community rendered in predator-red invites the reader to think the substrate
+// is saying something about predators, when the hue is just a hash bucket.
+// Keeping this palette in cool hues makes "left pane colour = what rule is
+// acting on this boid" and "right pane colour = which flock it belongs to"
+// visually separable at a glance.
+const PALETTE = ["#a56eff", "#08bdba", "#ff7eb6", "#4589ff", "#d12771", "#33b1ff", "#8a3ffc", "#007d79"];
 
 export function communityColor(communityID: string | undefined): string {
   if (!communityID) return "#6f6f6f"; // neutral until assigned
