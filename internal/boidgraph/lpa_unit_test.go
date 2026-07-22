@@ -109,6 +109,20 @@ func (m *memStorage) Clear(_ context.Context) error {
 	return nil
 }
 
+// Prune keeps only the supplied partition, dropping everything a previous
+// detection run left behind (ADR-085 write-then-prune). Keyed like
+// SaveCommunity so the retained set matches what was written.
+func (m *memStorage) Prune(_ context.Context, keep []*clustering.Community) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	retained := make(map[string]*clustering.Community, len(keep))
+	for _, c := range keep {
+		retained[fmt.Sprintf("%d.%s", c.Level, c.ID)] = c
+	}
+	m.comms = retained
+	return nil
+}
+
 func (m *memStorage) GetAllCommunities(_ context.Context) ([]*clustering.Community, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
