@@ -26,8 +26,17 @@ type EventSourceLike = {
   onopen: (() => void) | null;
   onerror: (() => void) | null;
   onmessage: ((ev: { data: string }) => void) | null;
+  readyState?: number;
   close(): void;
 };
+
+// EventSource.CLOSED. A connection in this state will never retry on its own.
+const ES_CLOSED = 2;
+
+// Backoff before re-arming a permanently-closed stream. Long enough not to
+// hammer a backend that is still starting, short enough that the pane comes
+// back on its own while someone is watching it.
+const RECONNECT_DELAY_MS = 2000;
 
 export interface GraphStreamOptions {
   url?: string;
@@ -43,6 +52,7 @@ export class GraphStream {
   private url: string;
   private esFactory: (url: string) => EventSourceLike;
   private es: EventSourceLike | null = null;
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(opts: GraphStreamOptions = {}) {
     this.url = opts.url ?? "/boids/graph/stream";
@@ -57,9 +67,18 @@ export class GraphStream {
     es.onopen = () => {
       this.status = "open";
     };
-    // EventSource reconnects automatically; surface the state.
     es.onerror = () => {
       this.status = "error";
+      // EventSource only auto-reconnects on NETWORK-level failures. When the
+      // server answers with a non-200 — a proxy 502 while the backend
+      // restarts, or our own 503 while the shared graph view is still
+      // attaching — the browser closes the connection permanently
+      // (readyState CLOSED, no retry) and the pane would stay blank until a
+      // manual reload. Re-arm ourselves so recovery needs no user action,
+      // which the graph-pane spec requires.
+      if (es.readyState === ES_CLOSED) {
+        this.scheduleReconnect();
+      }
     };
     es.onmessage = (ev) => {
       let batch: GraphBatch;
@@ -72,7 +91,23 @@ export class GraphStream {
     };
   }
 
+  // scheduleReconnect tears the dead stream down and re-arms after a backoff.
+  // Guarded so overlapping error events cannot stack timers.
+  private scheduleReconnect(): void {
+    if (this.reconnectTimer !== null) return;
+    this.es?.close();
+    this.es = null;
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
+      this.connect();
+    }, RECONNECT_DELAY_MS);
+  }
+
   disconnect(): void {
+    if (this.reconnectTimer !== null) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
     this.es?.close();
     this.es = null;
     this.status = "idle";
@@ -107,7 +142,15 @@ export function getGraphStream(): GraphStream {
  * communityColor maps a community id to a stable categorical color.
  * Unassigned entities get the neutral color.
  */
-const PALETTE = ["#a56eff", "#08bdba", "#ff7eb6", "#4589ff", "#f1c21b", "#42be65", "#fa4d56", "#d12771"];
+// Community colours are categorical — they identify a flock, they do not carry
+// meaning. They therefore deliberately EXCLUDE the three zone-kind colours the
+// canvas pane uses semantically (predator #fa4d56, food #42be65, wind #f1c21b):
+// a community rendered in predator-red invites the reader to think the substrate
+// is saying something about predators, when the hue is just a hash bucket.
+// Keeping this palette in cool hues makes "left pane colour = what rule is
+// acting on this boid" and "right pane colour = which flock it belongs to"
+// visually separable at a glance.
+const PALETTE = ["#a56eff", "#08bdba", "#ff7eb6", "#4589ff", "#d12771", "#33b1ff", "#8a3ffc", "#007d79"];
 
 export function communityColor(communityID: string | undefined): string {
   if (!communityID) return "#6f6f6f"; // neutral until assigned
