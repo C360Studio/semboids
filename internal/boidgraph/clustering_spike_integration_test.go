@@ -16,13 +16,19 @@ import (
 	"time"
 
 	"github.com/c360studio/semstreams/component"
+	"github.com/c360studio/semstreams/graph"
+	"github.com/c360studio/semstreams/message"
 	"github.com/c360studio/semstreams/natsclient"
 	"github.com/c360studio/semstreams/payloadbuiltins"
 	"github.com/c360studio/semstreams/payloadregistry"
+	"github.com/c360studio/semstreams/pkg/projection"
 	graphclustering "github.com/c360studio/semstreams/processor/graph-clustering"
 	graphindex "github.com/c360studio/semstreams/processor/graph-index"
 	graphingest "github.com/c360studio/semstreams/processor/graph-ingest"
 	"github.com/c360studio/semstreams/types"
+	"github.com/c360studio/semstreams/vocabulary"
+
+	"github.com/c360studio/semboids/internal/boidgraph"
 )
 
 func boidID(n int) string {
@@ -59,47 +65,64 @@ func startComponent(
 	t.Cleanup(func() { _ = lc.Stop(5 * time.Second) })
 }
 
+// spikeContract declares the fixture's write intent: strict-create boids
+// carrying position + neighbor facts. Test-local on purpose — the production
+// semboids-neighbors contract covers only the reconcile group, and the spike's
+// birth shape should not warp it.
+func spikeContract() projection.Contract {
+	vocabulary.Register("flock.position.x",
+		vocabulary.WithDescription("Boid x position at snapshot time (spike fixture)"),
+		vocabulary.WithDataType("number"))
+	return projection.Contract{
+		Name:            "spike-boids",
+		EntityPattern:   boidgraph.BoidEntityIDPattern,
+		BirthPredicates: []string{"flock.position.x", boidgraph.NeighborPredicate},
+	}
+}
+
 // publishTwoClusters creates two fully-connected 4-boid clusters with no
-// cross edges (boids 0-3 and 4-7) via the mutation API.
+// cross edges (boids 0-3 and 4-7) via the typed mutation client (beta.160:
+// the create_with_triples wire op is retired; entity.create is strict).
 func publishTwoClusters(t *testing.T, ctx context.Context, tc *natsclient.TestClient) {
 	t.Helper()
+	mutations, err := projection.NewMutationClient(projection.MutationClientConfig{
+		NATS:      tc.Client,
+		Contracts: []projection.Contract{spikeContract()},
+	})
+	if err != nil {
+		t.Fatalf("build mutation client: %v", err)
+	}
 	publishCluster := func(members []int) {
 		for _, m := range members {
-			var triples []map[string]any
-			triples = append(triples,
-				map[string]any{"subject": boidID(m), "predicate": "flock.position.x",
-					"object": float64(100 * m), "source": "spike", "confidence": 1.0},
-			)
+			now := time.Now()
+			mk := func(predicate string, object any) message.Triple {
+				return message.Triple{
+					Subject: boidID(m), Predicate: predicate, Object: object,
+					Source: "spike", Timestamp: now, Confidence: 1.0,
+				}
+			}
+			triples := []message.Triple{mk("flock.position.x", float64(100*m))}
 			for _, other := range members {
 				if other == m {
 					continue
 				}
-				triples = append(triples, map[string]any{
-					"subject": boidID(m), "predicate": "flock.neighbor.of",
-					"object": boidID(other), "source": "spike", "confidence": 1.0,
-				})
+				triples = append(triples, mk(boidgraph.NeighborPredicate, boidID(other)))
 			}
-			req := map[string]any{
-				"entity": map[string]any{
-					"id":           boidID(m),
-					"message_type": map[string]any{"domain": "boids", "category": "boid", "version": "v1"},
+			_, err := mutations.Create(ctx, projection.CreateMutation{
+				Contract: "spike-boids",
+				Entity: &graph.EntityState{
+					ID:          boidID(m),
+					MessageType: message.Type{Domain: "boids", Category: "boid", Version: "v1"},
 				},
-				"triples": triples,
-			}
-			data, err := json.Marshal(req)
-			if err != nil {
-				t.Fatalf("marshal create request: %v", err)
-			}
-			resp, err := tc.Client.Request(ctx, "graph.mutation.entity.create_with_triples", data, 10*time.Second)
+				Triples: triples,
+				Metadata: projection.MutationMetadata{
+					RequestID: fmt.Sprintf("spike-create-%d", m),
+					Source:    "spike",
+					Timestamp: now,
+				},
+			})
 			if err != nil {
 				t.Fatalf("create boid %d: %v", m, err)
-			}
-			var result struct {
-				Success bool   `json:"success"`
-				Error   string `json:"error"`
-			}
-			if err := json.Unmarshal(resp, &result); err == nil && !result.Success && result.Error != "" {
-				t.Fatalf("create boid %d rejected: %s", m, result.Error)
 			}
 		}
 	}

@@ -72,7 +72,7 @@
       scenario names with the graph-snapshots delta
 - [x] 4.3 `task check` green (vet, gofmt tree-wide, revive, `-race` unit); remember
       `gofmt -w` every new file immediately (CI's gofmt gate skips untracked files)
-- [ ] 4.4 `go test -race -tags=integration ./...` green against a fresh dev NATS
+- [x] 4.4 `go test -race -tags=integration ./...` green against a fresh dev NATS
 
 ## 5. Fresh state and product proof
 
