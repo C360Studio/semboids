@@ -90,10 +90,10 @@ func startRoundTrip(t *testing.T, ctx context.Context, ruleEnabled bool) <-chan 
 		"enable_graph_integration": false,
 		"ports": map[string]any{
 			"inputs": []map[string]any{
-				{"name": "zone_events", "subject": EventsSubject, "type": "nats", "required": true},
+				{"name": "zone_events", "required": true, "config": map[string]any{"kind": "nats", "subject": EventsSubject}},
 			},
 			"outputs": []map[string]any{
-				{"name": "steering", "subject": SteeringSubject, "type": "nats"},
+				{"name": "steering", "config": map[string]any{"kind": "nats", "subject": SteeringSubject}},
 			},
 		},
 	}

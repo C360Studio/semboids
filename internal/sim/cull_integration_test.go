@@ -144,10 +144,11 @@ func startCullChain(
 	startLifecycleComponent(t, ctx, registry, deps, "graph-ingest-t", "graph-ingest", map[string]any{
 		"ports": map[string]any{
 			"inputs": []map[string]any{
-				{"name": "entity_stream", "subject": "entity.>", "type": "jetstream", "stream_name": "ENTITY"},
+				{"name": "entity_stream", "config": map[string]any{"kind": "jetstream", "stream_name": "ENTITY", "subjects": []any{"entity.>"}}},
+				{"name": "graph_mutations", "required": true, "config": map[string]any{"kind": "nats-request", "subject": "graph.mutation.>", "interface": map[string]any{"type": "semstreams.graph.mutation", "version": "v1"}}},
 			},
 			"outputs": []map[string]any{
-				{"name": "entity_states", "type": "kv-write", "subject": "ENTITY_STATES"},
+				{"name": "entity_states", "config": map[string]any{"kind": "kv-write", "bucket": "ENTITY_STATES"}},
 			},
 		},
 	})
@@ -161,7 +162,7 @@ func startCullChain(
 		"enable_graph_integration": false,
 		"ports": map[string]any{
 			"inputs": []map[string]any{
-				{"name": "zone_events", "subject": EventsSubject, "type": "nats", "required": true},
+				{"name": "zone_events", "required": true, "config": map[string]any{"kind": "nats", "subject": EventsSubject}},
 			},
 		},
 	})

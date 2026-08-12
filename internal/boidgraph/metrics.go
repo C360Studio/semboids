@@ -28,6 +28,7 @@ type publisherMetrics struct {
 	entities        prometheus.Counter
 	snapshots       prometheus.Counter
 	dropped         prometheus.Counter
+	clearFailures   prometheus.Counter
 }
 
 // newPublisherMetrics registers the pipeline metrics against reg. Returns nil
@@ -66,11 +67,19 @@ func newPublisherMetrics(reg *metric.MetricsRegistry) *publisherMetrics {
 	})
 	_ = reg.RegisterCounter(metricService, "snapshots_dropped_total", dropped)
 
+	clearFailures := prometheus.NewCounter(prometheus.CounterOpts{
+		Namespace: metricNamespace, Subsystem: metricSubsystem,
+		Name: "neighbor_clear_failures_total",
+		Help: "Neighbor-group reconciles that exhausted retries or hit an ambiguous outcome (stale edges until the next emptying transition).",
+	})
+	_ = reg.RegisterCounter(metricService, "neighbor_clear_failures_total", clearFailures)
+
 	return &publisherMetrics{
 		publishDuration: duration,
 		entities:        entities,
 		snapshots:       snapshots,
 		dropped:         dropped,
+		clearFailures:   clearFailures,
 	}
 }
 
@@ -95,6 +104,12 @@ func (m *publisherMetrics) incSnapshot() {
 func (m *publisherMetrics) incDropped() {
 	if m != nil {
 		m.dropped.Inc()
+	}
+}
+
+func (m *publisherMetrics) incNeighborClearFailure() {
+	if m != nil {
+		m.clearFailures.Inc()
 	}
 }
 

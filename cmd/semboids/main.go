@@ -428,14 +428,15 @@ func ensureServiceManagerConfig(cfg *config.Config) {
 		}
 		defaultConfigJSON, _ := json.Marshal(defaultConfig)
 		cfg.Services["service-manager"] = types.ServiceConfig{
-			Name:    "service-manager",
 			Enabled: true,
 			Config:  defaultConfigJSON,
 		}
 	}
 }
 
-// configureAndCreateServices configures the manager and creates all services.
+// configureAndCreateServices configures the manager, which constructs every
+// enabled configured service itself (beta.160: construction is part of
+// ConfigureFromServices; a second CreateService pass double-registers).
 func configureAndCreateServices(
 	cfg *config.Config,
 	manager *service.Manager,
@@ -443,26 +444,6 @@ func configureAndCreateServices(
 ) error {
 	if err := manager.ConfigureFromServices(cfg.Services, svcDeps); err != nil {
 		return fmt.Errorf("configure service manager: %w", err)
-	}
-
-	for name, svcConfig := range cfg.Services {
-		if name == "service-manager" {
-			continue
-		}
-		if !svcConfig.Enabled {
-			slog.Info("Service disabled in config", "name", name)
-			continue
-		}
-		if !manager.HasConstructor(name) {
-			slog.Warn("Service configured but not registered",
-				"key", name,
-				"available_constructors", manager.ListConstructors())
-			continue
-		}
-		if _, err := manager.CreateService(name, svcConfig.Config, svcDeps); err != nil {
-			return fmt.Errorf("create service %s: %w", name, err)
-		}
-		slog.Info("Created service", "name", name)
 	}
 	return nil
 }

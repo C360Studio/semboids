@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "platform": {
     "org": "c360",
     "id": "semboids",
@@ -19,13 +19,14 @@
         "entity.>"
       ],
       "storage": "file",
-      "max_age": "168h",
+      "max_age": "24h",
+      "max_bytes": 2147483648,
+      "discard": "old",
       "replicas": 1
     }
   },
   "services": {
     "service-manager": {
-      "name": "service-manager",
       "enabled": true,
       "config": {
         "http_port": 8080,
@@ -38,21 +39,17 @@
       }
     },
     "component-manager": {
-      "name": "component-manager",
       "enabled": true,
       "config": {}
     },
     "metrics": {
-      "name": "metrics",
       "enabled": true,
       "config": {
         "port": 9090,
-        "path": "/metrics",
-        "include_go_metrics": false
+        "path": "/metrics"
       }
     },
     "boids": {
-      "name": "boids",
       "enabled": true,
       "config": {}
     }
@@ -99,9 +96,25 @@
           "outputs": [
             {
               "name": "frames",
-              "subject": "boids.frames",
-              "type": "nats",
-              "required": true
+              "required": true,
+              "description": "Aggregated flock frame per tick (compact JSON)",
+              "config": {
+                "kind": "nats",
+                "subject": "boids.frames"
+              }
+            },
+            {
+              "name": "graph_mutations",
+              "required": true,
+              "description": "Typed graph mutations: neighbor-set reconcile on emptying, fenced entity delete on cull reclaim",
+              "config": {
+                "kind": "nats-request",
+                "subject": "graph.mutation.>",
+                "interface": {
+                  "type": "semstreams.graph.mutation",
+                  "version": "v1"
+                }
+              }
             }
           ]
         },
@@ -118,16 +131,36 @@
           "inputs": [
             {
               "name": "entity_stream",
-              "subject": "entity.>",
-              "type": "jetstream",
-              "stream_name": "ENTITY"
+              "description": "Batched boid/zone Graphable snapshots (the load-dial firehose)",
+              "config": {
+                "kind": "jetstream",
+                "stream_name": "ENTITY",
+                "subjects": [
+                  "entity.>"
+                ]
+              }
+            },
+            {
+              "name": "graph_mutations",
+              "required": true,
+              "description": "Typed graph mutation provider (sole ENTITY_STATES writer)",
+              "config": {
+                "kind": "nats-request",
+                "subject": "graph.mutation.>",
+                "interface": {
+                  "type": "semstreams.graph.mutation",
+                  "version": "v1"
+                }
+              }
             }
           ],
           "outputs": [
             {
               "name": "entity_states",
-              "type": "kv-write",
-              "subject": "ENTITY_STATES"
+              "config": {
+                "kind": "kv-write",
+                "bucket": "ENTITY_STATES"
+              }
             }
           ]
         }
@@ -149,16 +182,22 @@
           "inputs": [
             {
               "name": "zone_events",
-              "subject": "boids.zone.events",
-              "type": "nats",
-              "required": true
+              "required": true,
+              "description": "Zone transition events from the sim",
+              "config": {
+                "kind": "nats",
+                "subject": "boids.zone.events"
+              }
             }
           ],
           "outputs": [
             {
               "name": "steering",
-              "subject": "boids.steering",
-              "type": "nats"
+              "description": "TTL'd steering modifiers back to the sim",
+              "config": {
+                "kind": "nats",
+                "subject": "boids.steering"
+              }
             }
           ]
         }
@@ -174,16 +213,24 @@
           "inputs": [
             {
               "name": "nats_input",
-              "subject": "boids.frames",
-              "type": "nats",
-              "required": true
+              "required": true,
+              "description": "Flock frames to fan out to browsers",
+              "config": {
+                "kind": "nats",
+                "subject": "boids.frames"
+              }
             }
           ],
           "outputs": [
             {
               "name": "websocket_server",
-              "subject": "http://0.0.0.0:8081/ws",
-              "type": "network"
+              "description": "WebSocket server endpoint for browser clients",
+              "config": {
+                "kind": "network",
+                "protocol": "http",
+                "host": "0.0.0.0",
+                "port": 8081
+              }
             }
           ]
         }
@@ -199,30 +246,40 @@
           "inputs": [
             {
               "name": "entity_watch",
-              "type": "kv-watch",
-              "subject": "ENTITY_STATES"
+              "config": {
+                "kind": "kv-watch",
+                "bucket": "ENTITY_STATES"
+              }
             }
           ],
           "outputs": [
             {
               "name": "outgoing_index",
-              "type": "kv-write",
-              "subject": "OUTGOING_INDEX"
+              "config": {
+                "kind": "kv-write",
+                "bucket": "OUTGOING_INDEX"
+              }
             },
             {
               "name": "incoming_index",
-              "type": "kv-write",
-              "subject": "INCOMING_INDEX"
+              "config": {
+                "kind": "kv-write",
+                "bucket": "INCOMING_INDEX"
+              }
             },
             {
               "name": "alias_index",
-              "type": "kv-write",
-              "subject": "ALIAS_INDEX"
+              "config": {
+                "kind": "kv-write",
+                "bucket": "ALIAS_INDEX"
+              }
             },
             {
               "name": "predicate_index",
-              "type": "kv-write",
-              "subject": "PREDICATE_INDEX"
+              "config": {
+                "kind": "kv-write",
+                "bucket": "PREDICATE_INDEX"
+              }
             }
           ]
         }
@@ -245,15 +302,53 @@
           "inputs": [
             {
               "name": "entity_watch",
-              "type": "kv-watch",
-              "subject": "ENTITY_STATES"
+              "config": {
+                "kind": "kv-watch",
+                "bucket": "ENTITY_STATES"
+              }
+            },
+            {
+              "name": "entity_states",
+              "config": {
+                "kind": "kv-read",
+                "bucket": "ENTITY_STATES"
+              }
+            },
+            {
+              "name": "outgoing_index",
+              "config": {
+                "kind": "kv-read",
+                "bucket": "OUTGOING_INDEX"
+              }
+            },
+            {
+              "name": "incoming_index",
+              "config": {
+                "kind": "kv-read",
+                "bucket": "INCOMING_INDEX"
+              }
             }
           ],
           "outputs": [
             {
+              "name": "graph_mutations",
+              "required": true,
+              "description": "Community summary mutations through the typed graph write contract",
+              "config": {
+                "kind": "nats-request",
+                "subject": "graph.mutation.>",
+                "interface": {
+                  "type": "semstreams.graph.mutation",
+                  "version": "v1"
+                }
+              }
+            },
+            {
               "name": "communities",
-              "type": "kv-write",
-              "subject": "COMMUNITY_INDEX"
+              "config": {
+                "kind": "kv-write",
+                "bucket": "COMMUNITY_INDEX"
+              }
             }
           ]
         }

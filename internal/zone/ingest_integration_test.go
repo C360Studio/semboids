@@ -56,10 +56,10 @@ func TestZonesLandInEntityStates(t *testing.T) {
 		Config: json.RawMessage(`{
 			"ports": {
 				"inputs": [
-					{"name": "entity_stream", "subject": "entity.>", "type": "jetstream", "stream_name": "ENTITY"}
+					{"name": "entity_stream", "config": map[string]any{"kind": "jetstream", "stream_name": "ENTITY", "subjects": []any{"entity.>"}}}
 				],
 				"outputs": [
-					{"name": "entity_states", "type": "kv-write", "subject": "ENTITY_STATES"}
+					{"name": "entity_states", "config": map[string]any{"kind": "kv-write", "bucket": "ENTITY_STATES"}}
 				]
 			}
 		}`),

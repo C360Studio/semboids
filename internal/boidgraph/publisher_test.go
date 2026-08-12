@@ -3,9 +3,12 @@ package boidgraph
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/c360studio/semstreams/pkg/projection"
 
 	"github.com/c360studio/semboids/internal/flock"
 )
@@ -71,19 +74,35 @@ type boidTick struct {
 	tick uint64
 }
 
-type fakeRemover struct {
+// fakeReconciler captures neighbor-group reconciles and returns scripted
+// errors per call (nil beyond the script), standing in for the projection
+// mutation client.
+type fakeReconciler struct {
 	mu       sync.Mutex
-	requests []map[string]any
+	requests []projection.ReconcileMutation
+	script   []error
 }
 
-func (f *fakeRemover) Request(_ context.Context, subject string, data []byte, _ time.Duration) ([]byte, error) {
-	var req map[string]any
-	_ = json.Unmarshal(data, &req)
-	req["_subject"] = subject
+func (f *fakeReconciler) Reconcile(_ context.Context, req projection.ReconcileMutation) (projection.MutationReceipt, error) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
+	call := len(f.requests)
 	f.requests = append(f.requests, req)
-	return []byte(`{"success": true}`), nil
+	if call < len(f.script) && f.script[call] != nil {
+		return projection.MutationReceipt{}, f.script[call]
+	}
+	return projection.MutationReceipt{}, nil
+}
+
+func (f *fakeReconciler) calls() []projection.ReconcileMutation {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	return append([]projection.ReconcileMutation(nil), f.requests...)
+}
+
+// mutationErr builds the classified error shape the projection client returns.
+func mutationErr(kind projection.MutationErrorKind) error {
+	return &projection.MutationError{Kind: kind, Err: errors.New(string(kind))}
 }
 
 func snapshotWith(tick uint64, neighbors map[uint32][]uint32) Snapshot {
@@ -173,10 +192,10 @@ func TestPublisherDropsWhenStalled(t *testing.T) {
 	close(stream.block) // unblock for clean shutdown
 }
 
-func TestPublisherRemovesEmptiedNeighborSets(t *testing.T) {
+func TestPublisherClearsEmptiedNeighborSets(t *testing.T) {
 	stream := &fakeStream{}
-	remover := &fakeRemover{}
-	p := NewPublisher(stream, remover, "c360", "semboids", nil, nil)
+	reconciler := &fakeReconciler{}
+	p := NewPublisher(stream, reconciler, "c360", "semboids", nil, nil)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	go p.Run(ctx)
@@ -187,16 +206,48 @@ func TestPublisherRemovesEmptiedNeighborSets(t *testing.T) {
 	p.Offer(snapshotWith(2, nil))
 	waitFor(t, func() bool { s, _, _ := p.Counts(); return s == 2 })
 
-	remover.mu.Lock()
-	defer remover.mu.Unlock()
-	if len(remover.requests) != 1 {
-		t.Fatalf("remove requests = %d, want exactly 1 (boid 0's transition)", len(remover.requests))
+	calls := reconciler.calls()
+	if len(calls) != 1 {
+		t.Fatalf("reconcile calls = %d, want exactly 1 (boid 0's transition)", len(calls))
 	}
-	req := remover.requests[0]
-	if req["_subject"] != "graph.mutation.triple.remove" ||
-		req["subject"] != "c360.semboids.sim.flock.boid.0" ||
-		req["predicate"] != "flock.neighbor.of" {
-		t.Fatalf("remove request = %v", req)
+	req := calls[0]
+	if req.Contract != NeighborContractName || req.Group != NeighborGroup ||
+		req.EntityID != "c360.semboids.sim.flock.boid.0" || len(req.Desired) != 0 {
+		t.Fatalf("reconcile request = %+v", req)
+	}
+}
+
+// TestClearNeighborsRetryClassification pins design D2's retry policy on the
+// clear path: definite non-commits (revision conflict, no responder) retry up
+// to the bound, a missing entity is already-clear, and an ambiguous outcome
+// is never blind-retried.
+func TestClearNeighborsRetryClassification(t *testing.T) {
+	cases := []struct {
+		name      string
+		script    []error
+		wantCalls int
+	}{
+		{"conflict then success", []error{mutationErr(projection.MutationRevisionConflict), nil}, 2},
+		{"unavailable then success", []error{mutationErr(projection.MutationUnavailable), nil}, 2},
+		{"conflict exhausts bound", []error{
+			mutationErr(projection.MutationRevisionConflict),
+			mutationErr(projection.MutationRevisionConflict),
+			mutationErr(projection.MutationRevisionConflict),
+			mutationErr(projection.MutationRevisionConflict), // must never be reached
+		}, neighborClearRetries},
+		{"not found is already clear", []error{mutationErr(projection.MutationNotFound)}, 1},
+		{"ambiguous is not retried", []error{mutationErr(projection.MutationCommitUnknown)}, 1},
+		{"invalid is not retried", []error{mutationErr(projection.MutationInvalid)}, 1},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			reconciler := &fakeReconciler{script: tc.script}
+			p := NewPublisher(&fakeStream{}, reconciler, "c360", "semboids", nil, nil)
+			p.clearNeighbors(context.Background(), 7)
+			if got := len(reconciler.calls()); got != tc.wantCalls {
+				t.Fatalf("reconcile calls = %d, want %d", got, tc.wantCalls)
+			}
+		})
 	}
 }
 

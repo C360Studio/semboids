@@ -6,7 +6,7 @@ import (
 )
 
 // drainPool bounds the sim's off-loop lifecycle IO (Manager.Create for spawns,
-// graph.mutation.entity.delete for reclaims) to a fixed number of in-flight
+// the revision-fenced entity delete for reclaims) to a fixed number of in-flight
 // operations. Distinct boids have distinct entity IDs → distinct graph-ingest
 // lanes (beta.142 ADR-072), so their calls run concurrently; the pool caps the
 // concurrency at the lane count so a spawn burst never fans out into unbounded

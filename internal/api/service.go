@@ -41,8 +41,10 @@ var kindRules = map[string][]string{
 const cullKind = "cull"
 
 // ruleReconfigurer is the slice of the rule processor the API needs — the
-// service.RuntimeConfigurable trio, resolved structurally so this package
-// needs no processor/rule import.
+// runtime-reconfiguration trio, resolved structurally so this package needs no
+// processor/rule import. (beta.160 removed the service-plane
+// RuntimeConfigurable interface; the rule component keeps these methods, which
+// is what the demo's live rule toggles ride on.)
 type ruleReconfigurer interface {
 	GetRuntimeConfig() map[string]any
 	ValidateConfigUpdate(changes map[string]any) error

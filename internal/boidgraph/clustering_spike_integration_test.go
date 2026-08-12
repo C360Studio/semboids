@@ -148,23 +148,24 @@ func TestLPADistinguishesDisjointFlocks(t *testing.T) {
 	startComponent(t, ctx, registry, deps, "graph-ingest-t", "graph-ingest", map[string]any{
 		"ports": map[string]any{
 			"inputs": []map[string]any{
-				{"name": "entity_stream", "subject": "entity.>", "type": "jetstream", "stream_name": "ENTITY"},
+				{"name": "entity_stream", "config": map[string]any{"kind": "jetstream", "stream_name": "ENTITY", "subjects": []any{"entity.>"}}},
+				{"name": "graph_mutations", "required": true, "config": map[string]any{"kind": "nats-request", "subject": "graph.mutation.>", "interface": map[string]any{"type": "semstreams.graph.mutation", "version": "v1"}}},
 			},
 			"outputs": []map[string]any{
-				{"name": "entity_states", "type": "kv-write", "subject": "ENTITY_STATES"},
+				{"name": "entity_states", "config": map[string]any{"kind": "kv-write", "bucket": "ENTITY_STATES"}},
 			},
 		},
 	})
 	startComponent(t, ctx, registry, deps, "graph-index-t", "graph-index", map[string]any{
 		"ports": map[string]any{
 			"inputs": []map[string]any{
-				{"name": "entity_watch", "type": "kv-watch", "subject": "ENTITY_STATES"},
+				{"name": "entity_watch", "config": map[string]any{"kind": "kv-watch", "bucket": "ENTITY_STATES"}},
 			},
 			"outputs": []map[string]any{
-				{"name": "outgoing_index", "type": "kv-write", "subject": "OUTGOING_INDEX"},
-				{"name": "incoming_index", "type": "kv-write", "subject": "INCOMING_INDEX"},
-				{"name": "alias_index", "type": "kv-write", "subject": "ALIAS_INDEX"},
-				{"name": "predicate_index", "type": "kv-write", "subject": "PREDICATE_INDEX"},
+				{"name": "outgoing_index", "config": map[string]any{"kind": "kv-write", "bucket": "OUTGOING_INDEX"}},
+				{"name": "incoming_index", "config": map[string]any{"kind": "kv-write", "bucket": "INCOMING_INDEX"}},
+				{"name": "alias_index", "config": map[string]any{"kind": "kv-write", "bucket": "ALIAS_INDEX"}},
+				{"name": "predicate_index", "config": map[string]any{"kind": "kv-write", "bucket": "PREDICATE_INDEX"}},
 			},
 		},
 	})
@@ -179,10 +180,14 @@ func TestLPADistinguishesDisjointFlocks(t *testing.T) {
 		},
 		"ports": map[string]any{
 			"inputs": []map[string]any{
-				{"name": "entity_watch", "type": "kv-watch", "subject": "ENTITY_STATES"},
+				{"name": "entity_watch", "config": map[string]any{"kind": "kv-watch", "bucket": "ENTITY_STATES"}},
+				{"name": "entity_states", "config": map[string]any{"kind": "kv-read", "bucket": "ENTITY_STATES"}},
+				{"name": "outgoing_index", "config": map[string]any{"kind": "kv-read", "bucket": "OUTGOING_INDEX"}},
+				{"name": "incoming_index", "config": map[string]any{"kind": "kv-read", "bucket": "INCOMING_INDEX"}},
 			},
 			"outputs": []map[string]any{
-				{"name": "communities", "type": "kv-write", "subject": "COMMUNITY_INDEX"},
+				{"name": "graph_mutations", "required": true, "config": map[string]any{"kind": "nats-request", "subject": "graph.mutation.>", "interface": map[string]any{"type": "semstreams.graph.mutation", "version": "v1"}}},
+				{"name": "communities", "config": map[string]any{"kind": "kv-write", "bucket": "COMMUNITY_INDEX"}},
 			},
 		},
 	})

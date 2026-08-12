@@ -17,6 +17,7 @@ import (
 	"github.com/c360studio/semstreams/component"
 	"github.com/c360studio/semstreams/message"
 	"github.com/c360studio/semstreams/natsclient"
+	"github.com/c360studio/semstreams/pkg/projection"
 	"github.com/nats-io/nats.go"
 
 	"github.com/c360studio/semboids/internal/boidgraph"
@@ -52,7 +53,7 @@ type Config struct {
 	// culling (add-lifecycle-population).
 	CullGraceTicks int `json:"cull_grace_ticks,omitempty"`
 	// LifecycleDrainConcurrency bounds concurrent off-loop lifecycle IO
-	// (Manager.Create for spawns + graph.mutation.entity.delete for reclaims)
+	// (Manager.Create for spawns + the fenced read-then-delete for reclaims)
 	// across graph-ingest's keyed-concurrent lanes. 0/unset = 8 (matches
 	// ingest_lanes); 1 = the serial path (parallel-lifecycle-drain).
 	LifecycleDrainConcurrency int `json:"lifecycle_drain_concurrency,omitempty"`
@@ -75,10 +76,9 @@ func DefaultConfig() Config {
 		Ports: &component.PortConfig{
 			Outputs: []component.PortDefinition{{
 				Name:        "frames",
-				Type:        "nats",
-				Subject:     DefaultSubject,
 				Required:    true,
 				Description: "Aggregated flock frame per tick (compact JSON)",
+				Config:      component.NATSPort{Subject: DefaultSubject},
 			}},
 		},
 	}
@@ -121,11 +121,12 @@ type Component struct {
 
 	// Lifecycle population (add-lifecycle-population). population stages
 	// spawn/despawn deltas off the tick loop; churnHzBits is the runtime churn
-	// dial. spawner/reclaimer are nil when NATS/lifecycle is absent (unit
-	// tests) — the population still stages, but no Create/watch runs.
+	// dial. spawner/reclaimer/buckets are nil when NATS/lifecycle is absent
+	// (unit tests) — the population still stages, but no Create/watch runs.
 	population     *populationState
 	spawner        boidSpawner
 	reclaimer      entityReclaimer
+	buckets        bucketWaiter
 	churnHzBits    atomic.Uint64
 	metrics        *lifecycleMetrics
 	cullGraceTicks int
@@ -178,9 +179,17 @@ func NewComponent(rawConfig json.RawMessage, deps component.Dependencies) (compo
 	params := flock.DefaultParams()
 	params.DT = 1 / config.TickHz
 
-	subject := config.Ports.Outputs[0].Subject
-	if subject == "" {
-		subject = DefaultSubject
+	framesPort, err := config.Ports.Outputs[0].Resolve(component.DirectionOutput)
+	if err != nil {
+		return nil, fmt.Errorf("resolve frames output port: %w", err)
+	}
+	framesFacts, err := framesPort.Facts()
+	if err != nil {
+		return nil, fmt.Errorf("frames output port facts: %w", err)
+	}
+	subject := DefaultSubject
+	if subjects := framesFacts.NATSSubjects(); len(subjects) > 0 && subjects[0] != "" {
+		subject = subjects[0]
 	}
 
 	org, platform := deps.Platform.Org, deps.Platform.Platform
@@ -193,17 +202,15 @@ func NewComponent(rawConfig json.RawMessage, deps component.Dependencies) (compo
 
 	logger := deps.GetLogger()
 	c := &Component{
-		config:   config,
-		engine:   flock.NewEngine(config.Boids, config.Seed, params),
-		logger:   logger,
-		subject:  subject,
-		steering: newSteeringState(logger),
-		tracker:  newZoneTracker(config.Zones, config.CullGraceTicks),
-		org:      org,
-		platform: platform,
-		outputPorts: []component.Port{
-			component.BuildPortFromDefinition(config.Ports.Outputs[0], component.DirectionOutput),
-		},
+		config:      config,
+		engine:      flock.NewEngine(config.Boids, config.Seed, params),
+		logger:      logger,
+		subject:     subject,
+		steering:    newSteeringState(logger),
+		tracker:     newZoneTracker(config.Zones, config.CullGraceTicks),
+		org:         org,
+		platform:    platform,
+		outputPorts: []component.Port{framesPort},
 	}
 	c.snapshotRadius = config.SnapshotRadius
 	if c.snapshotRadius <= 0 {
@@ -221,11 +228,22 @@ func NewComponent(rawConfig json.RawMessage, deps component.Dependencies) (compo
 	c.drainPool = newDrainPool(drainConcurrency) // clamps <1 → 1 (serial)
 
 	if deps.NATSClient != nil {
+		// One immutable mutation client serves both typed write paths: the
+		// publisher's neighbor-group reconcile and the cull watcher's fenced
+		// reclaim (design D4). Contracts validate intent client-side.
+		mutations, err := projection.NewMutationClient(projection.MutationClientConfig{
+			NATS:      deps.NATSClient,
+			Contracts: []projection.Contract{boidgraph.NeighborContract()},
+		})
+		if err != nil {
+			return nil, fmt.Errorf("build graph mutation client: %w", err)
+		}
 		c.publish = deps.NATSClient.Publish
 		c.natsClient = deps.NATSClient
-		c.reclaimer = deps.NATSClient
+		c.buckets = deps.NATSClient
+		c.reclaimer = mutations
 		c.publisher = boidgraph.NewPublisher(
-			deps.NATSClient, deps.NATSClient, org, platform,
+			deps.NATSClient, mutations, org, platform,
 			deps.MetricsRegistry, logger)
 		c.snapshots = c.publisher
 		c.probe = boidgraph.NewLatencyProbe(

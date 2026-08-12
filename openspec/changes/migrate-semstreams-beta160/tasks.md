@@ -2,70 +2,75 @@
 
 ## 1. Pin and compile harvest
 
-- [ ] 1.1 Branch `migrate-semstreams-beta160` off main (with the archive PR merged);
+- [x] 1.1 Branch `migrate-semstreams-beta160` off main (with the archive PR merged);
       `go get github.com/c360studio/semstreams@v1.0.0-beta.160` (GOPROXY=direct if the
       proxy lags), tidy
-- [ ] 1.2 Run `go build ./... && go vet ./...` and record the complete error harvest in
+- [x] 1.2 Run `go build ./... && go vet ./...` and record the complete error harvest in
       the change dir (`evidence/compile-harvest.md`) — this is the authoritative
       work list per the upstream guide; diff it against the audit's predictions and
       flag any surprise surface
-- [ ] 1.3 Fix `cmd/semboids/main.go` `ensureServiceManagerConfig`: drop the removed
+- [x] 1.3 Fix `cmd/semboids/main.go` `ensureServiceManagerConfig`: drop the removed
       `ServiceConfig.Name` field
-- [ ] 1.4 Fix `internal/sim/component.go` port construction: replace flat
+- [x] 1.4 Fix `internal/sim/component.go` port construction: replace flat
       `Ports.Outputs[0].Subject` + `BuildPortFromDefinition` with
       `PortDefinition.Resolve(DirectionOutput)` / `Port.Facts()` (design D5)
-- [ ] 1.5 Compile clean: `go build ./... && go vet ./...` green (tests may still fail)
+- [x] 1.5 Compile clean: `go build ./... && go vet ./...` green (tests may still fail)
 
 ## 2. Configuration cutover
 
-- [ ] 2.1 Rewrite every port in `configs/flock.json` to the strict PortDefinition
+- [x] 2.1 Rewrite every port in `configs/flock.json` to the strict PortDefinition
       envelope per the design D5 mapping table (sim, graph-ingest, rule-processor,
       frames-websocket, graph-index, graph-clustering)
-- [ ] 2.2 Add graph-ingest's mandatory `graph_mutations` nats-request provider input
+- [x] 2.2 Add graph-ingest's mandatory `graph_mutations` nats-request provider input
       and the sim's matching requester output (interface
       `semstreams.graph.mutation/v1`, subject `graph.mutation.>`, required)
-- [ ] 2.3 Mirror upstream `DefaultConfig` for graph-clustering's full port set
+- [x] 2.3 Mirror upstream `DefaultConfig` for graph-clustering's full port set
       (3 kv-read inputs + required `graph_mutations` output + `communities` kv-write),
       keeping `coalesce_ms: 500` on graph-index and all clustering knobs unchanged
-- [ ] 2.4 Services block: remove every `"name"` field; streams: add
+- [x] 2.4 Services block: remove every `"name"` field; streams: add
       `max_age: "24h"`, `max_bytes: 2147483648`, `discard: "old"` to ENTITY;
       bump top-level `version` to `1.2.0`
-- [ ] 2.5 `go run ./cmd/semboids --config configs/flock.json --validate` passes strict
+- [x] 2.5 `go run ./cmd/semboids --config configs/flock.json --validate` passes strict
       config + flow validation (fresh NATS not required for --validate; iterate here
       until green)
 
 ## 3. Write-path migration
 
-- [ ] 3.1 Define the `semboids-neighbors` projection contract (entity pattern for boid
+- [x] 3.1 Define the `semboids-neighbors` projection contract (entity pattern for boid
       IDs, group `neighbors`, mode reconcile, predicates `["flock.neighbor.of"]`) and
       construct one `projection.MutationClient` in the sim component (design D4)
-- [ ] 3.2 Publisher: replace `TripleRemover` with a `PredicateReconciler`-shaped seam;
+- [x] 3.2 Publisher: replace `TripleRemover` with a `PredicateReconciler`-shaped seam;
       emptying transition issues `Reconcile` with empty desired set; bounded retry ×3
       on revision-conflict, `commit_unknown` logged + counted, never blind-retried
       (design D2); keep `prevHadNeighbors` and the one-snapshot-at-a-time invariant
-- [ ] 3.3 Cull reclaim (`internal/sim/lifecycle.go`): replace the raw
+- [x] 3.3 Cull reclaim (`internal/sim/lifecycle.go`): replace the raw
       `graph.mutation.entity.delete` request with `ReadAuthoritative → Delete` at the
       read revision, bounded retry ×5 on revision-conflict, reclaim-failure metric +
       log on `commit_unknown`/exhaustion, both round trips inside the drain-pool
       operation (design D3)
-- [ ] 3.4 Unit tests on the narrow seams: reconcile fired only on non-empty→empty,
+- [x] 3.4 Unit tests on the narrow seams: reconcile fired only on non-empty→empty,
       empty-reconcile retry classification (conflict retries, ambiguous does not),
       fenced-delete retry/exhaustion paths, drain-pool boundedness with the 2-RTT
       reclaim
-- [ ] 3.5 Sweep for leftover raw mutation-subject strings (`grep -rn 'graph.mutation'`)
+- [x] 3.5 Fix the seed-flock lifecycle startup race found in the smoke boot:
+      `Manager.Create` now exact-reads through the mutation responder, and the sim's
+      seed creation can beat graph-ingest's responder coming up — bounded
+      retry/backoff on "no responders" in the create drain path so seed boids are
+      never silently lifecycle-less
+- [x] 3.6 Sweep for leftover raw mutation-subject strings (`grep -rn 'graph.mutation'`)
       — none outside comments/docs referencing history
 
 ## 4. Test-fixture grammar migration
 
-- [ ] 4.1 Migrate every integration test's inline component config to the new port
+- [x] 4.1 Migrate every integration test's inline component config to the new port
       grammar (cull, roundtrip, probe, snapshot, zone ingest, clustering spike,
       debug index, neighbor-empty — same D5 mapping table), including the mutation
       provider port wherever graph-ingest is built in-proc
-- [ ] 4.2 Rewrite `TestNeighborEmptyGate` to pin both halves (design D6): raw stream
+- [x] 4.2 Rewrite `TestNeighborEmptyGate` to pin both halves (design D6): raw stream
       publish of an empty set still lingers (merge-only limitation persists);
       `Reconcile`-empty clears ENTITY_STATES + INCOMING (native path works); align
       scenario names with the graph-snapshots delta
-- [ ] 4.3 `task check` green (vet, gofmt tree-wide, revive, `-race` unit); remember
+- [x] 4.3 `task check` green (vet, gofmt tree-wide, revive, `-race` unit); remember
       `gofmt -w` every new file immediately (CI's gofmt gate skips untracked files)
 - [ ] 4.4 `go test -race -tags=integration ./...` green against a fresh dev NATS
 
