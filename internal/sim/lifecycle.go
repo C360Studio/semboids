@@ -3,13 +3,16 @@ package sim
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/c360studio/semstreams/graph"
 	"github.com/c360studio/semstreams/metric"
 	"github.com/c360studio/semstreams/pkg/lifecycle"
+	"github.com/c360studio/semstreams/pkg/projection"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
 
@@ -18,7 +21,6 @@ import (
 
 const (
 	entityStatesBucket = "ENTITY_STATES"
-	entityDeleteSubj   = "graph.mutation.entity.delete"
 	// spawnCreatePoll is how often the off-loop creator drains pending
 	// Manager.Create work; adds ≤ this to spawn→graph latency, keeps the tick
 	// loop free of NATS.
@@ -30,6 +32,18 @@ const (
 	// lifecycle_drain_concurrency is unset — matches graph-ingest's ingest_lanes
 	// default (beta.142 ADR-072) so the drain uses every lane the substrate has.
 	defaultDrainConcurrency = 8
+	// reclaimRetries bounds the fenced-delete loop. Conflicts come from the
+	// culled boid's own in-flight snapshot writes; the boid left physics at
+	// observation, so its writes stop and the retry converges (design D3).
+	reclaimRetries = 5
+	// createRetries bounds Manager.Create attempts. Create now round-trips
+	// through the graph mutation responder, which can lag the sim at process
+	// start (component-start races the responder subscription) — a bounded
+	// backoff turns the seed-flock race into a short wait instead of a
+	// silently lifecycle-less boid.
+	createRetries = 5
+	// createRetryBase is the first retry backoff (doubled per attempt).
+	createRetryBase = 100 * time.Millisecond
 )
 
 // boidSpawner is the slice of lifecycle.Manager the sim uses to record a
@@ -38,12 +52,20 @@ type boidSpawner interface {
 	Create(ctx context.Context, p lifecycle.Participant) error
 }
 
-// entityReclaimer is the slice of the NATS client the cull watcher needs:
-// watch ENTITY_STATES and delete reclaimed boid entities (lifecycle exposes no
-// despawn, so the sim issues the delete itself).
-type entityReclaimer interface {
+// bucketWaiter is the slice of the NATS client the cull watcher needs to
+// attach its raw ENTITY_STATES watch.
+type bucketWaiter interface {
 	WaitForBucket(ctx context.Context, name string, timeout time.Duration) (jetstream.KeyValue, error)
-	Request(ctx context.Context, subject string, data []byte, timeout time.Duration) ([]byte, error)
+}
+
+// entityReclaimer is the slice of the projection mutation client the cull
+// watcher needs: lifecycle exposes no despawn, so the sim reclaims a culled
+// boid itself via the beta.160 revision-fenced pairing — read the
+// authoritative revision, then delete at exactly that revision. The client
+// never retries for the caller (design D3).
+type entityReclaimer interface {
+	ReadAuthoritative(ctx context.Context, entityID string) (*graph.ExactEntity, error)
+	Delete(ctx context.Context, request projection.DeleteMutation) (projection.MutationReceipt, error)
 }
 
 // culledBoidID returns the boid's numeric ID and true when an ENTITY_STATES
@@ -94,7 +116,7 @@ func boidIDFromKey(key string) (uint32, bool) {
 // a raw KV watch, not Manager.Watch, which ignores the delete op we then
 // issue. Runs independently of any UI client.
 func (c *Component) runCullWatcher(ctx context.Context) {
-	kv, err := c.reclaimer.WaitForBucket(ctx, entityStatesBucket, 60*time.Second)
+	kv, err := c.buckets.WaitForBucket(ctx, entityStatesBucket, 60*time.Second)
 	if err != nil {
 		c.logger.Warn("cull watcher: ENTITY_STATES unavailable", slog.String("error", err.Error()))
 		return
@@ -142,16 +164,74 @@ func (c *Component) runCullWatcher(ctx context.Context) {
 	}
 }
 
-// deleteEntity reclaims a culled boid's ENTITY_STATES entry (graph-ingest
-// delete path — lifecycle has no despawn). Idempotent upstream.
+// deleteEntity reclaims a culled boid's ENTITY_STATES entry through the
+// revision-fenced pairing (graph-ingest is the mutation provider; lifecycle
+// has no despawn). Retry policy per design D3: a revision conflict or missing
+// responder is a definite non-commit and retries with a fresh read; a
+// missing entity means someone already reclaimed it; an ambiguous
+// (commit-unknown) outcome is never blind-retried — it is logged and counted,
+// and the culled zombie stays observable in ENTITY_STATES.
 func (c *Component) deleteEntity(ctx context.Context, entityID string) {
-	req, err := json.Marshal(map[string]string{"entity_id": entityID})
-	if err != nil {
+	for attempt := 1; attempt <= reclaimRetries; attempt++ {
+		exact, err := c.reclaimer.ReadAuthoritative(ctx, entityID)
+		if err != nil {
+			if kind, ok := mutationKind(err); ok {
+				switch kind {
+				case projection.MutationNotFound:
+					return // already reclaimed
+				case projection.MutationRevisionConflict, projection.MutationUnavailable:
+					if attempt < reclaimRetries {
+						continue
+					}
+				}
+			}
+			c.reclaimFailed(entityID, attempt, err)
+			return
+		}
+		_, err = c.reclaimer.Delete(ctx, projection.DeleteMutation{
+			EntityID:         entityID,
+			ExpectedRevision: exact.KVRevision,
+		})
+		if err == nil {
+			return
+		}
+		if kind, ok := mutationKind(err); ok {
+			switch kind {
+			case projection.MutationNotFound:
+				return // already reclaimed
+			case projection.MutationRevisionConflict, projection.MutationUnavailable:
+				if attempt < reclaimRetries {
+					continue // definite non-commit — re-read and retry
+				}
+			case projection.MutationCommitUnknown:
+				c.logger.Warn("reclaim culled entity: ambiguous outcome, not retried",
+					slog.String("entity", entityID), slog.String("error", err.Error()))
+				c.metrics.observeReclaimFailure()
+				return
+			}
+		}
+		c.reclaimFailed(entityID, attempt, err)
 		return
 	}
-	if _, err := c.reclaimer.Request(ctx, entityDeleteSubj, req, 5*time.Second); err != nil {
-		c.logger.Warn("reclaim culled entity", slog.String("entity", entityID), slog.String("error", err.Error()))
+	c.reclaimFailed(entityID, reclaimRetries, errors.New("retries exhausted"))
+}
+
+// reclaimFailed records a reclaim that gave up — the boid already left
+// physics, so the cost is a lingering culled entity, visible in
+// ENTITY_STATES and on the failure counter.
+func (c *Component) reclaimFailed(entityID string, attempts int, err error) {
+	c.logger.Warn("reclaim culled entity",
+		slog.String("entity", entityID), slog.Int("attempts", attempts), slog.String("error", err.Error()))
+	c.metrics.observeReclaimFailure()
+}
+
+// mutationKind extracts the projection client's stable failure category.
+func mutationKind(err error) (projection.MutationErrorKind, bool) {
+	var me *projection.MutationError
+	if errors.As(err, &me) {
+		return me.Kind, true
 	}
+	return "", false
 }
 
 // runSpawnCreator drains engine-allocated spawn IDs and records each as an
@@ -180,13 +260,41 @@ func (c *Component) createPending(ctx context.Context) {
 		c.drainPool.submit(ctx, func() {
 			start := time.Now()
 			entityID := boidgraph.BoidEntityID(c.org, c.platform, id)
-			if err := c.spawner.Create(ctx, boidgraph.NewBoidLifecycle(entityID)); err != nil {
-				c.logger.Warn("create boid lifecycle", slog.Uint64("boid", uint64(id)), slog.String("error", err.Error()))
+			if err := c.createWithRetry(ctx, entityID); err != nil {
+				c.logger.Warn("create boid lifecycle",
+					slog.Uint64("boid", uint64(id)), slog.Int("attempts", createRetries), slog.String("error", err.Error()))
 				return
 			}
 			c.metrics.observeSpawn(time.Since(start))
 		})
 	}
+}
+
+// createWithRetry records one boid as an active participant, retrying with
+// doubling backoff. Manager.Create exact-reads through the graph mutation
+// responder since beta.160, so process start can race the responder's
+// subscription coming up — observed live as "no responders available" on the
+// seed flock. The backoff (100ms doubling, ~3s worst case inside one bounded
+// pool slot) turns that race into a short wait; a persistent failure still
+// surfaces exactly once, at exhaustion.
+func (c *Component) createWithRetry(ctx context.Context, entityID string) error {
+	backoff := createRetryBase
+	var err error
+	for attempt := 1; attempt <= createRetries; attempt++ {
+		if err = c.spawner.Create(ctx, boidgraph.NewBoidLifecycle(entityID)); err == nil {
+			return nil
+		}
+		if attempt == createRetries {
+			break
+		}
+		select {
+		case <-ctx.Done():
+			return err
+		case <-time.After(backoff):
+		}
+		backoff *= 2
+	}
+	return err
 }
 
 // runChurn fires spawn waves at the runtime churn dial (spawns/sec), bounded by
@@ -218,10 +326,11 @@ func (c *Component) runChurn(ctx context.Context) {
 // lifecycleMetrics holds the churn Prometheus handles. A nil receiver no-ops,
 // so unit tests build a Component without a registry.
 type lifecycleMetrics struct {
-	spawns   prometheus.Counter
-	culls    prometheus.Counter
-	active   prometheus.Gauge
-	spawnDur prometheus.Observer
+	spawns        prometheus.Counter
+	culls         prometheus.Counter
+	active        prometheus.Gauge
+	spawnDur      prometheus.Observer
+	reclaimFailed prometheus.Counter
 }
 
 func newLifecycleMetrics(reg *metric.MetricsRegistry) *lifecycleMetrics {
@@ -237,7 +346,9 @@ func newLifecycleMetrics(reg *metric.MetricsRegistry) *lifecycleMetrics {
 	_ = reg.RegisterGauge(svc, "lifecycle_active", active)
 	dur := prometheus.NewHistogram(prometheus.HistogramOpts{Namespace: ns, Subsystem: sub, Name: "spawn_create_duration_seconds", Help: "Manager.Create round-trip per spawned boid.", Buckets: prometheus.ExponentialBuckets(0.001, 2, 14)})
 	_ = reg.RegisterHistogram(svc, "lifecycle_spawn_create_duration_seconds", dur)
-	return &lifecycleMetrics{spawns: spawns, culls: culls, active: active, spawnDur: dur}
+	reclaimFailed := prometheus.NewCounter(prometheus.CounterOpts{Namespace: ns, Subsystem: sub, Name: "reclaim_failures_total", Help: "Culled-boid reclaims that gave up (retry exhaustion or ambiguous outcome); the entity lingers in ENTITY_STATES."})
+	_ = reg.RegisterCounter(svc, "lifecycle_reclaim_failures_total", reclaimFailed)
+	return &lifecycleMetrics{spawns: spawns, culls: culls, active: active, spawnDur: dur, reclaimFailed: reclaimFailed}
 }
 
 func (m *lifecycleMetrics) observeSpawn(d time.Duration) {
@@ -255,4 +366,11 @@ func (m *lifecycleMetrics) observeCull() {
 	}
 	m.culls.Inc()
 	m.active.Dec()
+}
+
+func (m *lifecycleMetrics) observeReclaimFailure() {
+	if m == nil {
+		return
+	}
+	m.reclaimFailed.Inc()
 }

@@ -3,12 +3,14 @@ package boidgraph
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"sync/atomic"
 	"time"
 
 	"github.com/c360studio/semstreams/message"
 	"github.com/c360studio/semstreams/metric"
+	"github.com/c360studio/semstreams/pkg/projection"
 
 	"github.com/c360studio/semboids/internal/flock"
 )
@@ -30,15 +32,17 @@ type StreamPublisher interface {
 	PublishBatchToStream(ctx context.Context, subject string, msgs [][]byte) error
 }
 
-// TripleRemover issues graph.mutation.triple.remove requests — used on a
+// NeighborReconciler is the slice of the projection mutation client used on a
 // boid's non-empty→empty neighbor transition. The stream-upsert path
 // (MergeEntity/MergeTriples) is add/merge-only and cannot express now-zero: an
 // arrival carrying no flock.neighbor.of triple leaves the resident edges in
-// place (correct multi-writer merge). Verified-necessary on beta.152
-// (TestNeighborEmptyGate); a substrate-native replacement is tracked upstream
-// as semstreams#578.
-type TripleRemover interface {
-	Request(ctx context.Context, subject string, data []byte, timeout time.Duration) ([]byte, error)
+// place (correct multi-writer merge; re-verified against beta.160 source —
+// the fact-projection lane validates but still merges). A Reconcile with an
+// empty desired set over the neighbor group is the beta.160 typed replacement
+// for the removed graph.mutation.triple.remove (semstreams#578, resolved).
+// The client exact-reads internally and never retries for the caller.
+type NeighborReconciler interface {
+	Reconcile(ctx context.Context, request projection.ReconcileMutation) (projection.MutationReceipt, error)
 }
 
 // Publisher consumes snapshots from a bounded buffer and publishes boid
@@ -47,12 +51,12 @@ type TripleRemover interface {
 // snapshot is superseded only by physics time, so dropping the new one is
 // equivalent one tick later) and counts the drop.
 type Publisher struct {
-	pub      StreamPublisher
-	remover  TripleRemover
-	logger   *slog.Logger
-	orgID    string
-	platform string
-	metrics  *publisherMetrics
+	pub        StreamPublisher
+	reconciler NeighborReconciler
+	logger     *slog.Logger
+	orgID      string
+	platform   string
+	metrics    *publisherMetrics
 
 	ch chan Snapshot
 
@@ -69,13 +73,13 @@ type Publisher struct {
 // NewPublisher creates a Publisher with a small buffer (capacity 2: one in
 // flight, one pending). reg may be nil (tests), which disables the Prometheus
 // pipeline metrics.
-func NewPublisher(pub StreamPublisher, remover TripleRemover, orgID, platform string, reg *metric.MetricsRegistry, logger *slog.Logger) *Publisher {
+func NewPublisher(pub StreamPublisher, reconciler NeighborReconciler, orgID, platform string, reg *metric.MetricsRegistry, logger *slog.Logger) *Publisher {
 	if logger == nil {
 		logger = slog.Default()
 	}
 	return &Publisher{
 		pub:              pub,
-		remover:          remover,
+		reconciler:       reconciler,
 		logger:           logger,
 		orgID:            orgID,
 		platform:         platform,
@@ -172,7 +176,7 @@ func (p *Publisher) publishSnapshot(ctx context.Context, s Snapshot) {
 		had := p.prevHadNeighbors[b.ID]
 		has := len(b.Neighbors) > 0
 		if had && !has {
-			p.removeNeighborTriples(ctx, b.ID)
+			p.clearNeighbors(ctx, b.ID)
 		}
 		p.prevHadNeighbors[b.ID] = has
 	}
@@ -182,25 +186,54 @@ func (p *Publisher) publishSnapshot(ctx context.Context, s Snapshot) {
 	p.metrics.observeDuration(time.Since(start).Seconds())
 }
 
-// removeNeighborTriples issues one idempotent predicate removal for a boid
-// whose neighbor set transitioned to empty — the only way to clear an emptied
-// predicate on beta.152, since the stream merge preserves absent predicates
-// (see TripleRemover; semstreams#578 tracks retiring this).
-func (p *Publisher) removeNeighborTriples(ctx context.Context, id uint32) {
-	if p.remover == nil {
+// neighborClearRetries bounds the clear's retry loop. A retried Reconcile
+// re-reads the authoritative revision inside the client, so each attempt is
+// self-repairing; conflicts here come from the boid's own in-flight snapshot
+// writes and drain within a snapshot period.
+const neighborClearRetries = 3
+
+// clearNeighbors reconciles a boid's neighbor group to empty after its
+// neighbor set transitioned non-empty→empty — the stream merge cannot express
+// now-zero (see NeighborReconciler). Retry policy per design D2: retry
+// definite non-commits (revision conflict, no responder), treat a missing
+// entity as already-clear (reclaim raced us), and never blind-retry an
+// ambiguous outcome. Exhaustion or ambiguity is logged and counted; the count
+// sentinel (flock.neighbor.count=0) plus the next emptying transition bound
+// the visible staleness.
+func (p *Publisher) clearNeighbors(ctx context.Context, id uint32) {
+	if p.reconciler == nil {
 		return
 	}
-	req, err := json.Marshal(map[string]any{
-		"subject":   BoidEntityID(p.orgID, p.platform, id),
-		"predicate": "flock.neighbor.of",
-	})
-	if err != nil {
-		p.logger.Error("marshal triple remove", slog.Any("error", err))
-		return
+	req := projection.ReconcileMutation{
+		Contract: NeighborContractName,
+		Group:    NeighborGroup,
+		EntityID: BoidEntityID(p.orgID, p.platform, id),
 	}
-	if _, err := p.remover.Request(ctx, "graph.mutation.triple.remove", req, 5*time.Second); err != nil {
-		p.logger.Warn("remove stale neighbor triples",
-			slog.Uint64("boid", uint64(id)), slog.Any("error", err))
+	for attempt := 1; attempt <= neighborClearRetries; attempt++ {
+		_, err := p.reconciler.Reconcile(ctx, req)
+		if err == nil {
+			return
+		}
+		var me *projection.MutationError
+		if errors.As(err, &me) {
+			switch me.Kind {
+			case projection.MutationNotFound:
+				return // entity already reclaimed — nothing to clear
+			case projection.MutationRevisionConflict, projection.MutationUnavailable:
+				if attempt < neighborClearRetries {
+					continue // definite non-commit — safe to retry
+				}
+			case projection.MutationCommitUnknown:
+				p.logger.Warn("clear emptied neighbor set: ambiguous outcome, not retried",
+					slog.Uint64("boid", uint64(id)), slog.Any("error", err))
+				p.metrics.incNeighborClearFailure()
+				return
+			}
+		}
+		p.logger.Warn("clear emptied neighbor set",
+			slog.Uint64("boid", uint64(id)), slog.Int("attempts", attempt), slog.Any("error", err))
+		p.metrics.incNeighborClearFailure()
+		return
 	}
 }
 

@@ -15,6 +15,7 @@ import (
 	"github.com/c360studio/semstreams/natsclient"
 	"github.com/c360studio/semstreams/payloadbuiltins"
 	"github.com/c360studio/semstreams/payloadregistry"
+	"github.com/c360studio/semstreams/pkg/projection"
 	graphindex "github.com/c360studio/semstreams/processor/graph-index"
 	graphingest "github.com/c360studio/semstreams/processor/graph-ingest"
 
@@ -22,26 +23,27 @@ import (
 )
 
 // TestNeighborEmptyGate is a durable substrate-contract guard for the
-// neighbor-empty workaround (prevHadNeighbors + removeNeighborTriples in
-// publisher.go).
+// neighbor-empty clear (prevHadNeighbors + clearNeighbors in publisher.go).
+// It pins BOTH halves of the graph-snapshots contract (design D6):
 //
-// It pins the merge-vs-replace semantics that make that workaround necessary:
-// when a boid snapshot with an EMPTY neighbor set is published through the
-// ordinary stream-upsert path (entity.boid.upsert -> graph-ingest MergeEntity),
-// the boid's stale flock.neighbor.of edges DO NOT clear — neither in
-// ENTITY_STATES (what the graph pane reads via api/graphstream.go) nor in the
-// derived INCOMING index — because MergeTriples preserves predicates the
-// arrival does not carry (correct multi-writer behavior). Only the explicit
-// graph.mutation.triple.remove clears them.
-//
-// Verified on beta.152 (2026-07-19); the retire question is tracked upstream as
-// C360Studio/semstreams#578 (opt-in source-authoritative predicate replacement).
-// If a future substrate bump ever clears empties on the stream path, the final
-// assertion here fails loudly and re-opens the decision to retire the workaround.
+//  1. "Merge-only limitation persists": a boid snapshot with an EMPTY neighbor
+//     set published through the ordinary stream-upsert path
+//     (entity.boid.upsert -> graph-ingest MergeEntity) does NOT clear the
+//     stale flock.neighbor.of edges — neither in ENTITY_STATES (what the
+//     graph pane reads) nor in the derived INCOMING index — because
+//     MergeTriples preserves predicates the arrival does not carry (correct
+//     multi-writer behavior). If this half ever flips, the transition tracker
+//     can retire; the final assertion fails loudly to re-open that decision.
+//  2. "Emptying a neighbor set clears the edges": the typed entity.reconcile
+//     with an empty desired set over the neighbor group — beta.160's
+//     replacement for the removed graph.mutation.triple.remove, and the
+//     resolution of C360Studio/semstreams#578 — DOES clear both, end to end.
+//     A repeat reconcile of the already-empty group writes no new revision
+//     ("Clearing an already-empty set costs nothing").
 //
 // The publish here is deliberately the RAW stream path (PublishToStreamWithAck),
-// bypassing Publisher.removeNeighborTriples, so it measures the substrate's
-// merge semantics alone.
+// bypassing Publisher.clearNeighbors, so it measures the substrate's merge
+// semantics alone.
 func TestNeighborEmptyGate(t *testing.T) {
 	tc := natsclient.NewTestClient(t,
 		natsclient.WithE2EDefaults(),
@@ -76,23 +78,24 @@ func TestNeighborEmptyGate(t *testing.T) {
 	startComponent(t, ctx, registry, deps, "graph-ingest-t", "graph-ingest", map[string]any{
 		"ports": map[string]any{
 			"inputs": []map[string]any{
-				{"name": "entity_stream", "subject": "entity.>", "type": "jetstream", "stream_name": "ENTITY"},
+				{"name": "entity_stream", "config": map[string]any{"kind": "jetstream", "stream_name": "ENTITY", "subjects": []any{"entity.>"}}},
+				{"name": "graph_mutations", "required": true, "config": map[string]any{"kind": "nats-request", "subject": "graph.mutation.>", "interface": map[string]any{"type": "semstreams.graph.mutation", "version": "v1"}}},
 			},
 			"outputs": []map[string]any{
-				{"name": "entity_states", "type": "kv-write", "subject": "ENTITY_STATES"},
+				{"name": "entity_states", "config": map[string]any{"kind": "kv-write", "bucket": "ENTITY_STATES"}},
 			},
 		},
 	})
 	startComponent(t, ctx, registry, deps, "graph-index-t", "graph-index", map[string]any{
 		"ports": map[string]any{
 			"inputs": []map[string]any{
-				{"name": "entity_watch", "type": "kv-watch", "subject": "ENTITY_STATES"},
+				{"name": "entity_watch", "config": map[string]any{"kind": "kv-watch", "bucket": "ENTITY_STATES"}},
 			},
 			"outputs": []map[string]any{
-				{"name": "outgoing_index", "type": "kv-write", "subject": "OUTGOING_INDEX"},
-				{"name": "incoming_index", "type": "kv-write", "subject": "INCOMING_INDEX"},
-				{"name": "alias_index", "type": "kv-write", "subject": "ALIAS_INDEX"},
-				{"name": "predicate_index", "type": "kv-write", "subject": "PREDICATE_INDEX"},
+				{"name": "outgoing_index", "config": map[string]any{"kind": "kv-write", "bucket": "OUTGOING_INDEX"}},
+				{"name": "incoming_index", "config": map[string]any{"kind": "kv-write", "bucket": "INCOMING_INDEX"}},
+				{"name": "alias_index", "config": map[string]any{"kind": "kv-write", "bucket": "ALIAS_INDEX"}},
+				{"name": "predicate_index", "config": map[string]any{"kind": "kv-write", "bucket": "PREDICATE_INDEX"}},
 			},
 		},
 	})
@@ -219,22 +222,56 @@ func TestNeighborEmptyGate(t *testing.T) {
 		t.Logf("GATE RESULT: stream MergeEntity does NOT clear an emptied neighbor set (%d stale flock.neighbor.of remain in ENTITY_STATES) — the app-side removal is still load-bearing.", n2)
 	}
 
-	// --- Step 3: confirm the workaround's remedy (triple.remove) DOES clear,
-	// end to end (ENTITY_STATES + INCOMING) on beta.152. ---
-	rmReq, _ := json.Marshal(map[string]any{
-		"subject":   boid0,
-		"predicate": "flock.neighbor.of",
+	// --- Step 3: confirm the native remedy — entity.reconcile with an empty
+	// desired set over the neighbor group — DOES clear, end to end
+	// (ENTITY_STATES + INCOMING). This is the graph-snapshots delta's
+	// "Emptying a neighbor set clears the edges" on beta.160. ---
+	mutations, err := projection.NewMutationClient(projection.MutationClientConfig{
+		NATS:      tc.Client,
+		Contracts: []projection.Contract{boidgraph.NeighborContract()},
 	})
-	if _, err := tc.Client.Request(ctx, "graph.mutation.triple.remove", rmReq, 5*time.Second); err != nil {
-		t.Fatalf("triple.remove: %v", err)
+	if err != nil {
+		t.Fatalf("build mutation client: %v", err)
 	}
-	v3, n3 := waitVersionAtLeast(boid0, v2+1)
+	clearReq := projection.ReconcileMutation{
+		Contract: boidgraph.NeighborContractName,
+		Group:    boidgraph.NeighborGroup,
+		EntityID: boid0,
+	}
+	receipt, err := mutations.Reconcile(ctx, clearReq)
+	if err != nil {
+		t.Fatalf("reconcile empty neighbor group: %v", err)
+	}
+	// Wait on the observable outcome, not the logical Version counter — the
+	// reconcile lane's version semantics are the substrate's business.
+	var n3 int
+	deadline := time.After(30 * time.Second)
+	for {
+		if _, n, ok := neighborOfCount(boid0); ok && n == 0 {
+			n3 = n
+			break
+		}
+		select {
+		case <-deadline:
+			_, n, _ := neighborOfCount(boid0)
+			t.Fatalf("after reconcile-empty: flock.neighbor.of = %d in ENTITY_STATES, want 0 (the native clear must land)", n)
+		case <-time.After(200 * time.Millisecond):
+		}
+	}
 	time.Sleep(2 * time.Second)
 	incAfterRemove := incomingRowsForSource(boid0)
-	t.Logf("STEP 3 (graph.mutation.triple.remove): version=%d  ENTITY_STATES flock.neighbor.of=%d  INCOMING rows for source=%d",
-		v3, n3, incAfterRemove)
-	if n3 != 0 {
-		t.Fatalf("after triple.remove: flock.neighbor.of = %d in ENTITY_STATES, want 0 (the workaround remedy must clear)", n3)
+	t.Logf("STEP 3 (entity.reconcile, empty desired): kv_revision=%d  ENTITY_STATES flock.neighbor.of=%d  INCOMING rows for source=%d",
+		receipt.KVRevision, n3, incAfterRemove)
+
+	// --- Step 4: a repeat reconcile of the already-empty group is free — no
+	// new KV revision ("Clearing an already-empty set costs nothing"). ---
+	repeat, err := mutations.Reconcile(ctx, clearReq)
+	if err != nil {
+		t.Fatalf("repeat reconcile of empty group: %v", err)
+	}
+	if repeat.KVRevision != receipt.KVRevision {
+		t.Errorf("repeat empty reconcile bumped KV revision %d -> %d, want unchanged (idempotent no-op)",
+			receipt.KVRevision, repeat.KVRevision)
 	}
 
 	// Assert the expected (source-derived) finding so a substrate change that
