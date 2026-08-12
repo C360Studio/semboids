@@ -76,17 +76,17 @@
 
 ## 5. Fresh state and product proof
 
-- [ ] 5.1 Fresh NATS everywhere: `task dev:nats:clean` (dev), recreate
+- [x] 5.1 Fresh NATS everywhere: `task dev:nats:clean` (dev), recreate
       `semboids-demo-nats` (demo); confirm no retained pre-160 buckets/streams
-- [ ] 5.2 `task check:push` green (full CI mirror incl. cross-compile + schema
+- [x] 5.2 `task check:push` green (full CI mirror incl. cross-compile + schema
       no-drift)
-- [ ] 5.3 Live product proof on the demo stack, evidence in the change dir: ingest at
+- [x] 5.3 Live product proof on the demo stack, evidence in the change dir: ingest at
       dial 1→4 Hz, all four rule toggles flip behavior visibly, spawn wave + cull
       chain reclaims (fenced delete confirmed in logs/metrics, zero
       reclaim-failures), community colours appear in the graph pane, SSE stream +
       reconnect, process restart comes back clean against retained KV config
       (version gate honors 1.2.0)
-- [ ] 5.4 Record the product-proof checklist the upstream guide requires (tag,
+- [x] 5.4 Record the product-proof checklist the upstream guide requires (tag,
       migration commit, retired surfaces removed, suites green, e2e proof) in
       `evidence/product-proof.md`
 
