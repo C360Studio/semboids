@@ -92,11 +92,11 @@
 
 ## 6. Perf re-baseline and closeout
 
-- [ ] 6.1 Dial sweep vs the beta.158 baseline (fresh stack per run, interleaved,
+- [x] 6.1 Dial sweep vs the beta.158 baseline (fresh stack per run, interleaved,
       settle-waited per the beta.149 methodology); record in
       `docs/perf/beta160-migration-2026-08-12.md` with attribution notes separating
       migration effects from beta.159 add-lane dedup
-- [ ] 6.2 Comment + close semstreams#578 with the native-path verification evidence
+- [x] 6.2 Comment + close semstreams#578 with the native-path verification evidence
       (TestNeighborEmptyGate both halves); note the census row (W=4) is cleared
 - [ ] 6.3 Update CLAUDE.md's semstreams table if any package paths moved; conventional
       commits per milestone; PR with `task check:push` green; after merge,
