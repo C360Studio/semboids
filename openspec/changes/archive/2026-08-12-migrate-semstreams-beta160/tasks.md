@@ -98,6 +98,6 @@
       migration effects from beta.159 add-lane dedup
 - [x] 6.2 Comment + close semstreams#578 with the native-path verification evidence
       (TestNeighborEmptyGate both halves); note the census row (W=4) is cleared
-- [ ] 6.3 Update CLAUDE.md's semstreams table if any package paths moved; conventional
+- [x] 6.3 Update CLAUDE.md's semstreams table if any package paths moved; conventional
       commits per milestone; PR with `task check:push` green; after merge,
       `/opsx:archive migrate-semstreams-beta160` (delta sync included)

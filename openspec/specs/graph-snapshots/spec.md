@@ -83,29 +83,35 @@ graph-ingest's predicate-level merge (`MergeTriples`) replaces the previous
 set for the `flock.neighbor.of` predicate.
 
 The **empty-set case is a verified substrate limitation on the current pinned
-SemStreams (beta.152)**: the stream-upsert path (`entity.boid.upsert` →
+SemStreams (beta.160)**: the stream-upsert path (`entity.boid.upsert` →
 `MergeEntity`) is add/merge-only and cannot express "now zero neighbors" — an
 arrival carrying no `flock.neighbor.of` triple leaves the resident edges in
 place (correct merge behavior, since it preserves predicates owned by other
-writers such as `flock.lifecycle.phase`). This was confirmed end-to-end:
-republishing a boid with an empty neighbor set leaves the stale
-`flock.neighbor.of` edges present in **both** ENTITY_STATES (what the graph
-pane reads) and the derived INCOMING index; ADR-077 replacement is index-side
-and re-projects whatever ENTITY_STATES holds, so it does not clear them.
+writers such as `flock.lifecycle.phase`). Verified against beta.160 source:
+the stream fact-projection lane validates and subject-fills arrivals but still
+applies them through the same predicate-level merge.
 
 Therefore, on a boid's non-empty→empty transition the publisher SHALL clear
-the edges via the substrate mutation API (`graph.mutation.triple.remove` for
-`flock.neighbor.of`), tracked on the off-loop coordinator goroutine
-(`prevHadNeighbors`) so the ADR-001 physics hot path is untouched. This
-removal is verified-necessary, not a legacy relic. Each snapshot SHALL also
-publish an always-present `flock.neighbor.count` property — a genuine
-published degree property and the graph pane's neighbor-set reset sentinel.
+the edges through the substrate's typed mutation contract: an
+`entity.reconcile` mutation whose desired set for the `flock.neighbor.of`
+predicate group is empty (the canonical replacement for the retired
+`graph.mutation.triple.remove` operation, which no longer has a responder).
+The transition SHALL remain tracked on the off-loop coordinator goroutine so
+the ADR-001 physics hot path is untouched. Each snapshot SHALL also publish an
+always-present `flock.neighbor.count` property — a genuine published degree
+property and the graph pane's neighbor-set reset sentinel.
 
-The substrate-native alternative (retiring the coordinator's transition
-tracker) is tracked upstream as **C360Studio/semstreams#578** (opt-in
-source-authoritative predicate replacement on stream arrival); if it lands,
-a future change retires the tracker. The app SHALL NOT add a second app-side
-path in the meantime (Product Boundary).
+The reconcile is revision-fenced by the substrate. A revision conflict from a
+concurrent snapshot write is a definite non-commit: the publisher SHALL retry
+the clear (bounded), and SHALL NOT blindly retry an ambiguous
+(`commit_unknown`) outcome. Bulk snapshot publishing SHALL stay on the batch
+stream lane; the reconcile fires only on emptying transitions
+(Product Boundary: no per-snapshot request/reply for ordinary updates).
+
+The upstream ask that tracked a substrate-native alternative,
+**C360Studio/semstreams#578**, is RESOLVED by this typed reconcile operation;
+the transition tracker itself remains because clearing stays caller-initiated
+on the stream lane.
 
 #### Scenario: Neighbor churn does not accumulate
 - **GIVEN** a boid whose neighbor set changes between snapshots
@@ -116,10 +122,21 @@ path in the meantime (Product Boundary).
 #### Scenario: Emptying a neighbor set clears the edges
 - **GIVEN** a boid that had `flock.neighbor.of` edges in the previous snapshot
 - **WHEN** its next snapshot has an empty neighbor set
-- **THEN** the publisher issues a `graph.mutation.triple.remove` for
-  `flock.neighbor.of` on that boid
+- **THEN** the publisher issues an `entity.reconcile` mutation with an empty
+  desired set for `flock.neighbor.of` on that boid
 - **AND** the boid's `flock.neighbor.of` edges are cleared from ENTITY_STATES
   and the INCOMING index (the stream merge alone does not clear them)
+
+#### Scenario: Clearing an already-empty set costs nothing
+- **GIVEN** a boid whose `flock.neighbor.of` edges are already cleared
+- **WHEN** an `entity.reconcile` with an empty desired set is issued for it
+- **THEN** the mutation reports unchanged and writes no new entity revision
+
+#### Scenario: A concurrent write does not permanently defeat the clear
+- **GIVEN** an emptying transition racing other writes to the same boid
+- **WHEN** the reconcile returns a revision conflict
+- **THEN** the publisher retries with a fresh authoritative read and the edges
+  are cleared
 
 ### Requirement: Snapshot pipeline is observable
 The pipeline SHALL expose Prometheus metrics: snapshots published, boid
