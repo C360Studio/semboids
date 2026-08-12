@@ -277,11 +277,19 @@ func (c *Component) createPending(ctx context.Context) {
 // seed flock. The backoff (100ms doubling, ~3s worst case inside one bounded
 // pool slot) turns that race into a short wait; a persistent failure still
 // surfaces exactly once, at exhaustion.
+//
+// ErrAlreadyExists is success, not failure: a restart against retained
+// ENTITY_STATES re-seeds the same deterministic boid IDs, and beta.160's
+// Create is strict (observed live: 160 already-managed rejections on
+// restart). The boid IS a managed participant — counting it keeps the active
+// gauge honest; a retained culled-phase boid is swept by the cull watcher's
+// initial sync.
 func (c *Component) createWithRetry(ctx context.Context, entityID string) error {
 	backoff := createRetryBase
 	var err error
 	for attempt := 1; attempt <= createRetries; attempt++ {
-		if err = c.spawner.Create(ctx, boidgraph.NewBoidLifecycle(entityID)); err == nil {
+		err = c.spawner.Create(ctx, boidgraph.NewBoidLifecycle(entityID))
+		if err == nil || errors.Is(err, lifecycle.ErrAlreadyExists) {
 			return nil
 		}
 		if attempt == createRetries {

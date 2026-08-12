@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"sync"
 	"sync/atomic"
@@ -317,5 +318,29 @@ func TestCreateWithRetryExhaustsBound(t *testing.T) {
 	}
 	if fake.count() != 0 {
 		t.Fatalf("created %d participants, want 0", fake.count())
+	}
+}
+
+// alreadyManagedSpawner always reports the entity as lifecycle-managed — the
+// restart-against-retained-state shape.
+type alreadyManagedSpawner struct{ calls atomic.Int32 }
+
+func (f *alreadyManagedSpawner) Create(context.Context, lifecycle.Participant) error {
+	f.calls.Add(1)
+	return fmt.Errorf("wrapped: %w", lifecycle.ErrAlreadyExists)
+}
+
+// TestCreateTreatsAlreadyManagedAsSuccess pins the restart contract: a
+// re-seeded boid that is already a managed participant is success on the
+// first attempt — no retry churn, no warn, and the spawn counts so the
+// active gauge tracks the live flock.
+func TestCreateTreatsAlreadyManagedAsSuccess(t *testing.T) {
+	fake := &alreadyManagedSpawner{}
+	c := &Component{logger: slog.Default(), spawner: fake}
+	if err := c.createWithRetry(context.Background(), "c360.semboids.sim.flock.boid.3"); err != nil {
+		t.Fatalf("createWithRetry = %v, want success for already-managed", err)
+	}
+	if got := fake.calls.Load(); got != 1 {
+		t.Fatalf("Create calls = %d, want 1 (no retry on a permanent already-managed)", got)
 	}
 }
