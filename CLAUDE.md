@@ -93,6 +93,7 @@ don't carve an app-side parallel path.
 | NATS connection | `natsclient` |
 | Component wiring | `component.Registry`, `componentregistry.Register` |
 | Graph entities | `graph` (Graphable payloads → `ENTITY_STATES` via graph-ingest) |
+| Typed graph mutations | `pkg/projection` (`MutationClient`: reconcile/fenced delete; contracts declare intent) |
 | Rules | `processor/rule` (JSON rules, zone transitions) |
 | Spawn/despawn | `pkg/lifecycle` (Participant + Manager) |
 | Browser egress | `output/websocket` |
@@ -100,8 +101,10 @@ don't carve an app-side parallel path.
 | Metrics | `metric` (Prometheus, :9090) |
 | Errors/retry | `pkg/errs`, `pkg/retry` |
 
-Graph writes go through the `graph.mutation.*` API — `graph-ingest` is the sole
-writer to `ENTITY_STATES`. Rules pass references, never bulky payloads.
+Graph writes go through the typed `pkg/projection.MutationClient` (never raw
+`graph.mutation.*` subjects — beta.160 closed the wire) — `graph-ingest` is the
+sole writer to `ENTITY_STATES`. Bulk snapshots stay on the ENTITY stream lane.
+Rules pass references, never bulky payloads.
 
 ## Related Repos
 
