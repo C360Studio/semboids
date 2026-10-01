@@ -11,11 +11,11 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/c360studio/semstreams/pkg/graphview"
 	"github.com/c360studio/semstreams/service"
@@ -40,16 +40,7 @@ var kindRules = map[string][]string{
 // cullKind is the lifecycle rule kind — excluded from modifier clearing.
 const cullKind = "cull"
 
-// ruleReconfigurer is the slice of the rule processor the API needs — the
-// runtime-reconfiguration trio, resolved structurally so this package needs no
-// processor/rule import. (beta.160 removed the service-plane
-// RuntimeConfigurable interface; the rule component keeps these methods, which
-// is what the demo's live rule toggles ride on.)
-type ruleReconfigurer interface {
-	GetRuntimeConfig() map[string]any
-	ValidateConfigUpdate(changes map[string]any) error
-	ApplyConfigUpdate(changes map[string]any) error
-}
+type ruleReconfigurer = RuleControl
 
 // modifierClearer is the slice of the sim component the API needs.
 type modifierClearer interface {
@@ -70,8 +61,9 @@ type graphDialer interface {
 // Service exposes the rule-toggle endpoints.
 type Service struct {
 	*service.BaseService
-	deps   *service.Dependencies
-	logger *slog.Logger
+	deps     *service.Dependencies
+	logger   *slog.Logger
+	controls *Controls
 
 	// views holds the shared read-side graph subscriptions. One view per bucket
 	// for the whole process — SSE clients attach as subscribers rather than
@@ -80,9 +72,14 @@ type Service struct {
 }
 
 // New creates the boids API service (service.Constructor compatible).
-func New(_ json.RawMessage, deps *service.Dependencies) (service.Service, error) {
-	if deps == nil || deps.ComponentRegistry == nil {
-		return nil, fmt.Errorf("boids service requires a component registry")
+func New(raw json.RawMessage, deps *service.Dependencies) (service.Service, error) {
+	return NewWithControls(raw, deps, nil)
+}
+
+// NewWithControls injects the application control handles captured during boot.
+func NewWithControls(_ json.RawMessage, deps *service.Dependencies, controls *Controls) (service.Service, error) {
+	if deps == nil {
+		return nil, fmt.Errorf("boids service requires dependencies")
 	}
 	logger := deps.Logger
 	if logger == nil {
@@ -97,7 +94,7 @@ func New(_ json.RawMessage, deps *service.Dependencies) (service.Service, error)
 		service.WithMetrics(deps.MetricsRegistry),
 		service.WithNATS(deps.NATSClient),
 	)
-	return &Service{BaseService: base, deps: deps, logger: logger}, nil
+	return &Service{BaseService: base, deps: deps, logger: logger, controls: controls}, nil
 }
 
 // Start brings the service up and launches the shared graph views.
@@ -115,7 +112,7 @@ func (s *Service) Start(ctx context.Context) error {
 		// No NATS: graph streaming is unavailable and handled per request.
 		return nil
 	}
-	s.views = startGraphViews(func(ctx context.Context, bucket string) (graphview.WatcherSource, error) {
+	s.views = startGraphViews(ctx, func(ctx context.Context, bucket string) (graphview.WatcherSource, error) {
 		return s.deps.NATSClient.GetKeyValueBucket(ctx, bucket)
 	}, s.logger, newViewMetrics(s.deps.MetricsRegistry))
 	return nil
@@ -123,32 +120,22 @@ func (s *Service) Start(ctx context.Context) error {
 
 // Stop tears the shared views down before the base service stops. Idempotent,
 // per the service.Service contract.
-func (s *Service) Stop(timeout time.Duration) error {
-	s.views.stop()
-	return s.BaseService.Stop(timeout)
+func (s *Service) Stop(ctx context.Context) error {
+	// Both owners must receive cancellation even when one cannot join within
+	// the caller's budget. Preserve both failures rather than leaving the base
+	// health loops running after a view timeout.
+	return errors.Join(s.views.stop(ctx), s.BaseService.Stop(ctx))
 }
 
-// rules resolves the rule processor lazily: the component manager creates
-// components after services construct, so resolution happens per request.
+// rules resolves the explicitly injected live rule control after composition.
 func (s *Service) rules() (ruleReconfigurer, error) {
-	for _, comp := range s.deps.ComponentRegistry.ListComponents() {
-		if r, ok := comp.(ruleReconfigurer); ok {
-			return r, nil
-		}
+	if r := s.controls.ruleControl(); r != nil {
+		return r, nil
 	}
 	return nil, fmt.Errorf("rule processor not available")
 }
 
-// clearer resolves the sim component lazily (optional — clearing is a
-// visual nicety; toggling still works if the sim is absent).
-func (s *Service) clearer() modifierClearer {
-	for _, comp := range s.deps.ComponentRegistry.ListComponents() {
-		if c, ok := comp.(modifierClearer); ok {
-			return c
-		}
-	}
-	return nil
-}
+func (s *Service) clearer() modifierClearer { return s.controls.simControl() }
 
 // kindStates derives per-kind enabled state from the live rule config: a
 // kind is enabled when its primary (entered→modifier) rule is enabled.
@@ -222,10 +209,8 @@ func (s *Service) RegisterHTTPHandlers(prefix string, mux *http.ServeMux) {
 
 // dialer resolves the sim's dial surface lazily.
 func (s *Service) dialer() (graphDialer, error) {
-	for _, comp := range s.deps.ComponentRegistry.ListComponents() {
-		if d, ok := comp.(graphDialer); ok {
-			return d, nil
-		}
+	if d := s.controls.simControl(); d != nil {
+		return d, nil
 	}
 	return nil, fmt.Errorf("sim component not available")
 }

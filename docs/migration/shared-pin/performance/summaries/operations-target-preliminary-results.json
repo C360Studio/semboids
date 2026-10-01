@@ -1,0 +1,8 @@
+[
+  {
+    "probe": "probe_error",
+    "utc": "2026-10-01T11:38:43Z",
+    "error": "process exited before ready: 1",
+    "passed": false
+  }
+]

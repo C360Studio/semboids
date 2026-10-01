@@ -1,0 +1,13 @@
+{
+  "reviewed_at_utc": "2026-10-01T11:58:33.342099+00:00",
+  "disposition": "M1-M3, population-weighted offered load, WebSocket reconnect and whole-window coverage reviewed; 10 independent tests passed",
+  "sha256": {
+    "scripts/qualification/analyze.py": "91460e52a7249cbc9585802fa60dd6b3b188d9759e4aaf489eb777d442a2480c",
+    "scripts/qualification/campaign.py": "33d3e49656c463068a6e6c9b00d44ef7866d4dbdff389e255efb9c7e11eece86",
+    "scripts/qualification/load.py": "acc1cc86a9fd9e65574e4b2e61f7371dea874606ffc3faf53a4ad7d79bfd4505",
+    "scripts/qualification/operations.py": "7a7d1ecd7588ace2595ffcaab06f1ad2861f43f7ee15f1eb80bc1e34314ec615",
+    "scripts/qualification/test_load.py": "77e8f32287c37223b7e3337d2407ecb825e9620701323bf2c1187643b44edfa6",
+    "scripts/qualification/test_review_guards.py": "9516e71f48db209955b62a96655b81d35eb0d7be0adb918f6a91c4ee9ef7ef30",
+    "scripts/qualification/websocket.mjs": "987de6e0362c8ba54dd9c0a02986c200128182225bb41beb3b46ba245ad8f3bc"
+  }
+}

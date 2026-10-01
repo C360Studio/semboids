@@ -74,12 +74,16 @@ func DefaultConfig() Config {
 		TickHz: 30,
 		Seed:   1,
 		Ports: &component.PortConfig{
+			Inputs: []component.PortDefinition{{Name: "steering", Config: component.NATSPort{Subject: SteeringSubject}}},
 			Outputs: []component.PortDefinition{{
 				Name:        "frames",
 				Required:    true,
 				Description: "Aggregated flock frame per tick (compact JSON)",
 				Config:      component.NATSPort{Subject: DefaultSubject},
-			}},
+			},
+				{Name: "zone_events", Config: component.NATSPort{Subject: EventsSubject}},
+				{Name: "entity_stream", Config: component.JetStreamPort{StreamName: "ENTITY", Subjects: []string{boidgraph.IngestSubject}}},
+			},
 		},
 	}
 }
@@ -135,19 +139,23 @@ type Component struct {
 	// (parallel-lifecycle-drain). Never touches the tick loop.
 	drainPool *drainPool
 
-	natsClient interface {
+	steeringSub *natsclient.Subscription
+	natsClient  interface {
 		Subscribe(ctx context.Context, subject string,
 			handler func(context.Context, *nats.Msg)) (*natsclient.Subscription, error)
 	}
 
+	inputPorts  []component.Port
 	outputPorts []component.Port
 
-	mu        sync.RWMutex
-	started   bool
-	startTime time.Time
-	cancel    context.CancelFunc
-	done      chan struct{}
-	frames    uint64
+	mu          sync.RWMutex
+	started     bool
+	startTime   time.Time
+	cancel      context.CancelFunc
+	done        chan struct{}
+	everStarted bool
+	workers     sync.WaitGroup
+	frames      uint64
 }
 
 // NewComponent creates the sim component from raw JSON config.
@@ -179,9 +187,16 @@ func NewComponent(rawConfig json.RawMessage, deps component.Dependencies) (compo
 	params := flock.DefaultParams()
 	params.DT = 1 / config.TickHz
 
-	framesPort, err := config.Ports.Outputs[0].Resolve(component.DirectionOutput)
+	inputs, outputs, err := resolveSimPorts(config.Ports)
 	if err != nil {
-		return nil, fmt.Errorf("resolve frames output port: %w", err)
+		return nil, fmt.Errorf("resolve sim ports: %w", err)
+	}
+	var framesPort component.Port
+	for _, p := range outputs {
+		if p.Name == "frames" {
+			framesPort = p
+			break
+		}
 	}
 	framesFacts, err := framesPort.Facts()
 	if err != nil {
@@ -193,11 +208,8 @@ func NewComponent(rawConfig json.RawMessage, deps component.Dependencies) (compo
 	}
 
 	org, platform := deps.Platform.Org, deps.Platform.Platform
-	if org == "" {
-		org = "c360"
-	}
-	if platform == "" {
-		platform = "semboids"
+	if deps.NATSClient != nil && (org == "" || platform == "") {
+		return nil, fmt.Errorf("sim requires effective platform authority")
 	}
 
 	logger := deps.GetLogger()
@@ -210,7 +222,8 @@ func NewComponent(rawConfig json.RawMessage, deps component.Dependencies) (compo
 		tracker:     newZoneTracker(config.Zones, config.CullGraceTicks),
 		org:         org,
 		platform:    platform,
-		outputPorts: []component.Port{framesPort},
+		inputPorts:  inputs,
+		outputPorts: outputs,
 	}
 	c.snapshotRadius = config.SnapshotRadius
 	if c.snapshotRadius <= 0 {
@@ -363,10 +376,10 @@ func (c *Component) Meta() component.Metadata {
 	}
 }
 
-// InputPorts returns input port definitions (none — the sim is a source).
-func (c *Component) InputPorts() []component.Port { return nil }
+// InputPorts describes the steering subscription.
+func (c *Component) InputPorts() []component.Port { return c.inputPorts }
 
-// OutputPorts returns the frames output port.
+// OutputPorts describes frames, zone events, snapshots, and graph requests.
 func (c *Component) OutputPorts() []component.Port { return c.outputPorts }
 
 // ConfigSchema returns the configuration schema.
@@ -460,74 +473,59 @@ func (c *Component) Start(ctx context.Context) error {
 	if ctx == nil {
 		return fmt.Errorf("sim: context cannot be nil")
 	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	c.mu.Lock()
-	if c.started {
-		c.mu.Unlock()
-		return fmt.Errorf("sim already started")
+	defer c.mu.Unlock()
+	if c.everStarted {
+		return fmt.Errorf("sim: component is one-shot")
+	}
+	c.everStarted = true
+	ctx, c.cancel = context.WithCancel(ctx)
+	c.done = make(chan struct{})
+	if c.natsClient != nil {
+		sub, err := c.natsClient.Subscribe(ctx, SteeringSubject,
+			func(_ context.Context, msg *nats.Msg) { c.handleSteering(msg.Data) })
+		if err != nil {
+			c.cancel()
+			close(c.done)
+			return fmt.Errorf("subscribe %s: %w", SteeringSubject, err)
+		}
+		c.steeringSub = sub
 	}
 	c.started = true
 	c.startTime = time.Now()
-	ctx, c.cancel = context.WithCancel(ctx)
-	c.done = make(chan struct{})
-	c.mu.Unlock()
-
-	c.logger.Info("Starting sim component",
-		slog.Int("boids", c.config.Boids),
-		slog.Float64("tick_hz", c.config.TickHz),
-		slog.Uint64("seed", c.config.Seed),
-		slog.Int("zones", len(c.config.Zones)),
-		slog.String("subject", c.subject))
-
-	// The snapshot publisher owns all JetStream traffic (ADR-001: the tick
-	// loop never blocks on the substrate).
 	if c.publisher != nil {
-		go c.publisher.Run(ctx)
+		c.workers.Go(func() { c.publisher.Run(ctx) })
 	}
-
-	// The e2e latency probe watches ENTITY_STATES independently of any UI
-	// client (load-dial D4); its lifecycle is tied to this component, not to
-	// SSE connections. A watcher setup failure is logged, not fatal — the
-	// dial and physics keep running without the substrate-latency signal.
 	if c.probe != nil {
-		go func() {
-			if err := c.probe.Run(ctx); err != nil {
+		c.workers.Go(func() {
+			if err := c.probe.Run(ctx); err != nil && ctx.Err() == nil {
 				c.logger.Warn("e2e latency probe stopped", slog.String("error", err.Error()))
 			}
-		}()
+		})
 	}
-
-	// Lifecycle population (add-lifecycle-population): the spawn-create loop
-	// records spawned boids as active participants, the cull watcher observes
-	// phase=culled and reclaims, and the churn ticker drives the load axis.
-	// All off the tick loop; only when a Manager and NATS are wired.
 	if c.spawner != nil && c.reclaimer != nil {
-		go c.runSpawnCreator(ctx)
-		go c.runCullWatcher(ctx)
-		go c.runChurn(ctx)
-		// Record the initial population as active participants too — otherwise
-		// only spawned boids are lifecycle-managed and the seed flock can't be
-		// culled (the rule would hit "no phase triple").
 		initial := make([]uint32, 0, len(c.engine.Boids()))
 		for _, b := range c.engine.Boids() {
 			initial = append(initial, b.ID)
 		}
 		c.population.stageCreate(initial)
+		c.workers.Go(func() { c.runSpawnCreator(ctx) })
+		c.workers.Go(func() { c.runCullWatcher(ctx) })
+		c.workers.Go(func() { c.runChurn(ctx) })
 	}
-
-	// Steering modifiers arrive from the rule engine; unit tests feed
-	// handleSteering directly instead of subscribing.
-	if c.natsClient != nil {
-		if _, err := c.natsClient.Subscribe(ctx, SteeringSubject,
-			func(_ context.Context, msg *nats.Msg) { c.handleSteering(msg.Data) }); err != nil {
-			c.mu.Lock()
-			c.started = false
-			c.mu.Unlock()
-			c.cancel()
-			return fmt.Errorf("subscribe %s: %w", SteeringSubject, err)
+	c.workers.Go(func() { c.run(ctx) })
+	// Submitters must finish before waiting on the pool: concurrent Add/Wait
+	// raced on the beta.160 cull path. This join belongs to Start's lifetime.
+	go func(done chan struct{}) {
+		c.workers.Wait()
+		if c.drainPool != nil {
+			c.drainPool.wait()
 		}
-	}
-
-	go c.run(ctx)
+		close(done)
+	}(c.done)
 	return nil
 }
 
@@ -543,43 +541,38 @@ func (c *Component) handleSteering(data []byte) {
 }
 
 // Stop cancels the tick loop and waits for it to exit (bounded by timeout).
-func (c *Component) Stop(timeout time.Duration) error {
+func (c *Component) Stop(ctx context.Context) error {
+	if ctx == nil {
+		return fmt.Errorf("sim: stop context cannot be nil")
+	}
 	c.mu.Lock()
-	if !c.started {
-		c.mu.Unlock()
+	cancel, done, subscription := c.cancel, c.done, c.steeringSub
+	c.started = false
+	c.mu.Unlock()
+	if done == nil {
 		return nil
 	}
-	c.started = false
-	cancel := c.cancel
-	done := c.done
-	c.mu.Unlock()
-
+	// Stop new steering deliveries and join borrowed callbacks before releasing
+	// state. Start context cancellation alone does not own NATS subscriptions.
+	drainErr := subscription.Drain(ctx)
 	if cancel != nil {
 		cancel()
 	}
 	select {
 	case <-done:
-	case <-time.After(timeout):
-		return fmt.Errorf("sim: tick loop did not stop within %s", timeout)
+		return drainErr
+	default:
 	}
-	// Join in-flight lifecycle IO. ctx is cancelled, so in-flight Create/delete
-	// Requests error out fast; this only avoids leaking their goroutines past
-	// Stop. Bounded by the same timeout so a wedged Request can't hang Stop.
-	if c.drainPool != nil {
-		drained := make(chan struct{})
-		go func() { c.drainPool.wait(); close(drained) }()
-		select {
-		case <-drained:
-		case <-time.After(timeout):
-		}
+	select {
+	case <-done:
+		return drainErr
+	case <-ctx.Done():
+		return fmt.Errorf("sim: shutdown incomplete: %w", ctx.Err())
 	}
-	c.logger.Info("Sim component stopped")
-	return nil
 }
 
 // run is the tick loop: advance physics, publish one frame, repeat.
 func (c *Component) run(ctx context.Context) {
-	defer close(c.done)
 
 	interval := time.Duration(float64(time.Second) / c.config.TickHz)
 	ticker := time.NewTicker(interval)

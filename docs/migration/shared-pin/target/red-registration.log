@@ -1,0 +1,9 @@
+--- FAIL: TestRegisteredPayloadRoundTripAndFloor (0.00s)
+    payload_test.go:114: payload must declare its control indexing floor
+FAIL
+FAIL	github.com/c360studio/semboids/internal/boidgraph	0.499s
+--- FAIL: TestRegisteredPayloadRoundTripAndFloor (0.00s)
+    payload_test.go:107: payload must declare its control indexing floor
+FAIL
+FAIL	github.com/c360studio/semboids/internal/zone	0.304s
+FAIL

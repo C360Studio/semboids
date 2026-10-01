@@ -85,7 +85,7 @@ func TestSnapshotsLandAndReplace(t *testing.T) {
 		"boids": 20, "tick_hz": 30, "seed": 7,
 		"graph_hz": 5,
 	})
-	simInst, err := registry.CreateComponent("sim-t", types.ComponentConfig{
+	simInst, err := createTestComponent(registry, "sim-t", types.ComponentConfig{
 		Type: types.ComponentTypeInput, Name: "sim", Enabled: true, Config: simCfgJSON,
 	}, deps)
 	if err != nil {
@@ -98,7 +98,7 @@ func TestSnapshotsLandAndReplace(t *testing.T) {
 	if err := simLC.Start(ctx); err != nil {
 		t.Fatalf("sim start: %v", err)
 	}
-	t.Cleanup(func() { _ = simLC.Stop(5 * time.Second) })
+	t.Cleanup(func() { _ = simLC.Stop(testStopContext(t)) })
 
 	bucket, err := tc.Client.WaitForBucket(ctx, "ENTITY_STATES", 30*time.Second)
 	if err != nil {

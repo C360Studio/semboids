@@ -1,0 +1,31 @@
+{
+  "selected_added": [
+    "github.com/antithesishq/antithesis-sdk-go",
+    "github.com/google/go-tpm",
+    "github.com/minio/highwayhash",
+    "github.com/nats-io/jwt/v2",
+    "github.com/nats-io/nats-server/v2",
+    "pgregory.net/rapid"
+  ],
+  "selected_removed": [
+    "github.com/google/gofuzz"
+  ],
+  "version_changed": [
+    {
+      "module": "github.com/c360studio/semstreams",
+      "baseline": "v1.0.0-beta.160",
+      "target": "v1.0.0-beta.162.0.20260930150212-8b99efe9c66a"
+    },
+    {
+      "module": "github.com/modern-go/reflect2",
+      "baseline": "v1.0.3-0.20250322232337-35a7c28c31ee",
+      "target": "v1.0.2"
+    }
+  ],
+  "production_newly_reached": [],
+  "production_no_longer_reached": [
+    "github.com/json-iterator/go",
+    "github.com/modern-go/concurrent",
+    "github.com/modern-go/reflect2"
+  ]
+}

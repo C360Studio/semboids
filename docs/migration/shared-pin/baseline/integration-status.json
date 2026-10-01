@@ -1,0 +1,14 @@
+{
+  "command": [
+    "go",
+    "test",
+    "-count=1",
+    "-p=1",
+    "-tags=integration",
+    "-v",
+    "-race",
+    "./..."
+  ],
+  "exit_code": 1,
+  "elapsed_seconds": 104.72023296356201
+}

@@ -8,9 +8,7 @@ import (
 	"testing"
 
 	"github.com/c360studio/semstreams/component"
-	"github.com/c360studio/semstreams/natsclient"
 	"github.com/c360studio/semstreams/service"
-	"github.com/c360studio/semstreams/types"
 )
 
 // fakeRules is a stub rule processor: Discoverable + the RuntimeConfigurable
@@ -109,43 +107,19 @@ func (f *fakeSim) SetChurnHz(hz float64) error {
 	return nil
 }
 
-// newTestService wires the API service against a registry holding the fakes.
+// newTestService wires the API service with explicit application controls.
 func newTestService(t *testing.T, withRules, withSim bool) (*Service, *http.ServeMux, *fakeRules, *fakeSim) {
 	t.Helper()
-	registry := component.NewRegistry()
-	nc, err := natsclient.NewClient("nats://localhost:4222") // unconnected: satisfies dep validation
-	if err != nil {
-		t.Fatalf("new nats client: %v", err)
-	}
-	deps := component.Dependencies{NATSClient: nc}
-
+	controls := &Controls{}
 	rules := newFakeRules()
 	sim := &fakeSim{}
-	register := func(name string, disc component.Discoverable) {
-		if err := registry.RegisterFactory(name, &component.Registration{
-			Name: name, Type: "processor", Protocol: "test", Domain: "test",
-			Description: "test stub", Version: "0",
-			Factory: func(_ json.RawMessage, _ component.Dependencies) (component.Discoverable, error) {
-				return disc, nil
-			},
-		}); err != nil {
-			t.Fatalf("register %s: %v", name, err)
-		}
-		if _, err := registry.CreateComponent(name, types.ComponentConfig{
-			Type: types.ComponentTypeProcessor, Name: name, Enabled: true,
-			Config: json.RawMessage(`{}`),
-		}, deps); err != nil {
-			t.Fatalf("create %s: %v", name, err)
-		}
-	}
 	if withRules {
-		register("rule-processor", rules)
+		controls.BindRules(rules)
 	}
 	if withSim {
-		register("sim", sim)
+		controls.BindSim(sim)
 	}
-
-	svc, err := New(nil, &service.Dependencies{ComponentRegistry: registry})
+	svc, err := NewWithControls(nil, &service.Dependencies{}, controls)
 	if err != nil {
 		t.Fatalf("New: %v", err)
 	}

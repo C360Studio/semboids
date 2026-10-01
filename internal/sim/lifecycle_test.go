@@ -202,7 +202,7 @@ func (f *fakeReclaimer) ReadAuthoritative(_ context.Context, _ string) (*graph.E
 	if call < len(f.readScript) && f.readScript[call] != nil {
 		return nil, f.readScript[call]
 	}
-	return &graph.ExactEntity{KVRevision: f.revision}, nil
+	return &graph.ExactEntity{KVRevision: f.revision + uint64(call)}, nil
 }
 
 func (f *fakeReclaimer) Delete(_ context.Context, req projection.DeleteMutation) (projection.MutationReceipt, error) {
@@ -246,6 +246,11 @@ func TestDeleteEntityRetryClassification(t *testing.T) {
 		wantReads    int
 		wantDeletes  int
 	}{
+		{"unavailable read retries", []error{simMutationErr(projection.MutationUnavailable), nil}, nil, 2, 1},
+		{"conflict read retries", []error{simMutationErr(projection.MutationRevisionConflict), nil}, nil, 2, 1},
+		{"ambiguous read is not retried", []error{simMutationErr(projection.MutationCommitUnknown)}, nil, 1, 0},
+		{"invalid read is not retried", []error{simMutationErr(projection.MutationInvalid)}, nil, 1, 0},
+		{"unavailable delete retries", nil, []error{simMutationErr(projection.MutationUnavailable), nil}, 2, 2},
 		{"conflict re-reads then succeeds", nil,
 			[]error{simMutationErr(projection.MutationRevisionConflict), nil}, 2, 2},
 		{"read not-found is already reclaimed",
@@ -270,6 +275,11 @@ func TestDeleteEntityRetryClassification(t *testing.T) {
 			fake := &fakeReclaimer{readScript: tc.readScript, deleteScript: tc.deleteScript}
 			c := &Component{logger: slog.Default(), reclaimer: fake}
 			c.deleteEntity(context.Background(), "c360.semboids.sim.flock.boid.9")
+			for i := 1; i < len(fake.deleted); i++ {
+				if fake.deleted[i].ExpectedRevision <= fake.deleted[i-1].ExpectedRevision {
+					t.Fatal("retry reused a stale revision")
+				}
+			}
 			if fake.reads != tc.wantReads || fake.deletes != tc.wantDeletes {
 				t.Fatalf("reads=%d deletes=%d, want %d/%d",
 					fake.reads, fake.deletes, tc.wantReads, tc.wantDeletes)

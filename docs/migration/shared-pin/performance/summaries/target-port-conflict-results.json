@@ -1,0 +1,18 @@
+[
+  {
+    "probe": "occupied_listeners",
+    "utc": "2026-10-01T11:50:52Z",
+    "ipv4": "('0.0.0.0', 48080)",
+    "ipv6": "('::', 48080, 0, 0)",
+    "ipv6_only": 1
+  },
+  {
+    "probe": "failed_startup_port_conflict",
+    "utc": "2026-10-01T11:50:52Z",
+    "returncode": 1,
+    "seconds": 0.17529245803598315,
+    "passed": true,
+    "explicit_bind_error": true,
+    "forced_kill": false
+  }
+]

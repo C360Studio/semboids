@@ -1,0 +1,27 @@
+{
+  "recorded_date": "2026-10-01",
+  "semboids_baseline_commit": "8c03cc53836ced93a5df7064473c63ff144e64f1",
+  "semstreams_before": {
+    "version": "v1.0.0-beta.160",
+    "commit": "8403a2218000e45a31c5132fbfe01af42ed04f14",
+    "origin_evidence": "baseline/semstreams-origin.json"
+  },
+  "semstreams_target": {
+    "version": "v1.0.0-beta.162.0.20260930150212-8b99efe9c66a",
+    "commit": "8b99efe9c66a4faa4fa509f9f62cc6bad8392128",
+    "selection": "Reuse SETUP 03A already frozen main SHA; beta.163 absent at original selection; later revisions do not move baseline"
+  },
+  "shared_pin_authority": {
+    "repository": "https://github.com/C360Studio/semsource",
+    "read_commit": "d90f0432253dab36062608583802edb4246e3129",
+    "source_path": "docs/testing/setup-03a/pins.json",
+    "read_local_path": "/Users/coby/.codex/worktrees/setup-03a-migration/semsource/docs/testing/setup-03a/pins.json",
+    "source_sha256": "5ae39e8c75d5061a2432c3fa26a7bbcdf8975bf98c0a5935579fcaa6c115c28c",
+    "consumer_pr": "https://github.com/C360Studio/semsource/pull/213",
+    "semengine_setup_issue": "https://github.com/C360Studio/semengine/issues/7"
+  },
+  "comparison_boundary": "SemStreams exclusively; no SemEngine cutover or qualification claim",
+  "performance_broker": "Recorded by each isolated performance run manifest; baseline integration fixture uses nats:2.14-alpine",
+  "toolchain": "go1.26.4 darwin/arm64",
+  "target_qualification": "HOLD: delayed pre-cull snapshot resurrection on both pins; target cold-start provider-readiness failure. Ordinary correctness gates pass; steady-state workload comparisons recorded separately."
+}

@@ -1,0 +1,748 @@
+{
+  "module_directory": "/Users/coby/go/pkg/mod/github.com/c360studio/semstreams@v1.0.0-beta.162.0.20260930150212-8b99efe9c66a",
+  "consumer_directory": "/Users/coby/Code/c360/semboids",
+  "method": "Raw non-test .go directory lines; package reachability from recorded TSV; not linked symbols",
+  "direct_production_imports": {
+    "packages": 20,
+    "non_test_go_lines": 84070,
+    "package_rows": [
+      {
+        "package": "github.com/c360studio/semstreams/component",
+        "non_test_go_files": 28,
+        "non_test_go_lines": 5585
+      },
+      {
+        "package": "github.com/c360studio/semstreams/config",
+        "non_test_go_files": 12,
+        "non_test_go_lines": 5193
+      },
+      {
+        "package": "github.com/c360studio/semstreams/graph",
+        "non_test_go_files": 27,
+        "non_test_go_lines": 3293
+      },
+      {
+        "package": "github.com/c360studio/semstreams/message",
+        "non_test_go_files": 16,
+        "non_test_go_lines": 2186
+      },
+      {
+        "package": "github.com/c360studio/semstreams/metric",
+        "non_test_go_files": 4,
+        "non_test_go_lines": 1218
+      },
+      {
+        "package": "github.com/c360studio/semstreams/natsclient",
+        "non_test_go_files": 29,
+        "non_test_go_lines": 12377
+      },
+      {
+        "package": "github.com/c360studio/semstreams/output/websocket",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 2220
+      },
+      {
+        "package": "github.com/c360studio/semstreams/payloadbuiltins",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 93
+      },
+      {
+        "package": "github.com/c360studio/semstreams/payloadregistry",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 508
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/graphview",
+        "non_test_go_files": 5,
+        "non_test_go_lines": 1193
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/lifecycle",
+        "non_test_go_files": 13,
+        "non_test_go_lines": 3739
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/projection",
+        "non_test_go_files": 4,
+        "non_test_go_lines": 694
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/types",
+        "non_test_go_files": 9,
+        "non_test_go_lines": 751
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/graph-clustering",
+        "non_test_go_files": 7,
+        "non_test_go_lines": 4117
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/graph-index",
+        "non_test_go_files": 16,
+        "non_test_go_lines": 4527
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/graph-ingest",
+        "non_test_go_files": 9,
+        "non_test_go_lines": 5870
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/rule",
+        "non_test_go_files": 48,
+        "non_test_go_lines": 15826
+      },
+      {
+        "package": "github.com/c360studio/semstreams/service",
+        "non_test_go_files": 34,
+        "non_test_go_lines": 11819
+      },
+      {
+        "package": "github.com/c360studio/semstreams/types",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 188
+      },
+      {
+        "package": "github.com/c360studio/semstreams/vocabulary",
+        "non_test_go_files": 11,
+        "non_test_go_lines": 2673
+      }
+    ]
+  },
+  "production_closure": {
+    "packages": 62,
+    "non_test_go_lines": 131066,
+    "package_rows": [
+      {
+        "package": "github.com/c360studio/semstreams/agentic",
+        "non_test_go_files": 23,
+        "non_test_go_lines": 6005
+      },
+      {
+        "package": "github.com/c360studio/semstreams/agentic/agentrun",
+        "non_test_go_files": 3,
+        "non_test_go_lines": 1505
+      },
+      {
+        "package": "github.com/c360studio/semstreams/component",
+        "non_test_go_files": 28,
+        "non_test_go_lines": 5585
+      },
+      {
+        "package": "github.com/c360studio/semstreams/component/flowgraph",
+        "non_test_go_files": 3,
+        "non_test_go_lines": 1324
+      },
+      {
+        "package": "github.com/c360studio/semstreams/composition",
+        "non_test_go_files": 8,
+        "non_test_go_lines": 914
+      },
+      {
+        "package": "github.com/c360studio/semstreams/config",
+        "non_test_go_files": 12,
+        "non_test_go_lines": 5193
+      },
+      {
+        "package": "github.com/c360studio/semstreams/governance",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 140
+      },
+      {
+        "package": "github.com/c360studio/semstreams/graph",
+        "non_test_go_files": 27,
+        "non_test_go_lines": 3293
+      },
+      {
+        "package": "github.com/c360studio/semstreams/graph/clustering",
+        "non_test_go_files": 12,
+        "non_test_go_lines": 5516
+      },
+      {
+        "package": "github.com/c360studio/semstreams/graph/inference",
+        "non_test_go_files": 14,
+        "non_test_go_lines": 5338
+      },
+      {
+        "package": "github.com/c360studio/semstreams/graph/llm",
+        "non_test_go_files": 8,
+        "non_test_go_lines": 842
+      },
+      {
+        "package": "github.com/c360studio/semstreams/graph/readiness",
+        "non_test_go_files": 4,
+        "non_test_go_lines": 1016
+      },
+      {
+        "package": "github.com/c360studio/semstreams/graph/structural",
+        "non_test_go_files": 4,
+        "non_test_go_lines": 883
+      },
+      {
+        "package": "github.com/c360studio/semstreams/health",
+        "non_test_go_files": 4,
+        "non_test_go_lines": 625
+      },
+      {
+        "package": "github.com/c360studio/semstreams/internal/agentterminal",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 188
+      },
+      {
+        "package": "github.com/c360studio/semstreams/internal/componentadmission",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 8
+      },
+      {
+        "package": "github.com/c360studio/semstreams/internal/deliverylane",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 248
+      },
+      {
+        "package": "github.com/c360studio/semstreams/internal/graphmutation",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 264
+      },
+      {
+        "package": "github.com/c360studio/semstreams/internal/lifecyclecleanup",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 38
+      },
+      {
+        "package": "github.com/c360studio/semstreams/internal/logforwarderpolicy",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 105
+      },
+      {
+        "package": "github.com/c360studio/semstreams/internal/looptoken",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 42
+      },
+      {
+        "package": "github.com/c360studio/semstreams/message",
+        "non_test_go_files": 16,
+        "non_test_go_lines": 2186
+      },
+      {
+        "package": "github.com/c360studio/semstreams/metric",
+        "non_test_go_files": 4,
+        "non_test_go_lines": 1218
+      },
+      {
+        "package": "github.com/c360studio/semstreams/model",
+        "non_test_go_files": 5,
+        "non_test_go_lines": 1397
+      },
+      {
+        "package": "github.com/c360studio/semstreams/model/wire",
+        "non_test_go_files": 7,
+        "non_test_go_lines": 1182
+      },
+      {
+        "package": "github.com/c360studio/semstreams/natsclient",
+        "non_test_go_files": 29,
+        "non_test_go_lines": 12377
+      },
+      {
+        "package": "github.com/c360studio/semstreams/output/websocket",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 2220
+      },
+      {
+        "package": "github.com/c360studio/semstreams/payloadbuiltins",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 93
+      },
+      {
+        "package": "github.com/c360studio/semstreams/payloadregistry",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 508
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/acme",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 543
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/buffer",
+        "non_test_go_files": 6,
+        "non_test_go_lines": 1235
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/cache",
+        "non_test_go_files": 11,
+        "non_test_go_lines": 2449
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/dispatch",
+        "non_test_go_files": 5,
+        "non_test_go_lines": 1122
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/errs",
+        "non_test_go_files": 3,
+        "non_test_go_lines": 904
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/gateddag",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 221
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/graphview",
+        "non_test_go_files": 5,
+        "non_test_go_lines": 1193
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/lifecycle",
+        "non_test_go_files": 13,
+        "non_test_go_lines": 3739
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/platform",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 43
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/projection",
+        "non_test_go_files": 4,
+        "non_test_go_lines": 694
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/projection/contract",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 163
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/resource",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 398
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/retry",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 262
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/revlag",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 213
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/rulepack",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 143
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/security",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 384
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/timestamp",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 366
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/tlsutil",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 533
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/types",
+        "non_test_go_files": 9,
+        "non_test_go_lines": 751
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/worker",
+        "non_test_go_files": 3,
+        "non_test_go_lines": 707
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/gated-dag",
+        "non_test_go_files": 11,
+        "non_test_go_lines": 2367
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/graph-clustering",
+        "non_test_go_files": 7,
+        "non_test_go_lines": 4117
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/graph-index",
+        "non_test_go_files": 16,
+        "non_test_go_lines": 4527
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/graph-ingest",
+        "non_test_go_files": 9,
+        "non_test_go_lines": 5870
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/rule",
+        "non_test_go_files": 48,
+        "non_test_go_lines": 15826
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/rule/expression",
+        "non_test_go_files": 5,
+        "non_test_go_lines": 1417
+      },
+      {
+        "package": "github.com/c360studio/semstreams/service",
+        "non_test_go_files": 34,
+        "non_test_go_lines": 11819
+      },
+      {
+        "package": "github.com/c360studio/semstreams/storage",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 356
+      },
+      {
+        "package": "github.com/c360studio/semstreams/storage/objectstore",
+        "non_test_go_files": 9,
+        "non_test_go_lines": 3342
+      },
+      {
+        "package": "github.com/c360studio/semstreams/storage/storeregistry",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 115
+      },
+      {
+        "package": "github.com/c360studio/semstreams/types",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 188
+      },
+      {
+        "package": "github.com/c360studio/semstreams/vocabulary",
+        "non_test_go_files": 11,
+        "non_test_go_lines": 2673
+      },
+      {
+        "package": "github.com/c360studio/semstreams/vocabulary/agentic",
+        "non_test_go_files": 4,
+        "non_test_go_lines": 2133
+      }
+    ]
+  },
+  "integration_closure": {
+    "packages": 62,
+    "non_test_go_lines": 131066,
+    "package_rows": [
+      {
+        "package": "github.com/c360studio/semstreams/agentic",
+        "non_test_go_files": 23,
+        "non_test_go_lines": 6005
+      },
+      {
+        "package": "github.com/c360studio/semstreams/agentic/agentrun",
+        "non_test_go_files": 3,
+        "non_test_go_lines": 1505
+      },
+      {
+        "package": "github.com/c360studio/semstreams/component",
+        "non_test_go_files": 28,
+        "non_test_go_lines": 5585
+      },
+      {
+        "package": "github.com/c360studio/semstreams/component/flowgraph",
+        "non_test_go_files": 3,
+        "non_test_go_lines": 1324
+      },
+      {
+        "package": "github.com/c360studio/semstreams/composition",
+        "non_test_go_files": 8,
+        "non_test_go_lines": 914
+      },
+      {
+        "package": "github.com/c360studio/semstreams/config",
+        "non_test_go_files": 12,
+        "non_test_go_lines": 5193
+      },
+      {
+        "package": "github.com/c360studio/semstreams/governance",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 140
+      },
+      {
+        "package": "github.com/c360studio/semstreams/graph",
+        "non_test_go_files": 27,
+        "non_test_go_lines": 3293
+      },
+      {
+        "package": "github.com/c360studio/semstreams/graph/clustering",
+        "non_test_go_files": 12,
+        "non_test_go_lines": 5516
+      },
+      {
+        "package": "github.com/c360studio/semstreams/graph/inference",
+        "non_test_go_files": 14,
+        "non_test_go_lines": 5338
+      },
+      {
+        "package": "github.com/c360studio/semstreams/graph/llm",
+        "non_test_go_files": 8,
+        "non_test_go_lines": 842
+      },
+      {
+        "package": "github.com/c360studio/semstreams/graph/readiness",
+        "non_test_go_files": 4,
+        "non_test_go_lines": 1016
+      },
+      {
+        "package": "github.com/c360studio/semstreams/graph/structural",
+        "non_test_go_files": 4,
+        "non_test_go_lines": 883
+      },
+      {
+        "package": "github.com/c360studio/semstreams/health",
+        "non_test_go_files": 4,
+        "non_test_go_lines": 625
+      },
+      {
+        "package": "github.com/c360studio/semstreams/internal/agentterminal",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 188
+      },
+      {
+        "package": "github.com/c360studio/semstreams/internal/componentadmission",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 8
+      },
+      {
+        "package": "github.com/c360studio/semstreams/internal/deliverylane",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 248
+      },
+      {
+        "package": "github.com/c360studio/semstreams/internal/graphmutation",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 264
+      },
+      {
+        "package": "github.com/c360studio/semstreams/internal/lifecyclecleanup",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 38
+      },
+      {
+        "package": "github.com/c360studio/semstreams/internal/logforwarderpolicy",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 105
+      },
+      {
+        "package": "github.com/c360studio/semstreams/internal/looptoken",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 42
+      },
+      {
+        "package": "github.com/c360studio/semstreams/message",
+        "non_test_go_files": 16,
+        "non_test_go_lines": 2186
+      },
+      {
+        "package": "github.com/c360studio/semstreams/metric",
+        "non_test_go_files": 4,
+        "non_test_go_lines": 1218
+      },
+      {
+        "package": "github.com/c360studio/semstreams/model",
+        "non_test_go_files": 5,
+        "non_test_go_lines": 1397
+      },
+      {
+        "package": "github.com/c360studio/semstreams/model/wire",
+        "non_test_go_files": 7,
+        "non_test_go_lines": 1182
+      },
+      {
+        "package": "github.com/c360studio/semstreams/natsclient",
+        "non_test_go_files": 29,
+        "non_test_go_lines": 12377
+      },
+      {
+        "package": "github.com/c360studio/semstreams/output/websocket",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 2220
+      },
+      {
+        "package": "github.com/c360studio/semstreams/payloadbuiltins",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 93
+      },
+      {
+        "package": "github.com/c360studio/semstreams/payloadregistry",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 508
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/acme",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 543
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/buffer",
+        "non_test_go_files": 6,
+        "non_test_go_lines": 1235
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/cache",
+        "non_test_go_files": 11,
+        "non_test_go_lines": 2449
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/dispatch",
+        "non_test_go_files": 5,
+        "non_test_go_lines": 1122
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/errs",
+        "non_test_go_files": 3,
+        "non_test_go_lines": 904
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/gateddag",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 221
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/graphview",
+        "non_test_go_files": 5,
+        "non_test_go_lines": 1193
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/lifecycle",
+        "non_test_go_files": 13,
+        "non_test_go_lines": 3739
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/platform",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 43
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/projection",
+        "non_test_go_files": 4,
+        "non_test_go_lines": 694
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/projection/contract",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 163
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/resource",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 398
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/retry",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 262
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/revlag",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 213
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/rulepack",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 143
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/security",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 384
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/timestamp",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 366
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/tlsutil",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 533
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/types",
+        "non_test_go_files": 9,
+        "non_test_go_lines": 751
+      },
+      {
+        "package": "github.com/c360studio/semstreams/pkg/worker",
+        "non_test_go_files": 3,
+        "non_test_go_lines": 707
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/gated-dag",
+        "non_test_go_files": 11,
+        "non_test_go_lines": 2367
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/graph-clustering",
+        "non_test_go_files": 7,
+        "non_test_go_lines": 4117
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/graph-index",
+        "non_test_go_files": 16,
+        "non_test_go_lines": 4527
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/graph-ingest",
+        "non_test_go_files": 9,
+        "non_test_go_lines": 5870
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/rule",
+        "non_test_go_files": 48,
+        "non_test_go_lines": 15826
+      },
+      {
+        "package": "github.com/c360studio/semstreams/processor/rule/expression",
+        "non_test_go_files": 5,
+        "non_test_go_lines": 1417
+      },
+      {
+        "package": "github.com/c360studio/semstreams/service",
+        "non_test_go_files": 34,
+        "non_test_go_lines": 11819
+      },
+      {
+        "package": "github.com/c360studio/semstreams/storage",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 356
+      },
+      {
+        "package": "github.com/c360studio/semstreams/storage/objectstore",
+        "non_test_go_files": 9,
+        "non_test_go_lines": 3342
+      },
+      {
+        "package": "github.com/c360studio/semstreams/storage/storeregistry",
+        "non_test_go_files": 1,
+        "non_test_go_lines": 115
+      },
+      {
+        "package": "github.com/c360studio/semstreams/types",
+        "non_test_go_files": 2,
+        "non_test_go_lines": 188
+      },
+      {
+        "package": "github.com/c360studio/semstreams/vocabulary",
+        "non_test_go_files": 11,
+        "non_test_go_lines": 2673
+      },
+      {
+        "package": "github.com/c360studio/semstreams/vocabulary/agentic",
+        "non_test_go_files": 4,
+        "non_test_go_lines": 2133
+      }
+    ]
+  },
+  "integration_only": {
+    "packages": 0,
+    "non_test_go_lines": 0,
+    "package_rows": []
+  }
+}

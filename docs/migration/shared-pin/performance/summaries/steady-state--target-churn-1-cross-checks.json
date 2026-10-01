@@ -1,0 +1,119 @@
+{
+  "accepted_stream_messages": 18443,
+  "accepted_stream_per_s": 409.7719878179686,
+  "no_retention_loss": true,
+  "completed_consumer_work_per_s": null,
+  "ineligible_reasons": [
+    "start: finite delivery limit can retire unprocessed work",
+    "end: finite delivery limit can retire unprocessed work"
+  ],
+  "ack_pending_start": 0,
+  "ack_pending_end": 0,
+  "redelivered_start": 0,
+  "redelivered_end": 0,
+  "measurement_warn_error_events": {
+    "WARN|Action firing cap reached, skipping|": 17
+  },
+  "critical_counters_start_end": {
+    "boids_graph_entities_published_total": {
+      "start": 4950.0,
+      "end": 23393.0
+    },
+    "boids_graph_snapshots_published_total": {
+      "start": 20.0,
+      "end": 65.0
+    },
+    "boids_graph_snapshots_dropped_total": {
+      "start": 0.0,
+      "end": 0.0
+    },
+    "semstreams_datamanager_entities_updated_total": {
+      "start": 5248.0,
+      "end": 23917.0
+    },
+    "boids_graph_neighbor_clear_failures_total": {
+      "start": 0.0,
+      "end": 0.0
+    },
+    "boids_lifecycle_reclaim_failures_total": {
+      "start": 0.0,
+      "end": 0.0
+    },
+    "boids_lifecycle_spawns_total": {
+      "start": 295.0,
+      "end": 520.0
+    },
+    "boids_lifecycle_culls_total": {
+      "start": 0.0,
+      "end": 1.0
+    },
+    "semstreams_graph_ingest_mutation_rejections_total": {
+      "start": null,
+      "end": null
+    },
+    "semstreams_graph_ingest_predicate_contract_rejections_total": {
+      "start": null,
+      "end": null
+    },
+    "semstreams_graph_ingest_entity_state_contract_rejections_total": {
+      "start": null,
+      "end": null
+    },
+    "semstreams_graph_index_events_processed_total": {
+      "start": 3988.0,
+      "end": 9614.0
+    },
+    "semstreams_websocket_messages_received_total": {
+      "start": 758.0,
+      "end": 2108.0
+    },
+    "semstreams_websocket_messages_sent_total": {
+      "start": 599.0,
+      "end": 1934.0
+    },
+    "semstreams_websocket_errors_total": {
+      "start": null,
+      "end": null
+    },
+    "semstreams_graph_ingest_poisoned_entities": {
+      "start": 0.0,
+      "end": 0.0
+    }
+  },
+  "websocket_error_series_end": null,
+  "offered_load": {
+    "observed_offered_entities": 18443,
+    "observed_snapshot_offers": 45,
+    "inferred_offered_entities_per_s": 409.7719878179686,
+    "missing_frame_ticks": 0,
+    "ineligible_reasons": [],
+    "boundary_caveat": "frame receipt vs scrape boundaries can shift one snapshot"
+  },
+  "intended_churn_spawns_per_s": 5.0,
+  "physics_hashes": {
+    "300": "5dcd82fdedf18638b1528706603469fc2c560698ae3e51f73f044a63797aa6b4",
+    "600": "86aee5fe14a1cf8e82f9f44ec96d9bd0dbd3b78e872ea7d7a8a1f448b9d50bb7",
+    "900": "214a4695820ea92b8a99bf543f29e90182b6f46a66def1281111f34e6bfdf57e",
+    "1200": "d3b3bb4b9e4e4552edffc1ac90dd59bdd499adf788db92be6cc9cf88b908da35",
+    "1500": "fee0d7128c702c08c8646701ffffeb9562e471d9df579fbb1b35484dc5f16634",
+    "1800": "a1d1306c326243f3b31eb8315eb7c35ced2e607c2c2a57a08f034b71f297b908",
+    "2100": "3668e19d8bc899b5624443390e8aee3c753b6009ef475042b01b8299b6180389"
+  },
+  "websocket_ticks_missing_against_nats_window": 15,
+  "websocket_coverage_boundary_caveat": "separate receipt timestamps can move one edge tick across boundary",
+  "websocket_events_in_window": [
+    {
+      "at": 1790856977.391,
+      "event": "closed 1006 "
+    },
+    {
+      "at": 1790856977.893,
+      "event": "connected"
+    }
+  ],
+  "websocket_reconnect_seconds": [
+    0.5019998550415039
+  ],
+  "websocket_max_gap_seconds": 0.5329999923706055,
+  "websocket_max_age_ms": 17.0
+}

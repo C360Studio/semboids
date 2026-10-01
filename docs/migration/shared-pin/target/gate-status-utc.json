@@ -1,0 +1,210 @@
+[
+  {
+    "name": "build-native-utc",
+    "command": [
+      "go",
+      "build",
+      "-o",
+      "/tmp/semboids-shared-pin/target-semboids-revalidated",
+      "./cmd/semboids"
+    ],
+    "environment": {
+      "TZ": "UTC"
+    },
+    "exit_code": 0,
+    "elapsed_seconds": 3.5775611250428483
+  },
+  {
+    "name": "vet-utc",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "environment": {
+      "TZ": "UTC"
+    },
+    "exit_code": 0,
+    "elapsed_seconds": 0.3170729579869658
+  },
+  {
+    "name": "vet-integration-utc",
+    "command": [
+      "go",
+      "vet",
+      "-tags=integration",
+      "./..."
+    ],
+    "environment": {
+      "TZ": "UTC"
+    },
+    "exit_code": 0,
+    "elapsed_seconds": 0.5358724999241531
+  },
+  {
+    "name": "fmt-utc",
+    "command": [
+      "gofmt",
+      "-l",
+      "cmd/semboids/config_test.go",
+      "cmd/semboids/lifecycle_test.go",
+      "cmd/semboids/main.go",
+      "cmd/sweep/main.go",
+      "componentregistry/register.go",
+      "componentregistry/register_test.go",
+      "internal/api/controls.go",
+      "internal/api/graphstream.go",
+      "internal/api/graphstream_decode.go",
+      "internal/api/graphstream_decode_test.go",
+      "internal/api/graphstream_fanout_integration_test.go",
+      "internal/api/graphstream_integration_test.go",
+      "internal/api/graphstream_lifecycle_test.go",
+      "internal/api/graphstream_metrics.go",
+      "internal/api/graphstream_test.go",
+      "internal/api/graphstream_views.go",
+      "internal/api/migration_helpers_test.go",
+      "internal/api/service.go",
+      "internal/api/service_test.go",
+      "internal/boidgraph/clustering_spike_integration_test.go",
+      "internal/boidgraph/contract.go",
+      "internal/boidgraph/debug_index_integration_test.go",
+      "internal/boidgraph/lifecycle.go",
+      "internal/boidgraph/lifecycle_test.go",
+      "internal/boidgraph/lpa_unit_test.go",
+      "internal/boidgraph/metrics.go",
+      "internal/boidgraph/migration_helpers_test.go",
+      "internal/boidgraph/migration_integration_test.go",
+      "internal/boidgraph/neighbor_empty_verify_test.go",
+      "internal/boidgraph/payload.go",
+      "internal/boidgraph/payload_test.go",
+      "internal/boidgraph/probe.go",
+      "internal/boidgraph/probe_integration_test.go",
+      "internal/boidgraph/probe_test.go",
+      "internal/boidgraph/publisher.go",
+      "internal/boidgraph/publisher_bench_test.go",
+      "internal/boidgraph/publisher_test.go",
+      "internal/boidgraph/reclamation_qualification_test.go",
+      "internal/boidgraph/snapshot_integration_test.go",
+      "internal/boidgraph/vocabulary.go",
+      "internal/flock/bench_test.go",
+      "internal/flock/engine.go",
+      "internal/flock/engine_population_test.go",
+      "internal/flock/engine_test.go",
+      "internal/flock/external_test.go",
+      "internal/flock/grid.go",
+      "internal/flock/grid_test.go",
+      "internal/flock/params.go",
+      "internal/flock/snapshot_test.go",
+      "internal/flock/vec2.go",
+      "internal/flock/vec2_test.go",
+      "internal/sim/component.go",
+      "internal/sim/component_test.go",
+      "internal/sim/cull_integration_test.go",
+      "internal/sim/drainpool.go",
+      "internal/sim/drainpool_test.go",
+      "internal/sim/factory.go",
+      "internal/sim/frame.go",
+      "internal/sim/frame_test.go",
+      "internal/sim/integration_test.go",
+      "internal/sim/lifecycle.go",
+      "internal/sim/lifecycle_test.go",
+      "internal/sim/migration_helpers_test.go",
+      "internal/sim/migration_test.go",
+      "internal/sim/population.go",
+      "internal/sim/population_test.go",
+      "internal/sim/roundtrip_integration_test.go",
+      "internal/sim/snapshot_test.go",
+      "internal/sim/steering.go",
+      "internal/sim/steering_test.go",
+      "internal/sim/tracker.go",
+      "internal/sim/tracker_test.go",
+      "internal/zone/ingest.go",
+      "internal/zone/ingest_integration_test.go",
+      "internal/zone/ingest_test.go",
+      "internal/zone/migration_helpers_test.go",
+      "internal/zone/payload.go",
+      "internal/zone/payload_test.go",
+      "internal/zone/zone.go",
+      "internal/zone/zone_test.go"
+    ],
+    "environment": {
+      "TZ": "UTC"
+    },
+    "exit_code": 0,
+    "elapsed_seconds": 0.018499208032153547
+  },
+  {
+    "name": "revive-utc",
+    "command": [
+      "go",
+      "tool",
+      "revive",
+      "-config",
+      "revive.toml",
+      "-formatter",
+      "friendly",
+      "-exclude",
+      "ui/...",
+      "./..."
+    ],
+    "environment": {
+      "TZ": "UTC"
+    },
+    "exit_code": 0,
+    "elapsed_seconds": 1.0131483749719337
+  },
+  {
+    "name": "race-unit-utc",
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "-race",
+      "./..."
+    ],
+    "environment": {
+      "TZ": "UTC"
+    },
+    "exit_code": 0,
+    "elapsed_seconds": 6.311464291997254
+  },
+  {
+    "name": "linux-build-utc",
+    "command": [
+      "go",
+      "build",
+      "-ldflags=-w -s",
+      "-o",
+      "/tmp/semboids-shared-pin/target-semboids-linux-amd64-revalidated",
+      "./cmd/semboids"
+    ],
+    "environment": {
+      "TZ": "UTC",
+      "CGO_ENABLED": "0",
+      "GOOS": "linux",
+      "GOARCH": "amd64"
+    },
+    "exit_code": 0,
+    "elapsed_seconds": 1.5381519170477986
+  },
+  {
+    "name": "race-integration-default-parallel",
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "-race",
+      "-tags=integration",
+      "-v",
+      "./..."
+    ],
+    "environment": {
+      "TZ": "UTC"
+    },
+    "exit_code": 0,
+    "package_parallelism": "Go default; no -p override",
+    "test_subtest_passes": 221,
+    "skips": 0
+  }
+]

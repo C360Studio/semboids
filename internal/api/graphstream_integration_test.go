@@ -63,7 +63,7 @@ func TestGraphStreamOverKV(t *testing.T) {
 	if err := s.Start(ctx); err != nil {
 		t.Fatalf("Start: %v", err)
 	}
-	defer func() { _ = s.Stop(5 * time.Second) }()
+	defer func() { _ = s.Stop(testStopContext(t)) }()
 
 	// Explicit synchronization rather than a sleep: wait for the supervisor to
 	// attach the view, then for its initial replay to complete, so the initial

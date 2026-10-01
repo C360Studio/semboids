@@ -1,0 +1,24 @@
+{
+  "binary_sha256": "4153b224f0a204f2d5349ac0b167288d6ca1223b3082f6ac2368534b34e7f625",
+  "method": "manual Codex browser interaction and separate read-only HTTP/log verification",
+  "url": "http://localhost:5173",
+  "initial_boot": "both flock and graph panes rendered; graph initially waiting during bootstrap then colored communities appeared",
+  "controls": {
+    "predator": "disabled and reenabled without restart; GET rules confirmed flee=false then true",
+    "snapshot_hz": "1 to 5 to 1; GET graph confirmed hz1,dropped0",
+    "spawn": "final binary observed195 to220 after one click; log confirms wave25"
+  },
+  "restart": {
+    "observed_disconnected_state": "reconnecting",
+    "observed_recovered_state": "open",
+    "physics_tick_reset": true,
+    "graph_pane_recovered": true,
+    "effective_authority": "semboids-1e31da",
+    "identity_adopted_from_retained_store": true,
+    "population_note": "seeded population200; cull rule remained enabled, observed195 then manual spawn220. This is not a fixed-population comparison or proof of full graph/physics population equality."
+  },
+  "browser_console_warn_error": [],
+  "final_process_exit": 0,
+  "cleanup": "owned backend and Vite stopped, disposable semboids-migration-browser removed",
+  "preliminary_failures": "First target refused undeclared zone_events producer. Port declarations corrected before successful boot. target-ports-fixed binary predates final API Stop change; final screenshot/restart uses hash above."
+}

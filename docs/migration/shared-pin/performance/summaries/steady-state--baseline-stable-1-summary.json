@@ -1,0 +1,98 @@
+{
+  "label": "baseline-stable-1",
+  "profile": "stable",
+  "elapsed_seconds": 45.00551199913025,
+  "deltas": {
+    "acked_entities": 269200.0,
+    "completed_snapshot_attempts": 1346.0,
+    "snapshot_offer_drops": 4.0,
+    "entity_updates": 62385.0,
+    "neighbor_clear_failures": 0.0,
+    "reclaim_failures": 0.0,
+    "spawn_creates": 0.0,
+    "cull_observations": 0.0,
+    "mutation_rejections": null,
+    "predicate_rejections": null,
+    "entity_state_rejections": null,
+    "index_events": 3748.0,
+    "websocket_received": 1350.0,
+    "websocket_sent": 1335.0,
+    "websocket_errors": null
+  },
+  "rates_per_s": {
+    "acked_entities": 5981.489556328176,
+    "completed_snapshot_attempts": 29.90744778164088,
+    "snapshot_offer_drops": 0.08887800232285552,
+    "entity_updates": 1386.1635437278353,
+    "neighbor_clear_failures": 0.0,
+    "reclaim_failures": 0.0,
+    "spawn_creates": 0.0,
+    "cull_observations": 0.0,
+    "mutation_rejections": null,
+    "predicate_rejections": null,
+    "entity_state_rejections": null,
+    "index_events": 83.27868817651562,
+    "websocket_received": 29.996325783963737,
+    "websocket_sent": 29.663033275253028,
+    "websocket_errors": null
+  },
+  "backlog_start": {
+    "pending": 76077,
+    "ack_pending": 882,
+    "outstanding": 76959,
+    "redelivered": 0,
+    "ack_floor": {
+      "consumer_seq": 41601,
+      "stream_seq": 41601,
+      "last_active": "2026-10-01T12:09:39.623764042Z"
+    },
+    "delivered": {
+      "consumer_seq": 43923,
+      "stream_seq": 43923,
+      "last_active": "2026-10-01T12:09:39.59768075Z"
+    }
+  },
+  "backlog_end": {
+    "pending": 283173,
+    "ack_pending": 753,
+    "outstanding": 283926,
+    "redelivered": 0,
+    "ack_floor": {
+      "consumer_seq": 103872,
+      "stream_seq": 103872,
+      "last_active": "2026-10-01T12:10:24.646460091Z"
+    },
+    "delivered": {
+      "consumer_seq": 106171,
+      "stream_seq": 106171,
+      "last_active": "2026-10-01T12:10:24.008437674Z"
+    }
+  },
+  "backlog_growth_per_s": 4598.70337668861,
+  "physics_egress_fps": 29.996325783963737,
+  "max_frame_gap_seconds": 0.12416696548461914,
+  "missing_egress_ticks": 0,
+  "population_start": 200,
+  "population_end": 200,
+  "e2e_p50": {
+    "seconds": 23.13125703564728,
+    "lower_bound": false,
+    "observations": 6238.0
+  },
+  "e2e_p99": {
+    "seconds": 62.19055345335515,
+    "lower_bound": false,
+    "observations": 6238.0
+  },
+  "websocket_fps": 29.663033275253028,
+  "websocket_missing_ticks": 15,
+  "websocket_internal_sequence_gaps": 15,
+  "websocket_max_gap_seconds": 0.5390000343322754,
+  "websocket_max_delivery_age_ms": 137.0,
+  "load_end": [
+    14.32177734375,
+    9.0439453125,
+    8.2470703125
+  ],
+  "frame_reader_error": null
+}

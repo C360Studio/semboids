@@ -1,0 +1,60 @@
+{
+  "reviewed_at_utc": "2026-10-01T12:10:49.952322+00:00",
+  "review_status": "Source approval bounded by both explicit qualification blockers. Only UTC payload tests changed since previous source review. Final evidence review completed in independent-review.md and final-evidence-SHA256SUMS.json.",
+  "previous_snapshot": "source-SHA256SUMS.json",
+  "changed_since_previous_snapshot": {
+    "internal/boidgraph/payload_test.go": {
+      "previous": "3a91a355dd3879d17593ee02907e68224cf37d950e6667ab0c164b5eb5a6e287",
+      "reviewed": "0963a685695c31b5dcb1f2efac026939492388c856fbb73c46f1fa6921ecf303"
+    },
+    "internal/zone/payload_test.go": {
+      "previous": "f4a1eecf6e83465ccb8d5b07e8b815a78c1b090cd6723c2baf106bb8a84ba204",
+      "reviewed": "f53e524a57ad65921d133b439ac72c60902b8eeb46e79c2790751320aa21c358"
+    }
+  },
+  "sha256": {
+    "cmd/semboids/config_test.go": "8e3a1dae95d72966f5ba17a3f576970c4d1ed02eb2d76c78d35aa387165929d5",
+    "cmd/semboids/lifecycle_test.go": "2c3421d5692616eabe54fb34c5dc86e969596534b15a1556754ca3774f79f4fa",
+    "cmd/semboids/main.go": "7bb7fcce56820792c77baf9e61e3e262a3312620b41076e8fd229ed40e7c3973",
+    "componentregistry/register.go": "c4f78e199327df79ea17279e3c47dd284b298c8c8232ecd3918bd74b471125e5",
+    "componentregistry/register_test.go": "2de9c21a9e4503a066e06c879ce50ab8c75b63ae391576dd61650442670a8bc8",
+    "configs/flock.json": "35ead12abccdf04b84c7fe744a037f12ec3829a1f5af274001630e9cb94979e4",
+    "go.mod": "dad6341dda18d89a5a7fcb4b2a60d9e1c4e67ab5d47552749bb086cd00275d63",
+    "go.sum": "e56f8e2e5c2ea223f8975f83b83c6e8284323ea27a11ef767838ae40b21fc9b8",
+    "internal/api/controls.go": "97df49b887bf8e3d1e06c66c591be80021ee995f3004a024d16083963a501d7e",
+    "internal/api/graphstream_fanout_integration_test.go": "9f0a8615c4c53a54209aec5aae7a5c59425045812030bef556f1cca4029c7f6b",
+    "internal/api/graphstream_integration_test.go": "850383a118d8cfcd99cdd986d151b62436f8ceedcb22a6dc6739e81e7a25dd2a",
+    "internal/api/graphstream_lifecycle_test.go": "a4b7d2f0dc2f351f06f1f23151dcd13efe9a3f8e7f1cb9dc2d5fba603cbd351c",
+    "internal/api/graphstream_views.go": "f3a5248a36749fedba9d00d8cf27bc68491a646ab6db745ea326aac44326a4e1",
+    "internal/api/migration_helpers_test.go": "56028b753e620da161a1201b7e6d3b6967caeef29b8d2151e2d23c786ece02f7",
+    "internal/api/service.go": "3f0dcb699f28e33696ba77c7aa4963c9fb93fea7c6d852b2f89435abd2bcc497",
+    "internal/api/service_test.go": "6b1dc71871b8792a2d814667d7fb1b2f94b6632c9c275f8ea505172f7eb49aa2",
+    "internal/boidgraph/clustering_spike_integration_test.go": "65cc7439f03d09c3156cb261c471309c8243b49eb7661d25f56b631aaf014798",
+    "internal/boidgraph/contract.go": "313ae1b91d1be3b50f7cde907ef7046eddba9fab2d0bf736f4a57cd48bdbe3ac",
+    "internal/boidgraph/debug_index_integration_test.go": "6a14903cf9b2a8a8b5b37ab385082430e202a4a6af5843f3c338eafe7101c64f",
+    "internal/boidgraph/lifecycle_test.go": "eb0152c18b6a5362adae3683a89fbf54f85c8d7a1eab858a48165d90804dbb25",
+    "internal/boidgraph/migration_helpers_test.go": "eddd821310e26abba145d1263047d828255ad9fa685ee5bbdd019f1a0628a27d",
+    "internal/boidgraph/migration_integration_test.go": "18d12beeb790ca732fe6ef29c79208f0aca76d0406f200eaf19b616ee388bc3e",
+    "internal/boidgraph/payload.go": "2ff3e664b93b4b6f91686deb6d80a74d9b829c3cda03c88e238dac9b53c22d88",
+    "internal/boidgraph/payload_test.go": "0963a685695c31b5dcb1f2efac026939492388c856fbb73c46f1fa6921ecf303",
+    "internal/boidgraph/probe_integration_test.go": "ef0f6913451e71c2c91d39e22c93e040848e97b50fcc717e2f80572190e3a486",
+    "internal/boidgraph/reclamation_qualification_test.go": "2d386cdca1a3ebcf6bfa4d52dcc80ce54836eb14e7969901dc9a9a677810cbd1",
+    "internal/boidgraph/snapshot_integration_test.go": "fb3f10ca74eb696a5e147a3b4283d8eadd9d09c539be76582be5998637b6da5a",
+    "internal/boidgraph/vocabulary.go": "156b68d8e1427f018dc39d5d04c5905ed23e0f1f37688990f59afd7f0f9d87e7",
+    "internal/sim/component.go": "480ad2bd843bba07407b79ff14a6f1bf55ab71348aa1b39f0f7bb1dc68a926f8",
+    "internal/sim/component_test.go": "4ad1921ac9d039259fe650f30876fa16f579b33285e38d4f7312e18f489ec391",
+    "internal/sim/cull_integration_test.go": "8e65b75d99b51ee990178f11409d5adfa0a14342a96d187fb58b39014cbda7ce",
+    "internal/sim/factory.go": "90a8495097d9fb8c1bc6c7ef827de133e986770bd257fd54d544ae861448b794",
+    "internal/sim/integration_test.go": "05511a1a29a2457d50075a5df9a567e7cc60b8656b36eeec0eef98f2a487dd77",
+    "internal/sim/lifecycle_test.go": "0ad350d6ade4a9c8b7c5eeea3af44b6af4b1a4418eb27084b4b833dab5e568ba",
+    "internal/sim/migration_helpers_test.go": "67a8e8ffc350ccdbca59a5b350f47af729f6130ccc7a759b44bf1ac5a2e39793",
+    "internal/sim/migration_test.go": "0db5b08a2b843261cbdc5ad81ff9345ba912623877d745e27e5bfb0aaa5e5f55",
+    "internal/sim/roundtrip_integration_test.go": "ff1b4882b5ce0fe2fe3418d53d03b3f3365c6f0290f8db344cc3e78ad1ce2ae7",
+    "internal/sim/snapshot_test.go": "71ae74b866eb046e7a682f3781166f99aeb5d243cb2ad16289afa1afc23a9af7",
+    "internal/zone/ingest_integration_test.go": "4985522cba4841ce8ba49f2121d65c95fe69694509726c4f62b2298888b7d99e",
+    "internal/zone/migration_helpers_test.go": "20fbd7fae88cc808453dafab40e08509136b9e0bb5e52ac33037f65743ece3a6",
+    "internal/zone/payload.go": "5fb35d744ad23da61c4bdb431a3697076bc7af13c55db3ba8fec9bcfc7039726",
+    "internal/zone/payload_test.go": "f53e524a57ad65921d133b439ac72c60902b8eeb46e79c2790751320aa21c358"
+  },
+  "measured_target_binary_sha256": "4153b224f0a204f2d5349ac0b167288d6ca1223b3082f6ac2368534b34e7f625"
+}

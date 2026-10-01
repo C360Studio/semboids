@@ -1,0 +1,299 @@
+module	version	selected_by	in_production_package_closure	in_integration_test_package_closure	sum
+github.com/c360studio/semboids	workspace	direct	true	true	
+cloud.google.com/go/auth	v0.10.0	indirect	false	false	
+cloud.google.com/go/auth/oauth2adapt	v0.2.5	indirect	false	false	
+cloud.google.com/go/compute/metadata	v0.5.2	indirect	false	false	
+codeberg.org/chavacava/garif	v0.2.0	indirect	false	false	h1:F0tVjhYbuOCnvNcU3YSpO6b3Waw6Bimy4K0mM8y6MfY=
+dario.cat/mergo	v1.0.2	indirect	true	true	h1:85+piFYR1tMbRrLcDwR18y4UKJ3aH1Tbzi24VRW1TK8=
+github.com/AdaLogics/go-fuzz-headers	v0.0.0-20240806141605-e8a1dd7889d6	indirect	false	false	h1:He8afgbRMd7mFxO99hRNu+6tazq8nFF9lIwo9JFroBk=
+github.com/AdamSLevy/jsonrpc2/v14	v14.1.0	indirect	false	false	
+github.com/Azure/azure-sdk-for-go	v68.0.0+incompatible	indirect	false	false	
+github.com/Azure/azure-sdk-for-go/sdk/azcore	v1.16.0	indirect	false	false	
+github.com/Azure/azure-sdk-for-go/sdk/azidentity	v1.8.0	indirect	false	false	
+github.com/Azure/azure-sdk-for-go/sdk/internal	v1.10.0	indirect	false	false	
+github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/dns/armdns	v1.2.0	indirect	false	false	
+github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/privatedns/armprivatedns	v1.3.0	indirect	false	false	
+github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resourcegraph/armresourcegraph	v0.9.0	indirect	false	false	
+github.com/Azure/go-ansiterm	v0.0.0-20230124172434-306776ec8161	indirect	false	false	h1:L/gRVlceqvL25UVaW/CKtUDjefjrs0SPonmDGUVOYP0=
+github.com/Azure/go-autorest	v14.2.0+incompatible	indirect	false	false	
+github.com/Azure/go-autorest/autorest	v0.11.29	indirect	false	false	
+github.com/Azure/go-autorest/autorest/adal	v0.9.22	indirect	false	false	
+github.com/Azure/go-autorest/autorest/azure/auth	v0.5.13	indirect	false	false	
+github.com/Azure/go-autorest/autorest/azure/cli	v0.4.6	indirect	false	false	
+github.com/Azure/go-autorest/autorest/date	v0.3.0	indirect	false	false	
+github.com/Azure/go-autorest/autorest/to	v0.4.0	indirect	false	false	
+github.com/Azure/go-autorest/logger	v0.2.1	indirect	false	false	
+github.com/Azure/go-autorest/tracing	v0.6.0	indirect	false	false	
+github.com/AzureAD/microsoft-authentication-library-for-go	v1.2.2	indirect	false	false	
+github.com/BurntSushi/toml	v1.6.0	indirect	false	false	h1:dRaEfpa2VI55EwlIW72hMRHdWouJeRF7TPYhI+AUQjk=
+github.com/Microsoft/go-winio	v0.6.2	indirect	false	false	h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
+github.com/OpenDNS/vegadns2client	v0.0.0-20180418235048-a3fa4a771d87	indirect	false	false	
+github.com/akamai/AkamaiOPEN-edgegrid-golang	v1.2.2	indirect	false	false	
+github.com/alecthomas/kingpin/v2	v2.4.0	indirect	false	false	
+github.com/alecthomas/units	v0.0.0-20211218093645-b94a6e3cc137	indirect	false	false	
+github.com/aliyun/alibaba-cloud-sdk-go	v1.63.47	indirect	false	false	
+github.com/antihax/optional	v1.0.0	indirect	false	false	
+github.com/aws/aws-sdk-go-v2	v1.32.3	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream	v1.6.6	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/config	v1.28.1	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/credentials	v1.17.42	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/feature/ec2/imds	v1.16.18	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/internal/configsources	v1.3.22	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2	v2.6.22	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/internal/ini	v1.8.1	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/internal/v4a	v1.3.22	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding	v1.12.0	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/service/internal/checksum	v1.4.3	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/service/internal/presigned-url	v1.12.3	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/service/internal/s3shared	v1.18.3	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/service/lightsail	v1.42.3	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/service/route53	v1.46.0	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/service/s3	v1.66.2	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/service/sso	v1.24.3	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/service/ssooidc	v1.28.3	indirect	false	false	
+github.com/aws/aws-sdk-go-v2/service/sts	v1.32.3	indirect	false	false	
+github.com/aws/smithy-go	v1.22.0	indirect	false	false	
+github.com/benbjohnson/clock	v1.3.0	indirect	false	false	
+github.com/beorn7/perks	v1.0.1	indirect	true	true	h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
+github.com/boombuler/barcode	v1.0.1-0.20190219062509-6c824513bacc	indirect	false	false	
+github.com/c360studio/semstreams	v1.0.0-beta.160	direct	true	true	h1:sVkaLPOqs0Jy/iyYvfamkSi9An+Vq0o/5nqMxZVCvtk=
+github.com/cenkalti/backoff/v4	v4.3.0	indirect	true	true	h1:MyRJ/UdXutAwSAT+s3wNd7MfTIcy71VQueUuFK343L8=
+github.com/cespare/xxhash/v2	v2.3.0	indirect	true	true	h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
+github.com/civo/civogo	v0.3.11	indirect	false	false	
+github.com/cloudflare/cloudflare-go	v0.108.0	indirect	false	false	
+github.com/containerd/errdefs	v1.0.0	indirect	true	true	h1:tg5yIfIlQIrxYtu9ajqY42W3lpS19XqdxRQeEwYG8PI=
+github.com/containerd/errdefs/pkg	v0.3.0	indirect	true	true	h1:9IKJ06FvyNlexW690DXuQNx2KA2cUJXx151Xdx3ZPPE=
+github.com/containerd/log	v0.1.0	indirect	true	true	h1:TCJt7ioM2cr/tfR8GPbGf9/VRAX8D2B4PjzCpfX540I=
+github.com/containerd/platforms	v0.2.1	indirect	true	true	h1:zvwtM3rz2YHPQsF2CHYM8+KtB5dvhISiXh5ZpSBQv6A=
+github.com/containerd/typeurl/v2	v2.2.0	indirect	false	false	
+github.com/cpu/goacmedns	v0.1.1	indirect	false	false	
+github.com/cpuguy83/dockercfg	v0.3.2	indirect	true	true	h1:DlJTyZGBDlXqUZ2Dk2Q3xHs/FtnooJJVaad2S9GKorA=
+github.com/cpuguy83/go-md2man/v2	v2.0.5	indirect	false	false	
+github.com/creack/pty	v1.1.18	indirect	false	false	h1:n56/Zwd5o6whRC5PMGretI4IdRLlmBXYNjScPaBgsbY=
+github.com/davecgh/go-spew	v1.1.2-0.20180830191138-d8f796af33cc	indirect	true	true	h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
+github.com/dimchansky/utfbom	v1.1.1	indirect	false	false	
+github.com/distribution/reference	v0.6.0	indirect	true	true	h1:0IXCQ5g4/QMHHkarYzh5l+u8T3t73zM5QvfrDyIgxBk=
+github.com/dnsimple/dnsimple-go	v1.7.0	indirect	false	false	
+github.com/docker/docker	v28.5.1+incompatible	indirect	true	true	h1:Bm8DchhSD2J6PsFzxC35TZo4TLGR2PdW/E69rU45NhM=
+github.com/docker/go-connections	v0.6.0	indirect	true	true	h1:LlMG9azAe1TqfR7sO+NJttz1gy6KO7VJBh+pMmjSD94=
+github.com/docker/go-units	v0.5.0	indirect	true	true	h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=
+github.com/ebitengine/purego	v0.8.4	indirect	true	true	h1:CF7LEKg5FFOsASUj0+QwaXf8Ht6TlFxg09+S9wz0omw=
+github.com/exoscale/egoscale/v3	v3.1.7	indirect	false	false	
+github.com/fatih/color	v1.18.0	indirect	false	false	h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
+github.com/fatih/structs	v1.1.0	indirect	false	false	
+github.com/fatih/structtag	v1.2.0	indirect	false	false	h1:/OdNE99OxoI/PqaW/SuSK9uxxT3f/tcSZgon/ssNSx4=
+github.com/felixge/httpsnoop	v1.0.4	indirect	true	true	h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
+github.com/fsnotify/fsnotify	v1.7.0	indirect	false	false	
+github.com/gabriel-vasile/mimetype	v1.4.2	indirect	false	false	
+github.com/ghodss/yaml	v1.0.0	indirect	false	false	
+github.com/go-acme/lego/v4	v4.20.4	indirect	true	true	h1:yCQGBX9jOfMbriEQUocdYm7EBapdTp8nLXYG8k6SqSU=
+github.com/go-errors/errors	v1.0.1	indirect	false	false	
+github.com/go-jose/go-jose/v4	v4.1.3	indirect	true	true	h1:CVLmWDhDVRa6Mi/IgCgaopNosCaHz7zrMeF9MlZRkrs=
+github.com/go-logr/logr	v1.4.3	indirect	true	true	h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
+github.com/go-logr/stdr	v1.2.2	indirect	true	true	h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
+github.com/go-ole/go-ole	v1.2.6	indirect	false	false	h1:/Fpf6oFPoeFik9ty7siob0G6Ke8QvQEuVcuChpwXzpY=
+github.com/go-playground/locales	v0.14.1	indirect	false	false	
+github.com/go-playground/universal-translator	v0.18.1	indirect	false	false	
+github.com/go-playground/validator/v10	v10.16.0	indirect	false	false	
+github.com/go-resty/resty/v2	v2.13.1	indirect	false	false	
+github.com/go-viper/mapstructure/v2	v2.2.1	indirect	false	false	
+github.com/goccy/go-json	v0.10.3	indirect	false	false	
+github.com/gofrs/flock	v0.12.1	indirect	false	false	
+github.com/gogo/protobuf	v1.3.2	indirect	false	false	
+github.com/golang-jwt/jwt/v4	v4.5.1	indirect	false	false	
+github.com/golang-jwt/jwt/v5	v5.2.1	indirect	false	false	
+github.com/golang/groupcache	v0.0.0-20210331224755-41bb18bfe9da	indirect	false	false	
+github.com/golang/protobuf	v1.5.0	indirect	false	false	
+github.com/google/go-cmp	v0.7.0	indirect	false	false	h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
+github.com/google/go-querystring	v1.1.0	indirect	false	false	
+github.com/google/gofuzz	v1.0.0	indirect	false	false	
+github.com/google/s2a-go	v0.1.8	indirect	false	false	
+github.com/google/uuid	v1.6.0	indirect	true	true	h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+github.com/googleapis/enterprise-certificate-proxy	v0.3.4	indirect	false	false	
+github.com/googleapis/gax-go/v2	v2.13.0	indirect	false	false	
+github.com/gophercloud/gophercloud	v1.14.1	indirect	false	false	
+github.com/gophercloud/utils	v0.0.0-20231010081019-80377eca5d56	indirect	false	false	
+github.com/gorilla/websocket	v1.5.3	indirect	true	true	h1:saDtZ6Pbx/0u+bgYQ3q96pZgCzfhKXGPqt7kZ72aNNg=
+github.com/grpc-ecosystem/grpc-gateway/v2	v2.29.0	indirect	false	false	h1:5VipnvEpbqr2gA2VbM+nYVbkIF28c5ZQfqCBQ5g2xfk=
+github.com/hashicorp/errwrap	v1.0.0	indirect	false	false	
+github.com/hashicorp/go-cleanhttp	v0.5.2	indirect	false	false	
+github.com/hashicorp/go-multierror	v1.1.1	indirect	false	false	
+github.com/hashicorp/go-retryablehttp	v0.7.7	indirect	false	false	
+github.com/hashicorp/go-uuid	v1.0.3	indirect	false	false	
+github.com/hashicorp/go-version	v1.8.0	indirect	false	false	h1:KAkNb1HAiZd1ukkxDFGmokVZe1Xy9HG6NUp+bPle2i4=
+github.com/hashicorp/hcl	v1.0.0	indirect	false	false	
+github.com/huaweicloud/huaweicloud-sdk-go-v3	v0.1.120	indirect	false	false	
+github.com/iij/doapi	v0.0.0-20190504054126-0bbf12d6d7df	indirect	false	false	
+github.com/infobloxopen/infoblox-go-client	v1.1.1	indirect	false	false	
+github.com/jmespath/go-jmespath	v0.4.0	indirect	false	false	
+github.com/joho/godotenv	v1.5.1	direct	true	true	h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
+github.com/jpillora/backoff	v1.0.0	indirect	false	false	h1:uvFg412JmmHBHw7iwprIxkPMI+sGQ4kzOWsMeHnm2EA=
+github.com/json-iterator/go	v1.1.12	indirect	true	true	h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
+github.com/julienschmidt/httprouter	v1.3.0	indirect	false	false	
+github.com/k0kubun/go-ansi	v0.0.0-20180517002512-3bf9e2903213	indirect	false	false	
+github.com/klauspost/compress	v1.18.5	indirect	true	true	h1:/h1gH5Ce+VWNLSWqPzOVn6XBO+vJbCNGvjoaGBFW2IE=
+github.com/kolo/xmlrpc	v0.0.0-20220921171641-a4b6fa1dd06b	indirect	false	false	
+github.com/kr/pretty	v0.3.1	indirect	false	false	h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
+github.com/kr/text	v0.2.0	indirect	false	false	h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
+github.com/kylelemons/godebug	v1.1.0	indirect	false	false	h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0SNc=
+github.com/labbsr0x/bindman-dns-webhook	v1.0.2	indirect	false	false	
+github.com/labbsr0x/goh	v1.0.1	indirect	false	false	
+github.com/leodido/go-urn	v1.2.4	indirect	false	false	
+github.com/linode/linodego	v1.42.0	indirect	false	false	
+github.com/liquidweb/liquidweb-cli	v0.6.9	indirect	false	false	
+github.com/liquidweb/liquidweb-go	v1.6.4	indirect	false	false	
+github.com/lufia/plan9stats	v0.0.0-20211012122336-39d0f177ccd0	indirect	false	false	h1:6E+4a0GO5zZEnZ81pIr0yLvtUWk2if982qA3F3QD6H4=
+github.com/magiconair/properties	v1.8.10	indirect	true	true	h1:s31yESBquKXCV9a/ScB3ESkOjUYYv+X0rg8SYxI99mE=
+github.com/mattn/go-colorable	v0.1.14	indirect	false	false	h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHPsaIE=
+github.com/mattn/go-isatty	v0.0.20	indirect	false	false	h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=
+github.com/mgechev/dots	v1.0.0	indirect	false	false	h1:o+4OJ3OjWzgQHGJXKfJ8rbH4dqDugu5BiEy84nxg0k4=
+github.com/mgechev/revive	v1.15.0	indirect	false	false	h1:vJ0HzSBzfNyPbHKolgiFjHxLek9KUijhqh42yGoqZ8Q=
+github.com/miekg/dns	v1.1.62	indirect	true	true	h1:cN8OuEF1/x5Rq6Np+h1epln8OiyPWV+lROx9LxcGgIQ=
+github.com/mimuret/golang-iij-dpf	v0.9.1	indirect	false	false	
+github.com/mitchellh/go-homedir	v1.1.0	indirect	false	false	
+github.com/mitchellh/mapstructure	v1.5.0	indirect	false	false	
+github.com/moby/docker-image-spec	v1.3.1	indirect	true	true	h1:jMKff3w6PgbfSa69GfNg+zN/XLhfXJGnEx3Nl2EsFP0=
+github.com/moby/go-archive	v0.1.0	indirect	true	true	h1:Kk/5rdW/g+H8NHdJW2gsXyZ7UnzvJNOy6VKJqueWdcQ=
+github.com/moby/patternmatcher	v0.6.0	indirect	true	true	h1:GmP9lR19aU5GqSSFko+5pRqHi+Ohk1O69aFiKkVGiPk=
+github.com/moby/sys/atomicwriter	v0.1.0	indirect	false	false	h1:kw5D/EqkBwsBFi0ss9v1VG3wIkVhzGvLklJ+w3A14Sw=
+github.com/moby/sys/mount	v0.3.4	indirect	false	false	
+github.com/moby/sys/mountinfo	v0.7.2	indirect	false	false	
+github.com/moby/sys/reexec	v0.1.0	indirect	false	false	
+github.com/moby/sys/sequential	v0.6.0	indirect	true	true	h1:qrx7XFUd/5DxtqcoH1h438hF5TmOvzC/lspjy7zgvCU=
+github.com/moby/sys/user	v0.4.0	indirect	true	true	h1:jhcMKit7SA80hivmFJcbB1vqmw//wU61Zdui2eQXuMs=
+github.com/moby/sys/userns	v0.1.0	indirect	false	false	h1:tVLXkFOxVu9A64/yh59slHVv9ahO9UIev4JZusOLG/g=
+github.com/moby/term	v0.5.0	indirect	true	true	h1:xt8Q1nalod/v7BqbG21f8mQPqH+xAaC9C3N3wfWbVP0=
+github.com/modern-go/concurrent	v0.0.0-20180306012644-bacd9c7ef1dd	indirect	true	true	h1:TRLaZ9cD/w8PVh93nsPXa1VrQ6jlwL5oN8l14QlcNfg=
+github.com/modern-go/reflect2	v1.0.3-0.20250322232337-35a7c28c31ee	indirect	true	true	h1:W5t00kpgFdJifH4BDsTlE89Zl93FEloxaWZfGcifgq8=
+github.com/morikuni/aec	v1.0.0	indirect	true	true	h1:nP9CBfwrvYnBRgY6qfDQkygYDmYwOilePFkwzv4dU8A=
+github.com/munnerz/goautoneg	v0.0.0-20191010083416-a7dc8b61c822	indirect	true	true	h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
+github.com/mwitkow/go-conntrack	v0.0.0-20190716064945-2f068394615f	indirect	false	false	h1:KUppIJq7/+SVif2QVs3tOP0zanoHgBEVAwHxUSIzRqU=
+github.com/namedotcom/go	v0.0.0-20180403034216-08470befbe04	indirect	false	false	
+github.com/nats-io/nats.go	v1.52.0	direct	true	true	h1:n3avV4VBsCgsdwh71TppsTwtv+QdPs7ntSKM8qJLGsc=
+github.com/nats-io/nkeys	v0.4.15	indirect	true	true	h1:JACV5jRVO9V856KOapQ7x+EY8Jo3qw1vJt/9Jpwzkk4=
+github.com/nats-io/nuid	v1.0.1	indirect	true	true	h1:5iA8DT8V7q8WK2EScv2padNa/rTESc1KdnPw4TC2paw=
+github.com/nrdcg/auroradns	v1.1.0	indirect	false	false	
+github.com/nrdcg/bunny-go	v0.0.0-20240207213615-dde5bf4577a3	indirect	false	false	
+github.com/nrdcg/desec	v0.8.0	indirect	false	false	
+github.com/nrdcg/dnspod-go	v0.4.0	indirect	false	false	
+github.com/nrdcg/freemyip	v0.2.0	indirect	false	false	
+github.com/nrdcg/goinwx	v0.10.0	indirect	false	false	
+github.com/nrdcg/mailinabox	v0.2.0	indirect	false	false	
+github.com/nrdcg/namesilo	v0.2.1	indirect	false	false	
+github.com/nrdcg/nodion	v0.1.0	indirect	false	false	
+github.com/nrdcg/porkbun	v0.4.0	indirect	false	false	
+github.com/nzdjb/go-metaname	v1.0.0	indirect	false	false	
+github.com/opencontainers/go-digest	v1.0.0	indirect	true	true	h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
+github.com/opencontainers/image-spec	v1.1.1	indirect	true	true	h1:y0fUlFfIZhPF1W537XOLg0/fcx6zcHCJwooC2xJA040=
+github.com/opentracing/opentracing-go	v1.2.1-0.20220228012449-10b1cf09e00b	indirect	false	false	
+github.com/oracle/oci-go-sdk/v65	v65.77.1	indirect	false	false	
+github.com/ovh/go-ovh	v1.6.0	indirect	false	false	
+github.com/patrickmn/go-cache	v2.1.0+incompatible	indirect	false	false	
+github.com/pelletier/go-toml/v2	v2.1.0	indirect	false	false	
+github.com/pkg/browser	v0.0.0-20240102092130-5ac0b6a4141c	indirect	false	false	
+github.com/pkg/errors	v0.9.1	indirect	true	true	h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
+github.com/pmezard/go-difflib	v1.0.1-0.20181226105442-5d4384ee4fb2	indirect	true	true	h1:Jamvg5psRIccs7FGNTlIRMkT8wgtp5eCXdBlqhYGL6U=
+github.com/power-devops/perfstat	v0.0.0-20210106213030-5aafc221ea8c	indirect	false	false	h1:ncq/mPwQF4JjgDlrVEn3C11VoGHZN7m8qihwgMEtzYw=
+github.com/pquerna/otp	v1.4.0	indirect	false	false	
+github.com/prometheus/client_golang	v1.23.2	direct	true	true	h1:Je96obch5RDVy3FDMndoUsjAhG5Edi49h0RJWRi/o0o=
+github.com/prometheus/client_model	v0.6.2	indirect	true	true	h1:oBsgwpGs7iVziMvrGhE53c/GrLUsZdHnqNwqPLxwZyk=
+github.com/prometheus/common	v0.66.1	indirect	true	true	h1:h5E0h5/Y8niHc5DlaLlWLArTQI7tMrsfQjHV+d9ZoGs=
+github.com/prometheus/procfs	v0.16.1	indirect	false	false	h1:hZ15bTNuirocR6u0JZ6BAHHmwS1p8B4P6MRqxtzMyRg=
+github.com/rainycape/memcache	v0.0.0-20150622160815-1031fa0ce2f2	indirect	false	false	
+github.com/regfish/regfish-dnsapi-go	v0.1.1	indirect	false	false	
+github.com/robfig/cron/v3	v3.0.1	indirect	true	true	h1:WdRxkvbJztn8LMz/QEvLN5sBU+xKpSqwwUO1Pjr4qDs=
+github.com/rogpeppe/fastuuid	v1.2.0	indirect	false	false	
+github.com/rogpeppe/go-internal	v1.14.1	indirect	false	false	h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
+github.com/russross/blackfriday	v1.6.0	indirect	false	false	
+github.com/russross/blackfriday/v2	v2.1.0	indirect	false	false	
+github.com/sacloud/api-client-go	v0.2.10	indirect	false	false	
+github.com/sacloud/go-http	v0.1.8	indirect	false	false	
+github.com/sacloud/iaas-api-go	v1.12.0	indirect	false	false	
+github.com/sacloud/packages-go	v0.0.10	indirect	false	false	
+github.com/sagikazarmark/locafero	v0.4.0	indirect	false	false	
+github.com/sagikazarmark/slog-shim	v0.1.0	indirect	false	false	
+github.com/santhosh-tekuri/jsonschema/v5	v5.3.1	indirect	false	false	
+github.com/sashabaranov/go-openai	v1.41.2	indirect	true	true	h1:vfPRBZNMpnqu8ELsclWcAvF19lDNgh1t6TVfFFOPiSM=
+github.com/scaleway/scaleway-sdk-go	v1.0.0-beta.30	indirect	false	false	
+github.com/selectel/domains-go	v1.1.0	indirect	false	false	
+github.com/selectel/go-selvpcclient/v3	v3.1.1	indirect	false	false	
+github.com/shirou/gopsutil/v4	v4.25.6	indirect	true	true	h1:kLysI2JsKorfaFPcYmcJqbzROzsBWEOAtw6A7dIfqXs=
+github.com/shopspring/decimal	v1.3.1	indirect	false	false	
+github.com/sirupsen/logrus	v1.9.3	indirect	true	true	h1:dueUQJ1C2q9oE3F7wvmSGAaVtTmUizReu6fjN8uqzbQ=
+github.com/smartystreets/assertions	v1.0.1	indirect	false	false	
+github.com/smartystreets/go-aws-auth	v0.0.0-20180515143844-0c1422d1fdb9	indirect	false	false	
+github.com/softlayer/softlayer-go	v1.1.7	indirect	false	false	
+github.com/softlayer/xmlrpc	v0.0.0-20200409220501-5f089df7cb7e	indirect	false	false	
+github.com/sony/gobreaker	v0.5.0	indirect	false	false	
+github.com/sourcegraph/conc	v0.3.0	indirect	false	false	
+github.com/spf13/afero	v1.15.0	indirect	false	false	h1:b/YBCLWAJdFWJTN9cLhiXXcD7mzKn9Dm86dNnfyQw1I=
+github.com/spf13/cast	v1.6.0	indirect	false	false	
+github.com/spf13/pflag	v1.0.5	indirect	false	false	
+github.com/spf13/viper	v1.18.2	indirect	false	false	
+github.com/stretchr/objx	v0.5.2	indirect	false	false	h1:xuMeJ0Sdp5ZMRXx/aWO6RZxdr3beISkG5/G/aIRr3pY=
+github.com/stretchr/testify	v1.11.1	indirect	true	true	h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
+github.com/subosito/gotenv	v1.6.0	indirect	false	false	
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common	v1.0.1034	indirect	false	false	
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod	v1.0.1034	indirect	false	false	
+github.com/testcontainers/testcontainers-go	v0.40.0	indirect	true	true	h1:pSdJYLOVgLE8YdUY2FHQ1Fxu+aMnb6JfVz1mxk7OeMU=
+github.com/tjfoc/gmsm	v1.4.1	indirect	false	false	
+github.com/tklauser/go-sysconf	v0.3.12	indirect	true	true	h1:0QaGUFOdQaIVdPgfITYzaTegZvdCjmYO52cSFAEVmqU=
+github.com/tklauser/numcpus	v0.6.1	indirect	false	false	h1:ng9scYS7az0Bk4OZLvrNXNSAO2Pxr1XXRAPyjhIx+Fk=
+github.com/transip/gotransip/v6	v6.26.0	indirect	false	false	
+github.com/ultradns/ultradns-go-sdk	v1.8.0-20241010134910-243eeec	indirect	false	false	
+github.com/urfave/cli/v2	v2.27.5	indirect	false	false	
+github.com/vinyldns/go-vinyldns	v0.9.16	indirect	false	false	
+github.com/volcengine/volc-sdk-golang	v1.0.183	indirect	false	false	
+github.com/vultr/govultr/v3	v3.9.1	indirect	false	false	
+github.com/xeipuuv/gojsonpointer	v0.0.0-20180127040702-4e3ac2762d5f	indirect	false	false	h1:J9EGpcZtP0E/raorCMxlFGSTBrsSlaDGf3jU/qvAE2c=
+github.com/xeipuuv/gojsonreference	v0.0.0-20180127040603-bd5ef7bd5415	indirect	false	false	h1:EzJWgHovont7NscjpAxXsDA8S8BMYve8Y5+7cuRE7R0=
+github.com/xeipuuv/gojsonschema	v1.2.0	indirect	false	false	h1:LhYJRs+L4fBtjZUfuSZIKGeVu0QRy8e5Xi7D17UxZ74=
+github.com/xhit/go-str2duration/v2	v2.1.0	indirect	false	false	
+github.com/xrash/smetrics	v0.0.0-20240521201337-686a1a2994c1	indirect	false	false	
+github.com/yandex-cloud/go-genproto	v0.0.0-20241101135610-76a0cfc1a773	indirect	false	false	
+github.com/yandex-cloud/go-sdk	v0.0.0-20241101143304-947cf519f6bd	indirect	false	false	
+github.com/yuin/goldmark	v1.4.13	indirect	false	false	
+github.com/yusufpapurcu/wmi	v1.2.4	indirect	false	false	h1:zFUKzehAFReQwLys1b/iSMl+JQGSCSjtVqQn9bBrPo0=
+go.mongodb.org/mongo-driver	v1.12.0	indirect	false	false	
+go.opencensus.io	v0.24.0	indirect	false	false	
+go.opentelemetry.io/auto/sdk	v1.2.1	indirect	true	true	h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64=
+go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp	v0.54.0	indirect	true	true	h1:TT4fX+nBOA/+LUkobKGW1ydGcn+G3vRw9+g5HwCphpk=
+go.opentelemetry.io/otel	v1.42.0	indirect	true	true	h1:lSQGzTgVR3+sgJDAU/7/ZMjN9Z+vUip7leaqBKy4sho=
+go.opentelemetry.io/otel/exporters/otlp/otlptrace	v1.38.0	indirect	false	false	h1:GqRJVj7UmLjCVyVJ3ZFLdPRmhDUp2zFmQe3RHIOsw24=
+go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp	v1.19.0	indirect	false	false	h1:IeMeyr1aBvBiPVYihXIaeIZba6b8E1bYp7lbdxK8CQg=
+go.opentelemetry.io/otel/metric	v1.42.0	indirect	true	true	h1:2jXG+3oZLNXEPfNmnpxKDeZsFI5o4J+nz6xUlaFdF/4=
+go.opentelemetry.io/otel/sdk	v1.39.0	indirect	false	false	h1:nMLYcjVsvdui1B/4FRkwjzoRVsMK8uL/cj0OyhKzt18=
+go.opentelemetry.io/otel/trace	v1.42.0	indirect	true	true	h1:OUCgIPt+mzOnaUTpOQcBiM/PLQ/Op7oq6g4LenLmOYY=
+go.opentelemetry.io/proto/otlp	v1.9.0	indirect	false	false	h1:l706jCMITVouPOqEnii2fIAuO3IVGBRPV5ICjceRb/A=
+go.uber.org/atomic	v1.9.0	indirect	false	false	
+go.uber.org/goleak	v1.3.0	indirect	false	false	h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
+go.uber.org/multierr	v1.9.0	indirect	false	false	
+go.uber.org/ratelimit	v0.3.0	indirect	false	false	
+go.yaml.in/yaml/v2	v2.4.3	indirect	true	true	h1:6gvOSjQoTB3vt1l+CU+tSyi/HOjfOjRLJ4YwYZGwRO0=
+go.yaml.in/yaml/v3	v3.0.4	indirect	false	false	
+golang.org/x/crypto	v0.50.0	indirect	true	true	h1:zO47/JPrL6vsNkINmLoo/PH1gcxpls50DNogFvB5ZGI=
+golang.org/x/exp	v0.0.0-20240213143201-ec583247a57a	indirect	false	false	
+golang.org/x/mod	v0.34.0	indirect	false	false	h1:xIHgNUUnW6sYkcM5Jleh05DvLOtwc6RitGHbDk4akRI=
+golang.org/x/net	v0.53.0	indirect	true	true	h1:d+qAbo5L0orcWAr0a9JweQpjXF19LMXJE8Ey7hwOdUA=
+golang.org/x/oauth2	v0.36.0	indirect	false	false	h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+golang.org/x/sync	v0.20.0	indirect	false	false	h1:e0PTpb7pjO8GAtTs2dQ6jYa5BWYlMuX047Dco/pItO4=
+golang.org/x/sys	v0.43.0	indirect	true	true	h1:Rlag2XtaFTxp19wS8MXlJwTvoh8ArU6ezoyFsMyCTNI=
+golang.org/x/telemetry	v0.0.0-20260311193753-579e4da9a98c	indirect	false	false	
+golang.org/x/term	v0.42.0	indirect	false	false	h1:UiKe+zDFmJobeJ5ggPwOshJIVt6/Ft0rcfrXZDLWAWY=
+golang.org/x/text	v0.36.0	indirect	true	true	h1:JfKh3XmcRPqZPKevfXVpI1wXPTqbkE5f7JA92a55Yxg=
+golang.org/x/time	v0.14.0	indirect	false	false	h1:MRx4UaLrDotUKUdCIqzPC48t1Y9hANFKIRpNx+Te8PI=
+golang.org/x/tools	v0.43.0	indirect	false	false	h1:12BdW9CeB3Z+J/I/wj34VMl8X+fEXBxVR90JeMX5E7s=
+golang.org/x/xerrors	v0.0.0-20191204190536-9bdfabe68543	indirect	false	false	
+google.golang.org/api	v0.204.0	indirect	false	false	
+google.golang.org/genproto	v0.0.0-20241021214115-324edc3d5d38	indirect	false	false	h1:Q3nlH8iSQSRUwOskjbcSMcF2jiYMNiQYZ0c2KEJLKKU=
+google.golang.org/genproto/googleapis/api	v0.0.0-20260414002931-afd174a4e478	indirect	false	false	h1:yQugLulqltosq0B/f8l4w9VryjV+N/5gcW0jQ3N8Qec=
+google.golang.org/genproto/googleapis/rpc	v0.0.0-20260420184626-e10c466a9529	indirect	false	false	h1:XF8+t6QQiS0o9ArVan/HW8Q7cycNPGsJf6GA2nXxYAg=
+google.golang.org/grpc	v1.80.0	indirect	false	false	h1:Xr6m2WmWZLETvUNvIUmeD5OAagMw3FiKmMlTdViWsHM=
+google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af	indirect	true	true	h1:+5/Sw3GsDNlEmu7TfklWKPdQ0Ykja5VEmq2i817+jbI=
+gopkg.in/check.v1	v1.0.0-20201130134442-10cb98267c6c	indirect	false	false	h1:Hei/4ADfdWqJk1ZMxUNpqntNwaWcugrBjAiHlqqRiVk=
+gopkg.in/ini.v1	v1.67.0	indirect	false	false	
+gopkg.in/ns1/ns1-go.v2	v2.12.2	indirect	false	false	
+gopkg.in/yaml.v2	v2.4.0	indirect	false	false	
+gopkg.in/yaml.v3	v3.0.1	indirect	true	true	h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
+gotest.tools/v3	v3.5.2	indirect	false	false	h1:7koQfIKdy+I8UTetycgUqXWSDwpgv193Ka+qRsmBY8Q=
+software.sslmate.com/src/go-pkcs12	v0.5.0	indirect	false	false	

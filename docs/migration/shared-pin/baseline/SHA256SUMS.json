@@ -1,0 +1,23 @@
+{
+  "build-native.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "closure-status.json": "c68c84f6c459425982a9147c3fd0bd6a74de6852715d7f1f2161c05a0fea9808",
+  "direct-semstreams-imports.txt": "cb356c9656418b51eed9c1c6e3e8e358cfdc934e3a1a615020d9cd8cc180239a",
+  "fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "gate-status.json": "46a38818ef6aae9933722c4df687143ff6aea1ce5f2d6284d7040b042a22f5e2",
+  "go-env.log": "9da3109fab27637d0e905f515a65060d4e23073befd32c0c19ee2183e2f24bdd",
+  "integration-status.json": "f2f96a248c40a51b4f24f015d2ff66e72b29c78f42a2e583aa31cc2a1e66fab4",
+  "integration-test-packages.tsv": "b3ee5d9b6d06d3cbbbb0e2f5ed70bcc6402f460b617099e9efa30e3abb5c8eb0",
+  "linux-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "module-graph.txt": "8b29c5a4eca4ee34e0f60f691904ccb6abb3927f06533c94b3ef9d381cff4eb6",
+  "modules.tsv": "aa07ca105af08909b24a89b82801747c27c3b817edbccb71490f976083ae619d",
+  "production-packages.tsv": "573325e88075f231d44b1779a27aeadf8ca765f20d2be4c8e8d044d548f0f7f4",
+  "race-integration.log": "7eb27b020becfffa563173fdf1b52a016ebebd0bb2924377efc813655b833f5f",
+  "race-unit.log": "76601a685fe331f6ceae43ff5f92cdef4cb48ed3a610de9ed99e1a5ca6fada1c",
+  "revive.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "semstreams-origin.json": "80ab7c5796eaec75d05bb7a7e44aaf5901dd428a14f9c06e722f10ae1b194291",
+  "toolchain.log": "36849436282e424cf1142184057f25a7bd6845d03b16fedbb1071bc6722524c4",
+  "vet-integration.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "README.md": "fd511fd0d61e468488a5620d6a84cd49f9e23d8e8ab2731dc1ecc3f77c9b576c",
+  "closure-size.json": "0028cfbc6f45027ddd6edafe1e6ff492b5766b5666ae4204f30d84bb7f1e1856"
+}

@@ -1,0 +1,553 @@
+test	Unit tests (race)	﻿2026-10-01T11:53:51.9337148Z ##[group]Run go test -v -race ./...
+test	Unit tests (race)	2026-10-01T11:53:51.9337487Z ^[[36;1mgo test -v -race ./...^[[0m
+test	Unit tests (race)	2026-10-01T11:53:51.9402679Z shell: /usr/bin/bash -e {0}
+test	Unit tests (race)	2026-10-01T11:53:51.9402934Z env:
+test	Unit tests (race)	2026-10-01T11:53:51.9403123Z   GO_VERSION: 1.26
+test	Unit tests (race)	2026-10-01T11:53:51.9403334Z   GOTOOLCHAIN: local
+test	Unit tests (race)	2026-10-01T11:53:51.9403555Z ##[endgroup]
+test	Unit tests (race)	2026-10-01T11:53:52.0281822Z go: downloading github.com/c360studio/semstreams v1.0.0-beta.162.0.20260930150212-8b99efe9c66a
+test	Unit tests (race)	2026-10-01T11:53:53.7848383Z go: downloading github.com/nats-io/nats.go v1.52.0
+test	Unit tests (race)	2026-10-01T11:53:53.8062393Z go: downloading github.com/prometheus/client_golang v1.23.2
+test	Unit tests (race)	2026-10-01T11:53:53.9597847Z go: downloading github.com/joho/godotenv v1.5.1
+test	Unit tests (race)	2026-10-01T11:53:54.4607243Z go: downloading github.com/stretchr/testify v1.11.1
+test	Unit tests (race)	2026-10-01T11:53:54.4933433Z go: downloading github.com/gorilla/websocket v1.5.3
+test	Unit tests (race)	2026-10-01T11:53:54.5400412Z go: downloading github.com/docker/go-connections v0.6.0
+test	Unit tests (race)	2026-10-01T11:53:54.5633873Z go: downloading github.com/testcontainers/testcontainers-go v0.40.0
+test	Unit tests (race)	2026-10-01T11:53:54.8033441Z go: downloading github.com/robfig/cron/v3 v3.0.1
+test	Unit tests (race)	2026-10-01T11:53:54.8985377Z go: downloading github.com/prometheus/client_model v0.6.2
+test	Unit tests (race)	2026-10-01T11:53:55.4408526Z go: downloading github.com/beorn7/perks v1.0.1
+test	Unit tests (race)	2026-10-01T11:53:55.4586585Z go: downloading github.com/cespare/xxhash/v2 v2.3.0
+test	Unit tests (race)	2026-10-01T11:53:55.4779022Z go: downloading github.com/prometheus/common v0.66.1
+test	Unit tests (race)	2026-10-01T11:53:55.5178835Z go: downloading github.com/prometheus/procfs v0.16.1
+test	Unit tests (race)	2026-10-01T11:53:55.5180074Z go: downloading google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
+test	Unit tests (race)	2026-10-01T11:53:55.6294921Z go: downloading github.com/klauspost/compress v1.18.5
+test	Unit tests (race)	2026-10-01T11:53:55.7595521Z go: downloading github.com/nats-io/nuid v1.0.1
+test	Unit tests (race)	2026-10-01T11:53:55.7596507Z go: downloading github.com/nats-io/nkeys v0.4.15
+test	Unit tests (race)	2026-10-01T11:53:55.9299290Z go: downloading github.com/google/uuid v1.6.0
+test	Unit tests (race)	2026-10-01T11:53:56.2050374Z go: downloading golang.org/x/net v0.53.0
+test	Unit tests (race)	2026-10-01T11:53:56.2141161Z go: downloading github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
+test	Unit tests (race)	2026-10-01T11:53:56.2368578Z go: downloading github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2
+test	Unit tests (race)	2026-10-01T11:53:56.2540279Z go: downloading github.com/sashabaranov/go-openai v1.41.2
+test	Unit tests (race)	2026-10-01T11:53:56.4236400Z go: downloading dario.cat/mergo v1.0.2
+test	Unit tests (race)	2026-10-01T11:53:56.4251608Z go: downloading github.com/cenkalti/backoff/v4 v4.3.0
+test	Unit tests (race)	2026-10-01T11:53:56.4407617Z go: downloading github.com/containerd/errdefs v1.0.0
+test	Unit tests (race)	2026-10-01T11:53:56.4437682Z go: downloading github.com/containerd/platforms v0.2.1
+test	Unit tests (race)	2026-10-01T11:53:56.4491364Z go: downloading github.com/cpuguy83/dockercfg v0.3.2
+test	Unit tests (race)	2026-10-01T11:53:56.4589229Z go: downloading github.com/docker/docker v28.5.1+incompatible
+test	Unit tests (race)	2026-10-01T11:53:57.0181134Z go: downloading github.com/moby/go-archive v0.1.0
+test	Unit tests (race)	2026-10-01T11:53:57.0182789Z go: downloading github.com/moby/patternmatcher v0.6.0
+test	Unit tests (race)	2026-10-01T11:53:57.0183851Z go: downloading github.com/moby/term v0.5.0
+test	Unit tests (race)	2026-10-01T11:53:57.0184943Z go: downloading github.com/opencontainers/image-spec v1.1.1
+test	Unit tests (race)	2026-10-01T11:53:57.0420825Z go: downloading golang.org/x/crypto v0.50.0
+test	Unit tests (race)	2026-10-01T11:53:57.2378468Z go: downloading github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822
+test	Unit tests (race)	2026-10-01T11:53:57.2442101Z go: downloading go.yaml.in/yaml/v2 v2.4.3
+test	Unit tests (race)	2026-10-01T11:53:57.2594816Z go: downloading golang.org/x/sys v0.43.0
+test	Unit tests (race)	2026-10-01T11:53:57.4003622Z go: downloading gopkg.in/yaml.v3 v3.0.1
+test	Unit tests (race)	2026-10-01T11:53:57.4272622Z go: downloading github.com/go-acme/lego/v4 v4.20.4
+test	Unit tests (race)	2026-10-01T11:53:57.6400934Z go: downloading github.com/containerd/log v0.1.0
+test	Unit tests (race)	2026-10-01T11:53:57.6555012Z go: downloading github.com/moby/docker-image-spec v1.3.1
+test	Unit tests (race)	2026-10-01T11:53:57.6556560Z go: downloading github.com/opencontainers/go-digest v1.0.0
+test	Unit tests (race)	2026-10-01T11:53:57.6573289Z go: downloading github.com/docker/go-units v0.5.0
+test	Unit tests (race)	2026-10-01T11:53:57.6594851Z go: downloading github.com/morikuni/aec v1.0.0
+test	Unit tests (race)	2026-10-01T11:53:57.6785598Z go: downloading github.com/containerd/errdefs/pkg v0.3.0
+test	Unit tests (race)	2026-10-01T11:53:57.6799689Z go: downloading github.com/distribution/reference v0.6.0
+test	Unit tests (race)	2026-10-01T11:53:57.6802883Z go: downloading github.com/pkg/errors v0.9.1
+test	Unit tests (race)	2026-10-01T11:53:57.6813782Z go: downloading go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.54.0
+test	Unit tests (race)	2026-10-01T11:53:57.6970044Z go: downloading go.opentelemetry.io/otel/trace v1.42.0
+test	Unit tests (race)	2026-10-01T11:53:57.7000352Z go: downloading github.com/magiconair/properties v1.8.10
+test	Unit tests (race)	2026-10-01T11:53:57.7006033Z go: downloading github.com/shirou/gopsutil/v4 v4.25.6
+test	Unit tests (race)	2026-10-01T11:53:57.7066333Z go: downloading github.com/moby/sys/sequential v0.6.0
+test	Unit tests (race)	2026-10-01T11:53:57.7199541Z go: downloading go.opentelemetry.io/otel v1.42.0
+test	Unit tests (race)	2026-10-01T11:53:57.7251598Z go: downloading github.com/moby/sys/user v0.4.0
+test	Unit tests (race)	2026-10-01T11:53:57.7274982Z go: downloading github.com/moby/sys/userns v0.1.0
+test	Unit tests (race)	2026-10-01T11:53:57.8300822Z go: downloading golang.org/x/text v0.36.0
+test	Unit tests (race)	2026-10-01T11:53:57.9872627Z go: downloading github.com/sirupsen/logrus v1.9.3
+test	Unit tests (race)	2026-10-01T11:53:58.0106258Z go: downloading github.com/felixge/httpsnoop v1.0.4
+test	Unit tests (race)	2026-10-01T11:53:58.0369019Z go: downloading go.opentelemetry.io/otel/metric v1.42.0
+test	Unit tests (race)	2026-10-01T11:53:58.0650412Z go: downloading github.com/tklauser/go-sysconf v0.3.12
+test	Unit tests (race)	2026-10-01T11:53:58.1232723Z go: downloading github.com/go-logr/logr v1.4.3
+test	Unit tests (race)	2026-10-01T11:53:58.1654195Z go: downloading github.com/tklauser/numcpus v0.6.1
+test	Unit tests (race)	2026-10-01T11:53:58.1840230Z go: downloading github.com/go-jose/go-jose/v4 v4.1.3
+test	Unit tests (race)	2026-10-01T11:53:58.2291091Z go: downloading github.com/miekg/dns v1.1.62
+test	Unit tests (race)	2026-10-01T11:53:58.2307778Z go: downloading github.com/go-logr/stdr v1.2.2
+test	Unit tests (race)	2026-10-01T11:53:58.2309321Z go: downloading go.opentelemetry.io/auto/sdk v1.2.1
+test	Unit tests (race)	2026-10-01T11:54:46.7700192Z === RUN   TestAuthoredConfigUsesDeclaredAuthority
+test	Unit tests (race)	2026-10-01T11:54:46.7701201Z --- PASS: TestAuthoredConfigUsesDeclaredAuthority (0.02s)
+test	Unit tests (race)	2026-10-01T11:54:46.7702027Z === RUN   TestExtractPlatformUsesEffectiveIdentity
+test	Unit tests (race)	2026-10-01T11:54:46.7702786Z --- PASS: TestExtractPlatformUsesEffectiveIdentity (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:46.7703538Z === RUN   TestControlledStopKeepsStartContextLive
+test	Unit tests (race)	2026-10-01T11:54:46.7704082Z --- PASS: TestControlledStopKeepsStartContextLive (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:46.7704583Z === RUN   TestFailedStartStopsWithFreshContext
+test	Unit tests (race)	2026-10-01T11:54:46.7705147Z --- PASS: TestFailedStartStopsWithFreshContext (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:46.7705765Z === RUN   TestAbortStartContextUsesFreshStopContext
+test	Unit tests (race)	2026-10-01T11:54:46.7706715Z --- PASS: TestAbortStartContextUsesFreshStopContext (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:46.7707914Z === RUN   TestSignalDuringStartupAbortsAndJoinsBeforeCleanup
+test	Unit tests (race)	2026-10-01T11:54:46.7708852Z --- PASS: TestSignalDuringStartupAbortsAndJoinsBeforeCleanup (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:46.7709547Z PASS
+test	Unit tests (race)	2026-10-01T11:54:46.7710002Z ok  	github.com/c360studio/semboids/cmd/semboids	1.079s
+test	Unit tests (race)	2026-10-01T11:54:46.7710708Z ?   	github.com/c360studio/semboids/cmd/sweep	[no test files]
+test	Unit tests (race)	2026-10-01T11:54:47.0233091Z === RUN   TestFactoryBindsControlsAfterServiceConstruction
+test	Unit tests (race)	2026-10-01T11:54:47.0234107Z 2026/10/01 11:54:46 INFO Boids API handlers registered service=boids prefix=/boids/
+test	Unit tests (race)	2026-10-01T11:54:47.0235032Z --- PASS: TestFactoryBindsControlsAfterServiceConstruction (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0235679Z PASS
+test	Unit tests (race)	2026-10-01T11:54:47.0236123Z ok  	github.com/c360studio/semboids/componentregistry	1.066s
+test	Unit tests (race)	2026-10-01T11:54:47.0820277Z === RUN   TestDecodeBoidEntity
+test	Unit tests (race)	2026-10-01T11:54:47.0827442Z === PAUSE TestDecodeBoidEntity
+test	Unit tests (race)	2026-10-01T11:54:47.0828191Z === RUN   TestDecodeCommunity
+test	Unit tests (race)	2026-10-01T11:54:47.0846250Z === PAUSE TestDecodeCommunity
+test	Unit tests (race)	2026-10-01T11:54:47.0847248Z === RUN   TestGraphViewsCancellationJoinsPendingOpens
+test	Unit tests (race)	2026-10-01T11:54:47.0848773Z --- PASS: TestGraphViewsCancellationJoinsPendingOpens (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0872484Z === RUN   TestGraphViewsStopDeadlineDoesNotClaimJoin
+test	Unit tests (race)	2026-10-01T11:54:47.0884411Z --- PASS: TestGraphViewsStopDeadlineDoesNotClaimJoin (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0896449Z === RUN   TestGraphViewsNilStopDoesNotCancel
+test	Unit tests (race)	2026-10-01T11:54:47.0897472Z --- PASS: TestGraphViewsNilStopDoesNotCancel (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0898835Z === RUN   TestGraphViewsStopBoundsNativeWatcherJoin
+test	Unit tests (race)	2026-10-01T11:54:47.0899797Z --- PASS: TestGraphViewsStopBoundsNativeWatcherJoin (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0900749Z === RUN   TestServiceStopCancelsBaseEvenWhenViewsCannotJoin
+test	Unit tests (race)	2026-10-01T11:54:47.0901975Z --- PASS: TestServiceStopCancelsBaseEvenWhenViewsCannotJoin (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0902896Z === RUN   TestBridgeCoalescesLatestWins
+test	Unit tests (race)	2026-10-01T11:54:47.0903587Z --- PASS: TestBridgeCoalescesLatestWins (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0904339Z === RUN   TestBridgeSeedFromSnapshotIsTheInitialSync
+test	Unit tests (race)	2026-10-01T11:54:47.0905176Z --- PASS: TestBridgeSeedFromSnapshotIsTheInitialSync (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0926928Z === RUN   TestBridgeCommunityInversion
+test	Unit tests (race)	2026-10-01T11:54:47.0928151Z --- PASS: TestBridgeCommunityInversion (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0929466Z === RUN   TestBridgeEntityRemoval
+test	Unit tests (race)	2026-10-01T11:54:47.0930508Z --- PASS: TestBridgeEntityRemoval (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0931415Z === RUN   TestBridgePoisonKeepsLastKnownGood
+test	Unit tests (race)	2026-10-01T11:54:47.0932622Z --- PASS: TestBridgePoisonKeepsLastKnownGood (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0933680Z === RUN   TestGetRulesDerivesFromRuleConfig
+test	Unit tests (race)	2026-10-01T11:54:47.0935061Z 2026/10/01 11:54:46 INFO Boids API handlers registered service=boids prefix=/boids/
+test	Unit tests (race)	2026-10-01T11:54:47.0937314Z --- PASS: TestGetRulesDerivesFromRuleConfig (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0938464Z === RUN   TestToggleFlipsRulePairAndClears
+test	Unit tests (race)	2026-10-01T11:54:47.0939733Z 2026/10/01 11:54:46 INFO Boids API handlers registered service=boids prefix=/boids/
+test	Unit tests (race)	2026-10-01T11:54:47.0941959Z 2026/10/01 11:54:46 INFO Zone rules toggled service=boids kind=flee rules="[predator-flee predator-clear]" enabled=false
+test	Unit tests (race)	2026-10-01T11:54:47.0943926Z 2026/10/01 11:54:46 INFO Zone rules toggled service=boids kind=flee rules="[predator-flee predator-clear]" enabled=true
+test	Unit tests (race)	2026-10-01T11:54:47.0945686Z --- PASS: TestToggleFlipsRulePairAndClears (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0946727Z === RUN   TestToggleRejections
+test	Unit tests (race)	2026-10-01T11:54:47.0947743Z 2026/10/01 11:54:46 INFO Boids API handlers registered service=boids prefix=/boids/
+test	Unit tests (race)	2026-10-01T11:54:47.0948797Z === RUN   TestToggleRejections/unknown_kind
+test	Unit tests (race)	2026-10-01T11:54:47.0949660Z === RUN   TestToggleRejections/bad_body
+test	Unit tests (race)	2026-10-01T11:54:47.0950509Z === RUN   TestToggleRejections/wrong_method_on_toggle
+test	Unit tests (race)	2026-10-01T11:54:47.0951449Z === RUN   TestToggleRejections/wrong_method_on_list
+test	Unit tests (race)	2026-10-01T11:54:47.0952559Z --- PASS: TestToggleRejections (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0953653Z     --- PASS: TestToggleRejections/unknown_kind (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0954843Z     --- PASS: TestToggleRejections/bad_body (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0956100Z     --- PASS: TestToggleRejections/wrong_method_on_toggle (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0957442Z     --- PASS: TestToggleRejections/wrong_method_on_list (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0958560Z === RUN   TestUnavailableWithoutRuleProcessor
+test	Unit tests (race)	2026-10-01T11:54:47.0959728Z 2026/10/01 11:54:46 INFO Boids API handlers registered service=boids prefix=/boids/
+test	Unit tests (race)	2026-10-01T11:54:47.0960965Z --- PASS: TestUnavailableWithoutRuleProcessor (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0962113Z === RUN   TestGraphDialRoundTrip
+test	Unit tests (race)	2026-10-01T11:54:47.0963240Z 2026/10/01 11:54:46 INFO Boids API handlers registered service=boids prefix=/boids/
+test	Unit tests (race)	2026-10-01T11:54:47.0964466Z 2026/10/01 11:54:46 INFO Graph dial set service=boids hz=10
+test	Unit tests (race)	2026-10-01T11:54:47.0965514Z --- PASS: TestGraphDialRoundTrip (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0966249Z === RUN   TestToggleWorksWithoutSim
+test	Unit tests (race)	2026-10-01T11:54:47.0967517Z 2026/10/01 11:54:46 INFO Boids API handlers registered service=boids prefix=/boids/
+test	Unit tests (race)	2026-10-01T11:54:47.0969426Z 2026/10/01 11:54:46 INFO Zone rules toggled service=boids kind=wind rules="[wind-bias wind-clear]" enabled=false
+test	Unit tests (race)	2026-10-01T11:54:47.0970866Z --- PASS: TestToggleWorksWithoutSim (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0971937Z === RUN   TestCullToggleSkipsModifierClear
+test	Unit tests (race)	2026-10-01T11:54:47.0973311Z 2026/10/01 11:54:46 INFO Boids API handlers registered service=boids prefix=/boids/
+test	Unit tests (race)	2026-10-01T11:54:47.0975091Z 2026/10/01 11:54:46 INFO Zone rules toggled service=boids kind=cull rules=[predator-cull] enabled=true
+test	Unit tests (race)	2026-10-01T11:54:47.0977079Z 2026/10/01 11:54:46 INFO Zone rules toggled service=boids kind=cull rules=[predator-cull] enabled=false
+test	Unit tests (race)	2026-10-01T11:54:47.0978812Z --- PASS: TestCullToggleSkipsModifierClear (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0979891Z === RUN   TestPopulationEndpoints
+test	Unit tests (race)	2026-10-01T11:54:47.0981237Z 2026/10/01 11:54:46 INFO Boids API handlers registered service=boids prefix=/boids/
+test	Unit tests (race)	2026-10-01T11:54:47.0983249Z 2026/10/01 11:54:46 INFO Spawn wave requested service=boids n=25
+test	Unit tests (race)	2026-10-01T11:54:47.0984423Z 2026/10/01 11:54:46 INFO Churn dial set service=boids hz=4
+test	Unit tests (race)	2026-10-01T11:54:47.0985507Z --- PASS: TestPopulationEndpoints (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.0986541Z === CONT  TestDecodeBoidEntity
+test	Unit tests (race)	2026-10-01T11:54:47.0987337Z === CONT  TestDecodeCommunity
+test	Unit tests (race)	2026-10-01T11:54:47.0988424Z === RUN   TestDecodeBoidEntity/boid_key_decodes_position_and_neighbors
+test	Unit tests (race)	2026-10-01T11:54:47.0989682Z === RUN   TestDecodeCommunity/level-0_entry_keeps_its_members
+test	Unit tests (race)	2026-10-01T11:54:47.0990776Z === PAUSE TestDecodeBoidEntity/boid_key_decodes_position_and_neighbors
+test	Unit tests (race)	2026-10-01T11:54:47.0992130Z === PAUSE TestDecodeCommunity/level-0_entry_keeps_its_members
+test	Unit tests (race)	2026-10-01T11:54:47.0993878Z === RUN   TestDecodeBoidEntity/neighbor_count_resets_the_set_so_a_shrinking_flock_does_not_accumulate
+test	Unit tests (race)	2026-10-01T11:54:47.0995523Z === RUN   TestDecodeCommunity/non_level-0_key_maps_to_absence
+test	Unit tests (race)	2026-10-01T11:54:47.0996838Z === PAUSE TestDecodeBoidEntity/neighbor_count_resets_the_set_so_a_shrinking_flock_does_not_accumulate
+test	Unit tests (race)	2026-10-01T11:54:47.0998088Z === PAUSE TestDecodeCommunity/non_level-0_key_maps_to_absence
+test	Unit tests (race)	2026-10-01T11:54:47.0999172Z === RUN   TestDecodeBoidEntity/duplicate_predicates_resolve_last-write-wins
+test	Unit tests (race)	2026-10-01T11:54:47.1000755Z === PAUSE TestDecodeBoidEntity/duplicate_predicates_resolve_last-write-wins
+test	Unit tests (race)	2026-10-01T11:54:47.1002079Z === RUN   TestDecodeBoidEntity/non-boid_key_maps_to_absence
+test	Unit tests (race)	2026-10-01T11:54:47.1002919Z === PAUSE TestDecodeBoidEntity/non-boid_key_maps_to_absence
+test	Unit tests (race)	2026-10-01T11:54:47.1003872Z === RUN   TestDecodeCommunity/level_field_is_authoritative_even_when_the_key_prefix_says_otherwise
+test	Unit tests (race)	2026-10-01T11:54:47.1005017Z === RUN   TestDecodeBoidEntity/malformed_value_poisons_the_key_rather_than_skipping_silently
+test	Unit tests (race)	2026-10-01T11:54:47.1006168Z === PAUSE TestDecodeCommunity/level_field_is_authoritative_even_when_the_key_prefix_says_otherwise
+test	Unit tests (race)	2026-10-01T11:54:47.1007332Z === PAUSE TestDecodeBoidEntity/malformed_value_poisons_the_key_rather_than_skipping_silently
+test	Unit tests (race)	2026-10-01T11:54:47.1008429Z === RUN   TestDecodeCommunity/malformed_value_poisons_the_key_rather_than_skipping_silently
+test	Unit tests (race)	2026-10-01T11:54:47.1009455Z === RUN   TestDecodeBoidEntity/non-canonical_predicate_is_rejected_by_the_contract
+test	Unit tests (race)	2026-10-01T11:54:47.1010490Z === PAUSE TestDecodeCommunity/malformed_value_poisons_the_key_rather_than_skipping_silently
+test	Unit tests (race)	2026-10-01T11:54:47.1011712Z === PAUSE TestDecodeBoidEntity/non-canonical_predicate_is_rejected_by_the_contract
+test	Unit tests (race)	2026-10-01T11:54:47.1012554Z === CONT  TestDecodeCommunity/non_level-0_key_maps_to_absence
+test	Unit tests (race)	2026-10-01T11:54:47.1013230Z === CONT  TestDecodeCommunity/level-0_entry_keeps_its_members
+test	Unit tests (race)	2026-10-01T11:54:47.1014091Z === CONT  TestDecodeCommunity/malformed_value_poisons_the_key_rather_than_skipping_silently
+test	Unit tests (race)	2026-10-01T11:54:47.1014942Z === CONT  TestDecodeBoidEntity/non-boid_key_maps_to_absence
+test	Unit tests (race)	2026-10-01T11:54:47.1015792Z === CONT  TestDecodeCommunity/level_field_is_authoritative_even_when_the_key_prefix_says_otherwise
+test	Unit tests (race)	2026-10-01T11:54:47.1016818Z === CONT  TestDecodeBoidEntity/non-canonical_predicate_is_rejected_by_the_contract
+test	Unit tests (race)	2026-10-01T11:54:47.1017721Z === CONT  TestDecodeBoidEntity/duplicate_predicates_resolve_last-write-wins
+test	Unit tests (race)	2026-10-01T11:54:47.1018761Z === CONT  TestDecodeBoidEntity/neighbor_count_resets_the_set_so_a_shrinking_flock_does_not_accumulate
+test	Unit tests (race)	2026-10-01T11:54:47.1019849Z === CONT  TestDecodeBoidEntity/malformed_value_poisons_the_key_rather_than_skipping_silently
+test	Unit tests (race)	2026-10-01T11:54:47.1020576Z --- PASS: TestDecodeCommunity (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1021760Z     --- PASS: TestDecodeCommunity/non_level-0_key_maps_to_absence (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1022686Z     --- PASS: TestDecodeCommunity/level-0_entry_keeps_its_members (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1023837Z     --- PASS: TestDecodeCommunity/malformed_value_poisons_the_key_rather_than_skipping_silently (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1025182Z     --- PASS: TestDecodeCommunity/level_field_is_authoritative_even_when_the_key_prefix_says_otherwise (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1026140Z === CONT  TestDecodeBoidEntity/boid_key_decodes_position_and_neighbors
+test	Unit tests (race)	2026-10-01T11:54:47.1026770Z --- PASS: TestDecodeBoidEntity (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1027493Z     --- PASS: TestDecodeBoidEntity/non-boid_key_maps_to_absence (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1028509Z     --- PASS: TestDecodeBoidEntity/duplicate_predicates_resolve_last-write-wins (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1029695Z     --- PASS: TestDecodeBoidEntity/non-canonical_predicate_is_rejected_by_the_contract (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1030990Z     --- PASS: TestDecodeBoidEntity/malformed_value_poisons_the_key_rather_than_skipping_silently (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1062760Z     --- PASS: TestDecodeBoidEntity/neighbor_count_resets_the_set_so_a_shrinking_flock_does_not_accumulate (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1064104Z     --- PASS: TestDecodeBoidEntity/boid_key_decodes_position_and_neighbors (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1065030Z PASS
+test	Unit tests (race)	2026-10-01T11:54:47.1065450Z ok  	github.com/c360studio/semboids/internal/api	1.057s
+test	Unit tests (race)	2026-10-01T11:54:47.1066023Z === RUN   TestBoidWorkflowRegisters
+test	Unit tests (race)	2026-10-01T11:54:47.1067410Z 2026/10/01 11:54:46 INFO lifecycle: registered workflow workflow=flock.boid pattern=*.*.sim.flock.boid.* phase_count=3 operator_writable_predicates=0 child_workflows=0 reference_predicates=0
+test	Unit tests (race)	2026-10-01T11:54:47.1068786Z --- PASS: TestBoidWorkflowRegisters (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1069318Z === RUN   TestBoidLifecycleParticipant
+test	Unit tests (race)	2026-10-01T11:54:47.1069849Z --- PASS: TestBoidLifecycleParticipant (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1070384Z === RUN   TestBoidTransitionsValid
+test	Unit tests (race)	2026-10-01T11:54:47.1070880Z --- PASS: TestBoidTransitionsValid (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1071381Z === RUN   TestBoidEntityID6Part
+test	Unit tests (race)	2026-10-01T11:54:47.1072021Z --- PASS: TestBoidEntityID6Part (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1072490Z === RUN   TestBoidTriples
+test	Unit tests (race)	2026-10-01T11:54:47.1072902Z --- PASS: TestBoidTriples (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1073385Z === RUN   TestNeighborCountAlwaysPresent
+test	Unit tests (race)	2026-10-01T11:54:47.1073938Z --- PASS: TestNeighborCountAlwaysPresent (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1074504Z === RUN   TestBoidPayloadSchemaAndRegistry
+test	Unit tests (race)	2026-10-01T11:54:47.1075073Z --- PASS: TestBoidPayloadSchemaAndRegistry (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1075689Z === RUN   TestRegisteredPayloadRoundTripAndFloor
+test	Unit tests (race)	2026-10-01T11:54:47.1077884Z     payload_test.go:131: round-trip changed entity identity or facts: &{Boid:{ID:7 X:812.5 Y:301.25 VX:21.75 VY:-37 Neighbors:[12 31]} OrgID:c360 Platform:semboids Tick:1234 ObservedAt:2024-07-02 16:00:00.123 +0000 UTC}
+test	Unit tests (race)	2026-10-01T11:54:47.1079408Z --- FAIL: TestRegisteredPayloadRoundTripAndFloor (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1080018Z === RUN   TestProbeRecordsLatency
+test	Unit tests (race)	2026-10-01T11:54:47.1080502Z --- PASS: TestProbeRecordsLatency (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1080988Z === RUN   TestProbeSampling
+test	Unit tests (race)	2026-10-01T11:54:47.1081410Z --- PASS: TestProbeSampling (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1082113Z === RUN   TestProbeSkipsNonBoidAndMalformed
+test	Unit tests (race)	2026-10-01T11:54:47.1082707Z --- PASS: TestProbeSkipsNonBoidAndMalformed (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1083272Z === RUN   TestParseObservedAtNewest
+test	Unit tests (race)	2026-10-01T11:54:47.1083773Z --- PASS: TestParseObservedAtNewest (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1084297Z === RUN   TestPublisherPublishesEachBoid
+test	Unit tests (race)	2026-10-01T11:54:47.1084841Z --- PASS: TestPublisherPublishesEachBoid (0.01s)
+test	Unit tests (race)	2026-10-01T11:54:47.1085397Z === RUN   TestPublisherDropsWhenStalled
+test	Unit tests (race)	2026-10-01T11:54:47.1085931Z --- PASS: TestPublisherDropsWhenStalled (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1086521Z === RUN   TestPublisherClearsEmptiedNeighborSets
+test	Unit tests (race)	2026-10-01T11:54:47.1087170Z --- PASS: TestPublisherClearsEmptiedNeighborSets (0.02s)
+test	Unit tests (race)	2026-10-01T11:54:47.1088005Z === RUN   TestClearNeighborsRetryClassification
+test	Unit tests (race)	2026-10-01T11:54:47.1088712Z === RUN   TestClearNeighborsRetryClassification/conflict_then_success
+test	Unit tests (race)	2026-10-01T11:54:47.1089572Z === RUN   TestClearNeighborsRetryClassification/unavailable_then_success
+test	Unit tests (race)	2026-10-01T11:54:47.1090458Z === RUN   TestClearNeighborsRetryClassification/conflict_exhausts_bound
+test	Unit tests (race)	2026-10-01T11:54:47.1121992Z 2026/10/01 11:54:46 WARN clear emptied neighbor set boid=7 attempts=3 error="projection mutation  failed (revision-conflict, ): revision-conflict"
+test	Unit tests (race)	2026-10-01T11:54:47.1123355Z === RUN   TestClearNeighborsRetryClassification/not_found_is_already_clear
+test	Unit tests (race)	2026-10-01T11:54:47.1124276Z === RUN   TestClearNeighborsRetryClassification/ambiguous_is_not_retried
+test	Unit tests (race)	2026-10-01T11:54:47.1125679Z 2026/10/01 11:54:46 WARN clear emptied neighbor set: ambiguous outcome, not retried boid=7 error="projection mutation  failed (commit-unknown, ): commit-unknown"
+test	Unit tests (race)	2026-10-01T11:54:47.1127022Z === RUN   TestClearNeighborsRetryClassification/invalid_is_not_retried
+test	Unit tests (race)	2026-10-01T11:54:47.1128187Z 2026/10/01 11:54:46 WARN clear emptied neighbor set boid=7 attempts=1 error="projection mutation  failed (invalid, ): invalid"
+test	Unit tests (race)	2026-10-01T11:54:47.1129241Z --- PASS: TestClearNeighborsRetryClassification (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1130236Z     --- PASS: TestClearNeighborsRetryClassification/conflict_then_success (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1131816Z     --- PASS: TestClearNeighborsRetryClassification/unavailable_then_success (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1133008Z     --- PASS: TestClearNeighborsRetryClassification/conflict_exhausts_bound (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1134195Z     --- PASS: TestClearNeighborsRetryClassification/not_found_is_already_clear (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1135379Z     --- PASS: TestClearNeighborsRetryClassification/ambiguous_is_not_retried (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1136529Z     --- PASS: TestClearNeighborsRetryClassification/invalid_is_not_retried (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1137331Z === RUN   TestPublisherNoCrossSnapshotReorder
+test	Unit tests (race)	2026-10-01T11:54:47.1137959Z --- PASS: TestPublisherNoCrossSnapshotReorder (0.01s)
+test	Unit tests (race)	2026-10-01T11:54:47.1138556Z === RUN   TestLPALibraryOnDisjointCliques
+test	Unit tests (race)	2026-10-01T11:54:47.1139241Z     lpa_unit_test.go:165: level 0: 2 communities
+test	Unit tests (race)	2026-10-01T11:54:47.1141065Z     lpa_unit_test.go:167:   c360.semboids.sim.flock.boid.1 (level 0): [c360.semboids.sim.flock.boid.0 c360.semboids.sim.flock.boid.1 c360.semboids.sim.flock.boid.2 c360.semboids.sim.flock.boid.3]
+test	Unit tests (race)	2026-10-01T11:54:47.1143932Z     lpa_unit_test.go:167:   c360.semboids.sim.flock.boid.4 (level 0): [c360.semboids.sim.flock.boid.4 c360.semboids.sim.flock.boid.5 c360.semboids.sim.flock.boid.6 c360.semboids.sim.flock.boid.7]
+test	Unit tests (race)	2026-10-01T11:54:47.1145382Z --- PASS: TestLPALibraryOnDisjointCliques (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:47.1145888Z FAIL
+test	Unit tests (race)	2026-10-01T11:54:47.1146383Z FAIL	github.com/c360studio/semboids/internal/boidgraph	0.087s
+test	Unit tests (race)	2026-10-01T11:54:50.0115305Z === RUN   TestTickSteadyStateAllocs
+test	Unit tests (race)	2026-10-01T11:54:50.0115925Z --- PASS: TestTickSteadyStateAllocs (0.15s)
+test	Unit tests (race)	2026-10-01T11:54:50.0116310Z === RUN   TestTickBudgetHeadroom
+test	Unit tests (race)	2026-10-01T11:54:50.0117093Z     bench_test.go:55: tick at 500 boids: 2106207ns (budget 33ms)
+test	Unit tests (race)	2026-10-01T11:54:50.0117713Z --- PASS: TestTickBudgetHeadroom (2.20s)
+test	Unit tests (race)	2026-10-01T11:54:50.0118280Z === RUN   TestAddBoidsAllocatesFreshMonotonicIDs
+test	Unit tests (race)	2026-10-01T11:54:50.0118826Z --- PASS: TestAddBoidsAllocatesFreshMonotonicIDs (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0119192Z === RUN   TestNextIDNeverReused
+test	Unit tests (race)	2026-10-01T11:54:50.0119473Z --- PASS: TestNextIDNeverReused (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0119789Z === RUN   TestRemoveBoidsPreservesSurvivors
+test	Unit tests (race)	2026-10-01T11:54:50.0120144Z --- PASS: TestRemoveBoidsPreservesSurvivors (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0120516Z === RUN   TestPopulationChangeAppliesAcrossTick
+test	Unit tests (race)	2026-10-01T11:54:50.0120895Z --- PASS: TestPopulationChangeAppliesAcrossTick (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0121255Z === RUN   TestSpawnPlacementDeterministic
+test	Unit tests (race)	2026-10-01T11:54:50.0121938Z --- PASS: TestSpawnPlacementDeterministic (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0122498Z === RUN   TestSeparationRepels
+test	Unit tests (race)	2026-10-01T11:54:50.0123223Z --- PASS: TestSeparationRepels (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0123546Z === RUN   TestCohesionAttracts
+test	Unit tests (race)	2026-10-01T11:54:50.0123826Z --- PASS: TestCohesionAttracts (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0124135Z === RUN   TestAlignmentConvergesHeadings
+test	Unit tests (race)	2026-10-01T11:54:50.0124479Z --- PASS: TestAlignmentConvergesHeadings (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0124814Z === RUN   TestClampsAlwaysHold
+test	Unit tests (race)	2026-10-01T11:54:50.0125091Z --- PASS: TestClampsAlwaysHold (0.01s)
+test	Unit tests (race)	2026-10-01T11:54:50.0125395Z === RUN   TestDeterministicSeeding
+test	Unit tests (race)	2026-10-01T11:54:50.0125699Z --- PASS: TestDeterministicSeeding (0.03s)
+test	Unit tests (race)	2026-10-01T11:54:50.0126015Z === RUN   TestDifferentSeedsDiverge
+test	Unit tests (race)	2026-10-01T11:54:50.0145631Z --- PASS: TestDifferentSeedsDiverge (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0146174Z === RUN   TestPositionsStayInWorld
+test	Unit tests (race)	2026-10-01T11:54:50.0146663Z --- PASS: TestPositionsStayInWorld (0.03s)
+test	Unit tests (race)	2026-10-01T11:54:50.0147199Z === RUN   TestInitialSpeedsWithinClamp
+test	Unit tests (race)	2026-10-01T11:54:50.0147627Z --- PASS: TestInitialSpeedsWithinClamp (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0147992Z === RUN   TestExternalSteeringBendsTrajectory
+test	Unit tests (race)	2026-10-01T11:54:50.0148371Z --- PASS: TestExternalSteeringBendsTrajectory (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0148774Z === RUN   TestExternalSteeringClampsHold
+test	Unit tests (race)	2026-10-01T11:54:50.0149115Z --- PASS: TestExternalSteeringClampsHold (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0149718Z === RUN   TestDeterminismUnaffectedByEmptyExternal
+test	Unit tests (race)	2026-10-01T11:54:50.0150138Z --- PASS: TestDeterminismUnaffectedByEmptyExternal (0.03s)
+test	Unit tests (race)	2026-10-01T11:54:50.0150527Z === RUN   TestExternalSteeringClearable
+test	Unit tests (race)	2026-10-01T11:54:50.0150854Z --- PASS: TestExternalSteeringClearable (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0151180Z === RUN   TestGridNeighborsBasic
+test	Unit tests (race)	2026-10-01T11:54:50.0152020Z --- PASS: TestGridNeighborsBasic (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0152378Z === RUN   TestGridNeighborsExcludesSelf
+test	Unit tests (race)	2026-10-01T11:54:50.0152711Z --- PASS: TestGridNeighborsExcludesSelf (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0153054Z === RUN   TestGridNeighborsRadiusFilter
+test	Unit tests (race)	2026-10-01T11:54:50.0153377Z --- PASS: TestGridNeighborsRadiusFilter (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0153710Z === RUN   TestGridNeighborsWrapAround
+test	Unit tests (race)	2026-10-01T11:54:50.0154037Z === RUN   TestGridNeighborsWrapAround/left_sees_right
+test	Unit tests (race)	2026-10-01T11:54:50.0154400Z === RUN   TestGridNeighborsWrapAround/right_sees_left
+test	Unit tests (race)	2026-10-01T11:54:50.0155028Z === RUN   TestGridNeighborsWrapAround/top_sees_bottom
+test	Unit tests (race)	2026-10-01T11:54:50.0155754Z === RUN   TestGridNeighborsWrapAround/corner_sees_opposite_corner
+test	Unit tests (race)	2026-10-01T11:54:50.0156452Z --- PASS: TestGridNeighborsWrapAround (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0157243Z     --- PASS: TestGridNeighborsWrapAround/left_sees_right (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0157904Z     --- PASS: TestGridNeighborsWrapAround/right_sees_left (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0158391Z     --- PASS: TestGridNeighborsWrapAround/top_sees_bottom (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0158927Z     --- PASS: TestGridNeighborsWrapAround/corner_sees_opposite_corner (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0159348Z === RUN   TestGridReuseAcrossRebuilds
+test	Unit tests (race)	2026-10-01T11:54:50.0159661Z --- PASS: TestGridReuseAcrossRebuilds (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0159979Z === RUN   TestSnapshotNeighbors
+test	Unit tests (race)	2026-10-01T11:54:50.0160259Z --- PASS: TestSnapshotNeighbors (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0160583Z === RUN   TestSnapshotNeighborsDoesNotPerturbSim
+test	Unit tests (race)	2026-10-01T11:54:50.0160971Z --- PASS: TestSnapshotNeighborsDoesNotPerturbSim (0.01s)
+test	Unit tests (race)	2026-10-01T11:54:50.0161315Z === RUN   TestVec2Ops
+test	Unit tests (race)	2026-10-01T11:54:50.0161819Z === RUN   TestVec2Ops/add
+test	Unit tests (race)	2026-10-01T11:54:50.0162070Z === RUN   TestVec2Ops/sub
+test	Unit tests (race)	2026-10-01T11:54:50.0162306Z === RUN   TestVec2Ops/scale
+test	Unit tests (race)	2026-10-01T11:54:50.0162552Z === RUN   TestVec2Ops/limit_under
+test	Unit tests (race)	2026-10-01T11:54:50.0162809Z === RUN   TestVec2Ops/limit_over
+test	Unit tests (race)	2026-10-01T11:54:50.0163068Z === RUN   TestVec2Ops/limit_zero_vec
+test	Unit tests (race)	2026-10-01T11:54:50.0163345Z --- PASS: TestVec2Ops (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0163642Z     --- PASS: TestVec2Ops/add (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0163949Z     --- PASS: TestVec2Ops/sub (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0164256Z     --- PASS: TestVec2Ops/scale (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0164590Z     --- PASS: TestVec2Ops/limit_under (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0165115Z     --- PASS: TestVec2Ops/limit_over (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0165472Z     --- PASS: TestVec2Ops/limit_zero_vec (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0165759Z === RUN   TestVec2Len
+test	Unit tests (race)	2026-10-01T11:54:50.0165984Z --- PASS: TestVec2Len (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0166235Z === RUN   TestTorusDelta
+test	Unit tests (race)	2026-10-01T11:54:50.0166478Z === RUN   TestTorusDelta/direct
+test	Unit tests (race)	2026-10-01T11:54:50.0166733Z === RUN   TestTorusDelta/wrap_x
+test	Unit tests (race)	2026-10-01T11:54:50.0166994Z === RUN   TestTorusDelta/wrap_x_negative
+test	Unit tests (race)	2026-10-01T11:54:50.0167277Z === RUN   TestTorusDelta/wrap_y
+test	Unit tests (race)	2026-10-01T11:54:50.0167526Z === RUN   TestTorusDelta/wrap_both
+test	Unit tests (race)	2026-10-01T11:54:50.0167791Z --- PASS: TestTorusDelta (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0168106Z     --- PASS: TestTorusDelta/direct (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0168444Z     --- PASS: TestTorusDelta/wrap_x (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0168806Z     --- PASS: TestTorusDelta/wrap_x_negative (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0169192Z     --- PASS: TestTorusDelta/wrap_y (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0169543Z     --- PASS: TestTorusDelta/wrap_both (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0169818Z === RUN   TestWrap
+test	Unit tests (race)	2026-10-01T11:54:50.0170027Z === RUN   TestWrap/inside
+test	Unit tests (race)	2026-10-01T11:54:50.0170256Z === RUN   TestWrap/over_x
+test	Unit tests (race)	2026-10-01T11:54:50.0170481Z === RUN   TestWrap/under_x
+test	Unit tests (race)	2026-10-01T11:54:50.0170840Z === RUN   TestWrap/over_y
+test	Unit tests (race)	2026-10-01T11:54:50.0171059Z === RUN   TestWrap/under_y
+test	Unit tests (race)	2026-10-01T11:54:50.0171284Z --- PASS: TestWrap (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0171881Z     --- PASS: TestWrap/inside (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0172204Z     --- PASS: TestWrap/over_x (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0172507Z     --- PASS: TestWrap/under_x (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0172813Z     --- PASS: TestWrap/over_y (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0173110Z     --- PASS: TestWrap/under_y (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:50.0173350Z PASS
+test	Unit tests (race)	2026-10-01T11:54:50.0173609Z ok  	github.com/c360studio/semboids/internal/flock	3.481s
+test	Unit tests (race)	2026-10-01T11:54:51.2040989Z === RUN   TestComponentPublishesOneFramePerTick
+test	Unit tests (race)	2026-10-01T11:54:51.2041988Z --- PASS: TestComponentPublishesOneFramePerTick (0.02s)
+test	Unit tests (race)	2026-10-01T11:54:51.2042447Z === RUN   TestComponentStopsCleanlyOnContextCancel
+test	Unit tests (race)	2026-10-01T11:54:51.2042927Z --- PASS: TestComponentStopsCleanlyOnContextCancel (0.11s)
+test	Unit tests (race)	2026-10-01T11:54:51.2043420Z === RUN   TestComponentStopIsIdempotent
+test	Unit tests (race)	2026-10-01T11:54:51.2043771Z --- PASS: TestComponentStopIsIdempotent (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2044193Z === RUN   TestComponentRejectsDoubleStart
+test	Unit tests (race)	2026-10-01T11:54:51.2044607Z --- PASS: TestComponentRejectsDoubleStart (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2044965Z === RUN   TestComponentPublishesTransitionEvents
+test	Unit tests (race)	2026-10-01T11:54:51.2045466Z --- PASS: TestComponentPublishesTransitionEvents (0.16s)
+test	Unit tests (race)	2026-10-01T11:54:51.2045868Z === RUN   TestComponentClearModifierKind
+test	Unit tests (race)	2026-10-01T11:54:51.2046194Z --- PASS: TestComponentClearModifierKind (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2046669Z === RUN   TestComponentRejectsInvalidZones
+test	Unit tests (race)	2026-10-01T11:54:51.2047034Z --- PASS: TestComponentRejectsInvalidZones (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2047366Z === RUN   TestComponentDefaults
+test	Unit tests (race)	2026-10-01T11:54:51.2047709Z --- PASS: TestComponentDefaults (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2048100Z === RUN   TestDrainPoolBoundsConcurrency
+test	Unit tests (race)	2026-10-01T11:54:51.2048419Z --- PASS: TestDrainPoolBoundsConcurrency (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2048751Z === RUN   TestDrainPoolSubmitBlocksWhenFull
+test	Unit tests (race)	2026-10-01T11:54:51.2049252Z --- PASS: TestDrainPoolSubmitBlocksWhenFull (0.05s)
+test	Unit tests (race)	2026-10-01T11:54:51.2049597Z === RUN   TestDrainPoolWaitJoinsInFlight
+test	Unit tests (race)	2026-10-01T11:54:51.2049925Z --- PASS: TestDrainPoolWaitJoinsInFlight (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2050421Z === RUN   TestDrainPoolCancelledCtxDropsWork
+test	Unit tests (race)	2026-10-01T11:54:51.2050776Z --- PASS: TestDrainPoolCancelledCtxDropsWork (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2051114Z === RUN   TestDrainPoolClampsToSerial
+test	Unit tests (race)	2026-10-01T11:54:51.2051721Z --- PASS: TestDrainPoolClampsToSerial (0.05s)
+test	Unit tests (race)	2026-10-01T11:54:51.2052067Z === RUN   TestFrameMarshalsCompactWireFormat
+test	Unit tests (race)	2026-10-01T11:54:51.2052590Z --- PASS: TestFrameMarshalsCompactWireFormat (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2053558Z === RUN   TestFrameWithoutZonesOrMods
+test	Unit tests (race)	2026-10-01T11:54:51.2053896Z --- PASS: TestFrameWithoutZonesOrMods (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2054409Z === RUN   TestFrameRoundTrips
+test	Unit tests (race)	2026-10-01T11:54:51.2054689Z --- PASS: TestFrameRoundTrips (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2055003Z === RUN   TestCreatePendingCreatesActivePerBoid
+test	Unit tests (race)	2026-10-01T11:54:51.2055549Z --- PASS: TestCreatePendingCreatesActivePerBoid (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2055915Z === RUN   TestCreatePendingRunsConcurrently
+test	Unit tests (race)	2026-10-01T11:54:51.2056256Z --- PASS: TestCreatePendingRunsConcurrently (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2056727Z === RUN   TestCulledBoidID
+test	Unit tests (race)	2026-10-01T11:54:51.2056977Z --- PASS: TestCulledBoidID (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2057238Z === RUN   TestBoidIDFromKey
+test	Unit tests (race)	2026-10-01T11:54:51.2057496Z --- PASS: TestBoidIDFromKey (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2057928Z === RUN   TestDeleteEntityFencedPairing
+test	Unit tests (race)	2026-10-01T11:54:51.2058256Z --- PASS: TestDeleteEntityFencedPairing (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2058592Z === RUN   TestDeleteEntityRetryClassification
+test	Unit tests (race)	2026-10-01T11:54:51.2059158Z === RUN   TestDeleteEntityRetryClassification/unavailable_read_retries
+test	Unit tests (race)	2026-10-01T11:54:51.2059643Z === RUN   TestDeleteEntityRetryClassification/conflict_read_retries
+test	Unit tests (race)	2026-10-01T11:54:51.2060301Z === RUN   TestDeleteEntityRetryClassification/ambiguous_read_is_not_retried
+test	Unit tests (race)	2026-10-01T11:54:51.2061692Z 2026/10/01 11:54:48 WARN reclaim culled entity entity=c360.semboids.sim.flock.boid.9 attempts=1 error="projection mutation  failed (commit-unknown, ): commit-unknown"
+test	Unit tests (race)	2026-10-01T11:54:51.2062717Z === RUN   TestDeleteEntityRetryClassification/invalid_read_is_not_retried
+test	Unit tests (race)	2026-10-01T11:54:51.2063564Z 2026/10/01 11:54:48 WARN reclaim culled entity entity=c360.semboids.sim.flock.boid.9 attempts=1 error="projection mutation  failed (invalid, ): invalid"
+test	Unit tests (race)	2026-10-01T11:54:51.2064399Z === RUN   TestDeleteEntityRetryClassification/unavailable_delete_retries
+test	Unit tests (race)	2026-10-01T11:54:51.2065073Z === RUN   TestDeleteEntityRetryClassification/conflict_re-reads_then_succeeds
+test	Unit tests (race)	2026-10-01T11:54:51.2065639Z === RUN   TestDeleteEntityRetryClassification/read_not-found_is_already_reclaimed
+test	Unit tests (race)	2026-10-01T11:54:51.2066404Z === RUN   TestDeleteEntityRetryClassification/delete_not-found_is_already_reclaimed
+test	Unit tests (race)	2026-10-01T11:54:51.2066978Z === RUN   TestDeleteEntityRetryClassification/ambiguous_is_not_retried
+test	Unit tests (race)	2026-10-01T11:54:51.2068050Z 2026/10/01 11:54:48 WARN reclaim culled entity: ambiguous outcome, not retried entity=c360.semboids.sim.flock.boid.9 error="projection mutation  failed (commit-unknown, ): commit-unknown"
+test	Unit tests (race)	2026-10-01T11:54:51.2069110Z === RUN   TestDeleteEntityRetryClassification/conflict_exhausts_bound
+test	Unit tests (race)	2026-10-01T11:54:51.2070118Z 2026/10/01 11:54:48 WARN reclaim culled entity entity=c360.semboids.sim.flock.boid.9 attempts=5 error="projection mutation  failed (revision-conflict, ): revision-conflict"
+test	Unit tests (race)	2026-10-01T11:54:51.2071080Z === RUN   TestDeleteEntityRetryClassification/invalid_is_not_retried
+test	Unit tests (race)	2026-10-01T11:54:51.2072139Z 2026/10/01 11:54:48 WARN reclaim culled entity entity=c360.semboids.sim.flock.boid.9 attempts=1 error="projection mutation  failed (invalid, ): invalid"
+test	Unit tests (race)	2026-10-01T11:54:51.2072858Z --- PASS: TestDeleteEntityRetryClassification (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2073616Z     --- PASS: TestDeleteEntityRetryClassification/unavailable_read_retries (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2074266Z     --- PASS: TestDeleteEntityRetryClassification/conflict_read_retries (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2075085Z     --- PASS: TestDeleteEntityRetryClassification/ambiguous_read_is_not_retried (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2075753Z     --- PASS: TestDeleteEntityRetryClassification/invalid_read_is_not_retried (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2076400Z     --- PASS: TestDeleteEntityRetryClassification/unavailable_delete_retries (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2077246Z     --- PASS: TestDeleteEntityRetryClassification/conflict_re-reads_then_succeeds (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2077962Z     --- PASS: TestDeleteEntityRetryClassification/read_not-found_is_already_reclaimed (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2078700Z     --- PASS: TestDeleteEntityRetryClassification/delete_not-found_is_already_reclaimed (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2079626Z     --- PASS: TestDeleteEntityRetryClassification/ambiguous_is_not_retried (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2080255Z     --- PASS: TestDeleteEntityRetryClassification/conflict_exhausts_bound (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2081058Z     --- PASS: TestDeleteEntityRetryClassification/invalid_is_not_retried (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2081645Z === RUN   TestCreateWithRetrySurvivesSeedRace
+test	Unit tests (race)	2026-10-01T11:54:51.2082204Z --- PASS: TestCreateWithRetrySurvivesSeedRace (0.30s)
+test	Unit tests (race)	2026-10-01T11:54:51.2082562Z === RUN   TestCreateWithRetryExhaustsBound
+test	Unit tests (race)	2026-10-01T11:54:51.2082899Z --- PASS: TestCreateWithRetryExhaustsBound (1.50s)
+test	Unit tests (race)	2026-10-01T11:54:51.2083264Z === RUN   TestCreateTreatsAlreadyManagedAsSuccess
+test	Unit tests (race)	2026-10-01T11:54:51.2083644Z --- PASS: TestCreateTreatsAlreadyManagedAsSuccess (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2084033Z === RUN   TestComponentStoppedInstanceCannotRestart
+test	Unit tests (race)	2026-10-01T11:54:51.2084432Z --- PASS: TestComponentStoppedInstanceCannotRestart (0.01s)
+test	Unit tests (race)	2026-10-01T11:54:51.2084831Z === RUN   TestComponentStopReportsIncompleteJoin
+test	Unit tests (race)	2026-10-01T11:54:51.2085211Z --- PASS: TestComponentStopReportsIncompleteJoin (0.01s)
+test	Unit tests (race)	2026-10-01T11:54:51.2085567Z === RUN   TestComponentRejectsNilContexts
+test	Unit tests (race)	2026-10-01T11:54:51.2085892Z --- PASS: TestComponentRejectsNilContexts (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2086375Z === RUN   TestPopulationStateStagesAndDrains
+test	Unit tests (race)	2026-10-01T11:54:51.2086728Z --- PASS: TestPopulationStateStagesAndDrains (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2087083Z === RUN   TestPopulationStateConcurrentStaging
+test	Unit tests (race)	2026-10-01T11:54:51.2087442Z --- PASS: TestPopulationStateConcurrentStaging (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2087946Z === RUN   TestSnapshotCadenceFollowsDial
+test	Unit tests (race)	2026-10-01T11:54:51.2088307Z 2026/10/01 11:54:49 INFO Graph snapshot cadence set graph_hz=50
+test	Unit tests (race)	2026-10-01T11:54:51.2088710Z 2026/10/01 11:54:50 INFO Graph snapshot cadence set graph_hz=0
+test	Unit tests (race)	2026-10-01T11:54:51.2089071Z --- PASS: TestSnapshotCadenceFollowsDial (0.30s)
+test	Unit tests (race)	2026-10-01T11:54:51.2089394Z === RUN   TestSetGraphHzClampsAndRejects
+test	Unit tests (race)	2026-10-01T11:54:51.2089735Z 2026/10/01 11:54:50 INFO Graph snapshot cadence set graph_hz=30
+test	Unit tests (race)	2026-10-01T11:54:51.2090107Z --- PASS: TestSetGraphHzClampsAndRejects (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2090426Z === RUN   TestParseModifier
+test	Unit tests (race)	2026-10-01T11:54:51.2090696Z === RUN   TestParseModifier/numeric_boid_id
+test	Unit tests (race)	2026-10-01T11:54:51.2091103Z === RUN   TestParseModifier/string_boid_id_(substitution_renders_strings)
+test	Unit tests (race)	2026-10-01T11:54:51.2091766Z === RUN   TestParseModifier/cancel
+test	Unit tests (race)	2026-10-01T11:54:51.2092074Z === RUN   TestParseModifier/unknown_kind
+test	Unit tests (race)	2026-10-01T11:54:51.2092378Z === RUN   TestParseModifier/missing_boid_id
+test	Unit tests (race)	2026-10-01T11:54:51.2092676Z --- PASS: TestParseModifier (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2093036Z     --- PASS: TestParseModifier/numeric_boid_id (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2093581Z     --- PASS: TestParseModifier/string_boid_id_(substitution_renders_strings) (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2094070Z     --- PASS: TestParseModifier/cancel (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2094445Z     --- PASS: TestParseModifier/unknown_kind (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2094845Z     --- PASS: TestParseModifier/missing_boid_id (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2095178Z === RUN   TestParseModifierMalformedJSON
+test	Unit tests (race)	2026-10-01T11:54:51.2095499Z --- PASS: TestParseModifierMalformedJSON (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2095823Z === RUN   TestSteeringTableLifecycle
+test	Unit tests (race)	2026-10-01T11:54:51.2096118Z --- PASS: TestSteeringTableLifecycle (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2096421Z === RUN   TestSteeringCancelRemoves
+test	Unit tests (race)	2026-10-01T11:54:51.2096708Z --- PASS: TestSteeringCancelRemoves (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2097003Z === RUN   TestSteeringClearKind
+test	Unit tests (race)	2026-10-01T11:54:51.2097269Z --- PASS: TestSteeringClearKind (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2097547Z === RUN   TestExternalVectors
+test	Unit tests (race)	2026-10-01T11:54:51.2097805Z --- PASS: TestExternalVectors (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2098081Z === RUN   TestTrackerEdgeDetection
+test	Unit tests (race)	2026-10-01T11:54:51.2098361Z --- PASS: TestTrackerEdgeDetection (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2098664Z === RUN   TestTrackerMultipleZonesAndBoids
+test	Unit tests (race)	2026-10-01T11:54:51.2099135Z --- PASS: TestTrackerMultipleZonesAndBoids (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2099515Z === RUN   TestTrackerLingeredFiresPastGracePredatorOnly
+test	Unit tests (race)	2026-10-01T11:54:51.2099945Z --- PASS: TestTrackerLingeredFiresPastGracePredatorOnly (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2100349Z === RUN   TestTrackerLingeredNotForFleeingBoid
+test	Unit tests (race)	2026-10-01T11:54:51.2100713Z --- PASS: TestTrackerLingeredNotForFleeingBoid (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2101045Z === RUN   TestTrackerForgetPrunes
+test	Unit tests (race)	2026-10-01T11:54:51.2101602Z --- PASS: TestTrackerForgetPrunes (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2101893Z PASS
+test	Unit tests (race)	2026-10-01T11:54:51.2102143Z ok  	github.com/c360studio/semboids/internal/sim	3.568s
+test	Unit tests (race)	2026-10-01T11:54:51.2102647Z === RUN   TestIngestPublishesOneMessagePerZone
+test	Unit tests (race)	2026-10-01T11:54:51.2103067Z --- PASS: TestIngestPublishesOneMessagePerZone (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2103422Z === RUN   TestIngestRejectsInvalidZones
+test	Unit tests (race)	2026-10-01T11:54:51.2103740Z --- PASS: TestIngestRejectsInvalidZones (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2104047Z === RUN   TestEntityID6Part
+test	Unit tests (race)	2026-10-01T11:54:51.2104305Z --- PASS: TestEntityID6Part (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2104567Z === RUN   TestEntityTriples
+test	Unit tests (race)	2026-10-01T11:54:51.2104818Z --- PASS: TestEntityTriples (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2105110Z === RUN   TestWindEntityHasDirectionTriples
+test	Unit tests (race)	2026-10-01T11:54:51.2105594Z --- PASS: TestWindEntityHasDirectionTriples (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2105934Z === RUN   TestPayloadSchemaAndValidate
+test	Unit tests (race)	2026-10-01T11:54:51.2106244Z --- PASS: TestPayloadSchemaAndValidate (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2106552Z === RUN   TestRegisterPayloads
+test	Unit tests (race)	2026-10-01T11:54:51.2106814Z --- PASS: TestRegisterPayloads (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2107129Z === RUN   TestRegisteredPayloadRoundTripAndFloor
+test	Unit tests (race)	2026-10-01T11:54:51.2107514Z --- PASS: TestRegisteredPayloadRoundTripAndFloor (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2107871Z === RUN   TestValidateAcceptsValidSet
+test	Unit tests (race)	2026-10-01T11:54:51.2108188Z --- PASS: TestValidateAcceptsValidSet (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2108498Z === RUN   TestValidateRejections
+test	Unit tests (race)	2026-10-01T11:54:51.2108776Z === RUN   TestValidateRejections/unknown_type
+test	Unit tests (race)	2026-10-01T11:54:51.2109088Z === RUN   TestValidateRejections/zero_radius
+test	Unit tests (race)	2026-10-01T11:54:51.2109409Z === RUN   TestValidateRejections/negative_radius
+test	Unit tests (race)	2026-10-01T11:54:51.2109732Z === RUN   TestValidateRejections/duplicate_ids
+test	Unit tests (race)	2026-10-01T11:54:51.2110047Z === RUN   TestValidateRejections/empty_id
+test	Unit tests (race)	2026-10-01T11:54:51.2110379Z === RUN   TestValidateRejections/wind_without_direction
+test	Unit tests (race)	2026-10-01T11:54:51.2110712Z --- PASS: TestValidateRejections (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2111097Z     --- PASS: TestValidateRejections/unknown_type (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2111736Z     --- PASS: TestValidateRejections/zero_radius (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2112183Z     --- PASS: TestValidateRejections/negative_radius (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2112616Z     --- PASS: TestValidateRejections/duplicate_ids (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2113025Z     --- PASS: TestValidateRejections/empty_id (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2113475Z     --- PASS: TestValidateRejections/wind_without_direction (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2113832Z === RUN   TestContains
+test	Unit tests (race)	2026-10-01T11:54:51.2114054Z === RUN   TestContains/center
+test	Unit tests (race)	2026-10-01T11:54:51.2114299Z === RUN   TestContains/inside
+test	Unit tests (race)	2026-10-01T11:54:51.2114545Z === RUN   TestContains/boundary
+test	Unit tests (race)	2026-10-01T11:54:51.2114806Z === RUN   TestContains/outside
+test	Unit tests (race)	2026-10-01T11:54:51.2115065Z === RUN   TestContains/diagonal_inside
+test	Unit tests (race)	2026-10-01T11:54:51.2115345Z === RUN   TestContains/diagonal_outside
+test	Unit tests (race)	2026-10-01T11:54:51.2115619Z --- PASS: TestContains (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2115915Z     --- PASS: TestContains/center (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2116238Z     --- PASS: TestContains/inside (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2116563Z     --- PASS: TestContains/boundary (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2116894Z     --- PASS: TestContains/outside (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2117245Z     --- PASS: TestContains/diagonal_inside (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2117622Z     --- PASS: TestContains/diagonal_outside (0.00s)
+test	Unit tests (race)	2026-10-01T11:54:51.2117907Z PASS
+test	Unit tests (race)	2026-10-01T11:54:51.2118156Z ok  	github.com/c360studio/semboids/internal/zone	1.054s
+test	Unit tests (race)	2026-10-01T11:54:51.2118579Z FAIL
+test	Unit tests (race)	2026-10-01T11:54:51.4299335Z ##[error]Process completed with exit code 1.
+status-check	Check all jobs	﻿2026-10-01T11:54:56.3521953Z ##[group]Run if [ "true" = "true" ] || [ "false" = "true" ]; then
+status-check	Check all jobs	2026-10-01T11:54:56.3522705Z ^[[36;1mif [ "true" = "true" ] || [ "false" = "true" ]; then^[[0m
+status-check	Check all jobs	2026-10-01T11:54:56.3523198Z ^[[36;1m  echo "One or more jobs failed"; exit 1^[[0m
+status-check	Check all jobs	2026-10-01T11:54:56.3523656Z ^[[36;1mfi^[[0m
+status-check	Check all jobs	2026-10-01T11:54:56.3524025Z ^[[36;1mecho "All jobs passed"^[[0m
+status-check	Check all jobs	2026-10-01T11:54:56.4475872Z shell: /usr/bin/bash -e {0}
+status-check	Check all jobs	2026-10-01T11:54:56.4476727Z env:
+status-check	Check all jobs	2026-10-01T11:54:56.4477111Z   GO_VERSION: 1.26
+status-check	Check all jobs	2026-10-01T11:54:56.4477510Z ##[endgroup]
+status-check	Check all jobs	2026-10-01T11:54:56.4662039Z One or more jobs failed
+status-check	Check all jobs	2026-10-01T11:54:56.4676158Z ##[error]Process completed with exit code 1.

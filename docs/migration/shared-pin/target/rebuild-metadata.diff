@@ -1,0 +1,20 @@
+--- frozen-target
++++ compilation-revalidation
+@@ -1,6 +1,6 @@
+-/tmp/semboids-shared-pin/target-semboids: go1.26.4
++/tmp/semboids-shared-pin/target-semboids-revalidated: go1.26.4
+ 	path	github.com/c360studio/semboids/cmd/semboids
+-	mod	github.com/c360studio/semboids	v0.0.0-20260812164904-8c03cc53836c+dirty	
++	mod	github.com/c360studio/semboids	v0.0.0-20261001115337-97d24dc08201+dirty	
+ 	dep	dario.cat/mergo	v1.0.2	h1:85+piFYR1tMbRrLcDwR18y4UKJ3aH1Tbzi24VRW1TK8=
+ 	dep	github.com/beorn7/perks	v1.0.1	h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
+ 	dep	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a	h1:WAlGLMjE/3EnYyeoqounCfYnVyIB3igMlG+FLP1Iq+o=
+@@ -76,6 +76,6 @@
+ 	build	GOOS=darwin
+ 	build	GOARM64=v8.0
+ 	build	vcs=git
+-	build	vcs.revision=8c03cc53836ced93a5df7064473c63ff144e64f1
+-	build	vcs.time=2026-08-12T16:49:04Z
++	build	vcs.revision=97d24dc082016aa5af1840bb0a52c87021048a18
++	build	vcs.time=2026-10-01T11:53:37Z
+ 	build	vcs.modified=true

@@ -1,0 +1,52 @@
+# github.com/c360studio/semboids/internal/zone [github.com/c360studio/semboids/internal/zone.test]
+internal/zone/ingest_integration_test.go:67:5: not enough arguments in call to registry.CreateComponent
+	have (string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies)
+	want (componentadmission.Access, string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies, func(component.Discoverable) error)
+internal/zone/ingest_integration_test.go:81:29: cannot use 5 * time.Second (constant 5000000000 of int64 type "time".Duration) as context.Context value in argument to lc.Stop: "time".Duration does not implement context.Context (missing method Deadline)
+# github.com/c360studio/semboids/internal/boidgraph_test [github.com/c360studio/semboids/internal/boidgraph.test]
+internal/boidgraph/clustering_spike_integration_test.go:51:5: not enough arguments in call to registry.CreateComponent
+	have (string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies)
+	want (componentadmission.Access, string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies, func(component.Discoverable) error)
+internal/boidgraph/clustering_spike_integration_test.go:65:33: cannot use 5 * time.Second (constant 5000000000 of int64 type "time".Duration) as context.Context value in argument to lc.Stop: "time".Duration does not implement context.Context (missing method Deadline)
+internal/boidgraph/probe_integration_test.go:129:5: not enough arguments in call to registry.CreateComponent
+	have (string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies)
+	want (componentadmission.Access, string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies, func(component.Discoverable) error)
+internal/boidgraph/probe_integration_test.go:140:36: cannot use 5 * time.Second (constant 5000000000 of int64 type "time".Duration) as context.Context value in argument to simLC.Stop: "time".Duration does not implement context.Context (missing method Deadline)
+internal/boidgraph/snapshot_integration_test.go:90:5: not enough arguments in call to registry.CreateComponent
+	have (string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies)
+	want (componentadmission.Access, string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies, func(component.Discoverable) error)
+internal/boidgraph/snapshot_integration_test.go:101:36: cannot use 5 * time.Second (constant 5000000000 of int64 type "time".Duration) as context.Context value in argument to simLC.Stop: "time".Duration does not implement context.Context (missing method Deadline)
+# github.com/c360studio/semboids/internal/sim [github.com/c360studio/semboids/internal/sim.test]
+internal/sim/cull_integration_test.go:74:5: not enough arguments in call to registry.CreateComponent
+	have (string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies)
+	want (componentadmission.Access, string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies, func(component.Discoverable) error)
+internal/sim/cull_integration_test.go:88:33: cannot use 5 * time.Second (constant 5000000000 of int64 type "time".Duration) as context.Context value in argument to lc.Stop: "time".Duration does not implement context.Context (missing method Deadline)
+internal/sim/cull_integration_test.go:186:5: not enough arguments in call to registry.CreateComponent
+	have (string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies)
+	want (componentadmission.Access, string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies, func(component.Discoverable) error)
+internal/sim/cull_integration_test.go:213:36: cannot use 5 * time.Second (constant 5000000000 of int64 type "time".Duration) as context.Context value in argument to simLC.Stop: "time".Duration does not implement context.Context (missing method Deadline)
+internal/sim/roundtrip_integration_test.go:103:5: not enough arguments in call to registry.CreateComponent
+	have (string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies)
+	want (componentadmission.Access, string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies, func(component.Discoverable) error)
+internal/sim/roundtrip_integration_test.go:114:37: cannot use 5 * time.Second (constant 5000000000 of int64 type "time".Duration) as context.Context value in argument to ruleLC.Stop: "time".Duration does not implement context.Context (missing method Deadline)
+internal/sim/roundtrip_integration_test.go:126:5: not enough arguments in call to registry.CreateComponent
+	have (string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies)
+	want (componentadmission.Access, string, "github.com/c360studio/semstreams/types".ComponentConfig, component.Dependencies, func(component.Discoverable) error)
+internal/sim/roundtrip_integration_test.go:153:36: cannot use 5 * time.Second (constant 5000000000 of int64 type "time".Duration) as context.Context value in argument to simLC.Stop: "time".Duration does not implement context.Context (missing method Deadline)
+# github.com/c360studio/semboids/internal/api
+internal/api/service.go:100:9: cannot use &Service{…} (value of type *Service) as service.Service value in return statement: *Service does not implement service.Service (wrong type for method Stop)
+		have Stop("time".Duration) error
+		want Stop(context.Context) error
+internal/api/service.go:128:28: cannot use timeout (variable of int64 type "time".Duration) as context.Context value in argument to s.BaseService.Stop: "time".Duration does not implement context.Context (missing method Deadline)
+internal/api/service.go:134:48: s.deps.ComponentRegistry.ListComponents undefined (type *component.Registry has no field or method ListComponents)
+internal/api/service.go:145:48: s.deps.ComponentRegistry.ListComponents undefined (type *component.Registry has no field or method ListComponents)
+internal/api/service.go:225:48: s.deps.ComponentRegistry.ListComponents undefined (type *component.Registry has no field or method ListComponents)
+FAIL	github.com/c360studio/semboids/cmd/semboids [build failed]
+?   	github.com/c360studio/semboids/cmd/sweep	[no test files]
+?   	github.com/c360studio/semboids/componentregistry	[no test files]
+FAIL	github.com/c360studio/semboids/internal/api [build failed]
+FAIL	github.com/c360studio/semboids/internal/boidgraph [build failed]
+ok  	github.com/c360studio/semboids/internal/flock	0.202s [no tests to run]
+FAIL	github.com/c360studio/semboids/internal/sim [build failed]
+FAIL	github.com/c360studio/semboids/internal/zone [build failed]
+FAIL

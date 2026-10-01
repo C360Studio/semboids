@@ -1,0 +1,466 @@
+=== RUN   TestAuthoredConfigUsesDeclaredAuthority
+--- PASS: TestAuthoredConfigUsesDeclaredAuthority (0.01s)
+=== RUN   TestExtractPlatformUsesEffectiveIdentity
+--- PASS: TestExtractPlatformUsesEffectiveIdentity (0.00s)
+=== RUN   TestControlledStopKeepsStartContextLive
+--- PASS: TestControlledStopKeepsStartContextLive (0.00s)
+=== RUN   TestFailedStartStopsWithFreshContext
+--- PASS: TestFailedStartStopsWithFreshContext (0.00s)
+=== RUN   TestAbortStartContextUsesFreshStopContext
+--- PASS: TestAbortStartContextUsesFreshStopContext (0.00s)
+=== RUN   TestSignalDuringStartupAbortsAndJoinsBeforeCleanup
+--- PASS: TestSignalDuringStartupAbortsAndJoinsBeforeCleanup (0.00s)
+PASS
+ok  	github.com/c360studio/semboids/cmd/semboids	1.592s
+?   	github.com/c360studio/semboids/cmd/sweep	[no test files]
+=== RUN   TestFactoryBindsControlsAfterServiceConstruction
+2026/10/01 06:49:05 INFO Boids API handlers registered service=boids prefix=/boids/
+--- PASS: TestFactoryBindsControlsAfterServiceConstruction (0.00s)
+PASS
+ok  	github.com/c360studio/semboids/componentregistry	1.364s
+=== RUN   TestDecodeBoidEntity
+=== PAUSE TestDecodeBoidEntity
+=== RUN   TestDecodeCommunity
+=== PAUSE TestDecodeCommunity
+=== RUN   TestGraphViewsCancellationJoinsPendingOpens
+--- PASS: TestGraphViewsCancellationJoinsPendingOpens (0.00s)
+=== RUN   TestGraphViewsStopDeadlineDoesNotClaimJoin
+--- PASS: TestGraphViewsStopDeadlineDoesNotClaimJoin (0.00s)
+=== RUN   TestGraphViewsNilStopDoesNotCancel
+--- PASS: TestGraphViewsNilStopDoesNotCancel (0.00s)
+=== RUN   TestGraphViewsStopBoundsNativeWatcherJoin
+--- PASS: TestGraphViewsStopBoundsNativeWatcherJoin (0.00s)
+=== RUN   TestServiceStopCancelsBaseEvenWhenViewsCannotJoin
+--- PASS: TestServiceStopCancelsBaseEvenWhenViewsCannotJoin (0.00s)
+=== RUN   TestBridgeCoalescesLatestWins
+--- PASS: TestBridgeCoalescesLatestWins (0.00s)
+=== RUN   TestBridgeSeedFromSnapshotIsTheInitialSync
+--- PASS: TestBridgeSeedFromSnapshotIsTheInitialSync (0.00s)
+=== RUN   TestBridgeCommunityInversion
+--- PASS: TestBridgeCommunityInversion (0.00s)
+=== RUN   TestBridgeEntityRemoval
+--- PASS: TestBridgeEntityRemoval (0.00s)
+=== RUN   TestBridgePoisonKeepsLastKnownGood
+--- PASS: TestBridgePoisonKeepsLastKnownGood (0.00s)
+=== RUN   TestGetRulesDerivesFromRuleConfig
+2026/10/01 06:49:06 INFO Boids API handlers registered service=boids prefix=/boids/
+--- PASS: TestGetRulesDerivesFromRuleConfig (0.00s)
+=== RUN   TestToggleFlipsRulePairAndClears
+2026/10/01 06:49:06 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:49:06 INFO Zone rules toggled service=boids kind=flee rules="[predator-flee predator-clear]" enabled=false
+2026/10/01 06:49:06 INFO Zone rules toggled service=boids kind=flee rules="[predator-flee predator-clear]" enabled=true
+--- PASS: TestToggleFlipsRulePairAndClears (0.00s)
+=== RUN   TestToggleRejections
+2026/10/01 06:49:06 INFO Boids API handlers registered service=boids prefix=/boids/
+=== RUN   TestToggleRejections/unknown_kind
+=== RUN   TestToggleRejections/bad_body
+=== RUN   TestToggleRejections/wrong_method_on_toggle
+=== RUN   TestToggleRejections/wrong_method_on_list
+--- PASS: TestToggleRejections (0.00s)
+    --- PASS: TestToggleRejections/unknown_kind (0.00s)
+    --- PASS: TestToggleRejections/bad_body (0.00s)
+    --- PASS: TestToggleRejections/wrong_method_on_toggle (0.00s)
+    --- PASS: TestToggleRejections/wrong_method_on_list (0.00s)
+=== RUN   TestUnavailableWithoutRuleProcessor
+2026/10/01 06:49:06 INFO Boids API handlers registered service=boids prefix=/boids/
+--- PASS: TestUnavailableWithoutRuleProcessor (0.00s)
+=== RUN   TestGraphDialRoundTrip
+2026/10/01 06:49:06 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:49:06 INFO Graph dial set service=boids hz=10
+--- PASS: TestGraphDialRoundTrip (0.00s)
+=== RUN   TestToggleWorksWithoutSim
+2026/10/01 06:49:06 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:49:06 INFO Zone rules toggled service=boids kind=wind rules="[wind-bias wind-clear]" enabled=false
+--- PASS: TestToggleWorksWithoutSim (0.00s)
+=== RUN   TestCullToggleSkipsModifierClear
+2026/10/01 06:49:06 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:49:06 INFO Zone rules toggled service=boids kind=cull rules=[predator-cull] enabled=true
+2026/10/01 06:49:06 INFO Zone rules toggled service=boids kind=cull rules=[predator-cull] enabled=false
+--- PASS: TestCullToggleSkipsModifierClear (0.00s)
+=== RUN   TestPopulationEndpoints
+2026/10/01 06:49:06 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:49:06 INFO Spawn wave requested service=boids n=25
+2026/10/01 06:49:06 INFO Churn dial set service=boids hz=4
+--- PASS: TestPopulationEndpoints (0.00s)
+=== CONT  TestDecodeCommunity
+=== CONT  TestDecodeBoidEntity
+=== RUN   TestDecodeCommunity/level-0_entry_keeps_its_members
+=== PAUSE TestDecodeCommunity/level-0_entry_keeps_its_members
+=== RUN   TestDecodeBoidEntity/boid_key_decodes_position_and_neighbors
+=== RUN   TestDecodeCommunity/non_level-0_key_maps_to_absence
+=== PAUSE TestDecodeBoidEntity/boid_key_decodes_position_and_neighbors
+=== PAUSE TestDecodeCommunity/non_level-0_key_maps_to_absence
+=== RUN   TestDecodeBoidEntity/neighbor_count_resets_the_set_so_a_shrinking_flock_does_not_accumulate
+=== RUN   TestDecodeCommunity/level_field_is_authoritative_even_when_the_key_prefix_says_otherwise
+=== PAUSE TestDecodeBoidEntity/neighbor_count_resets_the_set_so_a_shrinking_flock_does_not_accumulate
+=== PAUSE TestDecodeCommunity/level_field_is_authoritative_even_when_the_key_prefix_says_otherwise
+=== RUN   TestDecodeBoidEntity/duplicate_predicates_resolve_last-write-wins
+=== RUN   TestDecodeCommunity/malformed_value_poisons_the_key_rather_than_skipping_silently
+=== PAUSE TestDecodeBoidEntity/duplicate_predicates_resolve_last-write-wins
+=== PAUSE TestDecodeCommunity/malformed_value_poisons_the_key_rather_than_skipping_silently
+=== RUN   TestDecodeBoidEntity/non-boid_key_maps_to_absence
+=== CONT  TestDecodeCommunity/level-0_entry_keeps_its_members
+=== PAUSE TestDecodeBoidEntity/non-boid_key_maps_to_absence
+=== CONT  TestDecodeCommunity/level_field_is_authoritative_even_when_the_key_prefix_says_otherwise
+=== RUN   TestDecodeBoidEntity/malformed_value_poisons_the_key_rather_than_skipping_silently
+=== CONT  TestDecodeCommunity/malformed_value_poisons_the_key_rather_than_skipping_silently
+=== CONT  TestDecodeCommunity/non_level-0_key_maps_to_absence
+--- PASS: TestDecodeCommunity (0.00s)
+    --- PASS: TestDecodeCommunity/level_field_is_authoritative_even_when_the_key_prefix_says_otherwise (0.00s)
+    --- PASS: TestDecodeCommunity/level-0_entry_keeps_its_members (0.00s)
+    --- PASS: TestDecodeCommunity/malformed_value_poisons_the_key_rather_than_skipping_silently (0.00s)
+    --- PASS: TestDecodeCommunity/non_level-0_key_maps_to_absence (0.00s)
+=== PAUSE TestDecodeBoidEntity/malformed_value_poisons_the_key_rather_than_skipping_silently
+=== RUN   TestDecodeBoidEntity/non-canonical_predicate_is_rejected_by_the_contract
+=== PAUSE TestDecodeBoidEntity/non-canonical_predicate_is_rejected_by_the_contract
+=== CONT  TestDecodeBoidEntity/neighbor_count_resets_the_set_so_a_shrinking_flock_does_not_accumulate
+=== CONT  TestDecodeBoidEntity/malformed_value_poisons_the_key_rather_than_skipping_silently
+=== CONT  TestDecodeBoidEntity/non-canonical_predicate_is_rejected_by_the_contract
+=== CONT  TestDecodeBoidEntity/non-boid_key_maps_to_absence
+=== CONT  TestDecodeBoidEntity/duplicate_predicates_resolve_last-write-wins
+=== CONT  TestDecodeBoidEntity/boid_key_decodes_position_and_neighbors
+--- PASS: TestDecodeBoidEntity (0.00s)
+    --- PASS: TestDecodeBoidEntity/non-boid_key_maps_to_absence (0.00s)
+    --- PASS: TestDecodeBoidEntity/boid_key_decodes_position_and_neighbors (0.00s)
+    --- PASS: TestDecodeBoidEntity/duplicate_predicates_resolve_last-write-wins (0.00s)
+    --- PASS: TestDecodeBoidEntity/neighbor_count_resets_the_set_so_a_shrinking_flock_does_not_accumulate (0.00s)
+    --- PASS: TestDecodeBoidEntity/malformed_value_poisons_the_key_rather_than_skipping_silently (0.00s)
+    --- PASS: TestDecodeBoidEntity/non-canonical_predicate_is_rejected_by_the_contract (0.00s)
+PASS
+ok  	github.com/c360studio/semboids/internal/api	1.558s
+=== RUN   TestBoidWorkflowRegisters
+2026/10/01 06:49:06 INFO lifecycle: registered workflow workflow=flock.boid pattern=*.*.sim.flock.boid.* phase_count=3 operator_writable_predicates=0 child_workflows=0 reference_predicates=0
+--- PASS: TestBoidWorkflowRegisters (0.00s)
+=== RUN   TestBoidLifecycleParticipant
+--- PASS: TestBoidLifecycleParticipant (0.00s)
+=== RUN   TestBoidTransitionsValid
+--- PASS: TestBoidTransitionsValid (0.00s)
+=== RUN   TestBoidEntityID6Part
+--- PASS: TestBoidEntityID6Part (0.00s)
+=== RUN   TestBoidTriples
+--- PASS: TestBoidTriples (0.00s)
+=== RUN   TestNeighborCountAlwaysPresent
+--- PASS: TestNeighborCountAlwaysPresent (0.00s)
+=== RUN   TestBoidPayloadSchemaAndRegistry
+--- PASS: TestBoidPayloadSchemaAndRegistry (0.00s)
+=== RUN   TestRegisteredPayloadRoundTripAndFloor
+--- PASS: TestRegisteredPayloadRoundTripAndFloor (0.00s)
+=== RUN   TestProbeRecordsLatency
+--- PASS: TestProbeRecordsLatency (0.00s)
+=== RUN   TestProbeSampling
+--- PASS: TestProbeSampling (0.00s)
+=== RUN   TestProbeSkipsNonBoidAndMalformed
+--- PASS: TestProbeSkipsNonBoidAndMalformed (0.00s)
+=== RUN   TestParseObservedAtNewest
+--- PASS: TestParseObservedAtNewest (0.00s)
+=== RUN   TestPublisherPublishesEachBoid
+--- PASS: TestPublisherPublishesEachBoid (0.01s)
+=== RUN   TestPublisherDropsWhenStalled
+--- PASS: TestPublisherDropsWhenStalled (0.00s)
+=== RUN   TestPublisherClearsEmptiedNeighborSets
+--- PASS: TestPublisherClearsEmptiedNeighborSets (0.02s)
+=== RUN   TestClearNeighborsRetryClassification
+=== RUN   TestClearNeighborsRetryClassification/conflict_then_success
+=== RUN   TestClearNeighborsRetryClassification/unavailable_then_success
+=== RUN   TestClearNeighborsRetryClassification/conflict_exhausts_bound
+2026/10/01 06:49:06 WARN clear emptied neighbor set boid=7 attempts=3 error="projection mutation  failed (revision-conflict, ): revision-conflict"
+=== RUN   TestClearNeighborsRetryClassification/not_found_is_already_clear
+=== RUN   TestClearNeighborsRetryClassification/ambiguous_is_not_retried
+2026/10/01 06:49:06 WARN clear emptied neighbor set: ambiguous outcome, not retried boid=7 error="projection mutation  failed (commit-unknown, ): commit-unknown"
+=== RUN   TestClearNeighborsRetryClassification/invalid_is_not_retried
+2026/10/01 06:49:06 WARN clear emptied neighbor set boid=7 attempts=1 error="projection mutation  failed (invalid, ): invalid"
+--- PASS: TestClearNeighborsRetryClassification (0.00s)
+    --- PASS: TestClearNeighborsRetryClassification/conflict_then_success (0.00s)
+    --- PASS: TestClearNeighborsRetryClassification/unavailable_then_success (0.00s)
+    --- PASS: TestClearNeighborsRetryClassification/conflict_exhausts_bound (0.00s)
+    --- PASS: TestClearNeighborsRetryClassification/not_found_is_already_clear (0.00s)
+    --- PASS: TestClearNeighborsRetryClassification/ambiguous_is_not_retried (0.00s)
+    --- PASS: TestClearNeighborsRetryClassification/invalid_is_not_retried (0.00s)
+=== RUN   TestPublisherNoCrossSnapshotReorder
+--- PASS: TestPublisherNoCrossSnapshotReorder (0.01s)
+=== RUN   TestLPALibraryOnDisjointCliques
+    lpa_unit_test.go:165: level 0: 2 communities
+    lpa_unit_test.go:167:   c360.semboids.sim.flock.boid.1 (level 0): [c360.semboids.sim.flock.boid.0 c360.semboids.sim.flock.boid.1 c360.semboids.sim.flock.boid.2 c360.semboids.sim.flock.boid.3]
+    lpa_unit_test.go:167:   c360.semboids.sim.flock.boid.4 (level 0): [c360.semboids.sim.flock.boid.4 c360.semboids.sim.flock.boid.5 c360.semboids.sim.flock.boid.6 c360.semboids.sim.flock.boid.7]
+--- PASS: TestLPALibraryOnDisjointCliques (0.00s)
+PASS
+ok  	github.com/c360studio/semboids/internal/boidgraph	2.229s
+=== RUN   TestTickSteadyStateAllocs
+--- PASS: TestTickSteadyStateAllocs (0.27s)
+=== RUN   TestTickBudgetHeadroom
+    bench_test.go:55: tick at 500 boids: 3937788ns (budget 33ms)
+--- PASS: TestTickBudgetHeadroom (2.74s)
+=== RUN   TestAddBoidsAllocatesFreshMonotonicIDs
+--- PASS: TestAddBoidsAllocatesFreshMonotonicIDs (0.00s)
+=== RUN   TestNextIDNeverReused
+--- PASS: TestNextIDNeverReused (0.00s)
+=== RUN   TestRemoveBoidsPreservesSurvivors
+--- PASS: TestRemoveBoidsPreservesSurvivors (0.00s)
+=== RUN   TestPopulationChangeAppliesAcrossTick
+--- PASS: TestPopulationChangeAppliesAcrossTick (0.00s)
+=== RUN   TestSpawnPlacementDeterministic
+--- PASS: TestSpawnPlacementDeterministic (0.00s)
+=== RUN   TestSeparationRepels
+--- PASS: TestSeparationRepels (0.00s)
+=== RUN   TestCohesionAttracts
+--- PASS: TestCohesionAttracts (0.00s)
+=== RUN   TestAlignmentConvergesHeadings
+--- PASS: TestAlignmentConvergesHeadings (0.00s)
+=== RUN   TestClampsAlwaysHold
+--- PASS: TestClampsAlwaysHold (0.02s)
+=== RUN   TestDeterministicSeeding
+--- PASS: TestDeterministicSeeding (0.09s)
+=== RUN   TestDifferentSeedsDiverge
+--- PASS: TestDifferentSeedsDiverge (0.00s)
+=== RUN   TestPositionsStayInWorld
+--- PASS: TestPositionsStayInWorld (0.05s)
+=== RUN   TestInitialSpeedsWithinClamp
+--- PASS: TestInitialSpeedsWithinClamp (0.00s)
+=== RUN   TestExternalSteeringBendsTrajectory
+--- PASS: TestExternalSteeringBendsTrajectory (0.00s)
+=== RUN   TestExternalSteeringClampsHold
+--- PASS: TestExternalSteeringClampsHold (0.00s)
+=== RUN   TestDeterminismUnaffectedByEmptyExternal
+--- PASS: TestDeterminismUnaffectedByEmptyExternal (0.05s)
+=== RUN   TestExternalSteeringClearable
+--- PASS: TestExternalSteeringClearable (0.00s)
+=== RUN   TestGridNeighborsBasic
+--- PASS: TestGridNeighborsBasic (0.00s)
+=== RUN   TestGridNeighborsExcludesSelf
+--- PASS: TestGridNeighborsExcludesSelf (0.00s)
+=== RUN   TestGridNeighborsRadiusFilter
+--- PASS: TestGridNeighborsRadiusFilter (0.00s)
+=== RUN   TestGridNeighborsWrapAround
+=== RUN   TestGridNeighborsWrapAround/left_sees_right
+=== RUN   TestGridNeighborsWrapAround/right_sees_left
+=== RUN   TestGridNeighborsWrapAround/top_sees_bottom
+=== RUN   TestGridNeighborsWrapAround/corner_sees_opposite_corner
+--- PASS: TestGridNeighborsWrapAround (0.00s)
+    --- PASS: TestGridNeighborsWrapAround/left_sees_right (0.00s)
+    --- PASS: TestGridNeighborsWrapAround/right_sees_left (0.00s)
+    --- PASS: TestGridNeighborsWrapAround/top_sees_bottom (0.00s)
+    --- PASS: TestGridNeighborsWrapAround/corner_sees_opposite_corner (0.00s)
+=== RUN   TestGridReuseAcrossRebuilds
+--- PASS: TestGridReuseAcrossRebuilds (0.00s)
+=== RUN   TestSnapshotNeighbors
+--- PASS: TestSnapshotNeighbors (0.00s)
+=== RUN   TestSnapshotNeighborsDoesNotPerturbSim
+--- PASS: TestSnapshotNeighborsDoesNotPerturbSim (0.01s)
+=== RUN   TestVec2Ops
+=== RUN   TestVec2Ops/add
+=== RUN   TestVec2Ops/sub
+=== RUN   TestVec2Ops/scale
+=== RUN   TestVec2Ops/limit_under
+=== RUN   TestVec2Ops/limit_over
+=== RUN   TestVec2Ops/limit_zero_vec
+--- PASS: TestVec2Ops (0.00s)
+    --- PASS: TestVec2Ops/add (0.00s)
+    --- PASS: TestVec2Ops/sub (0.00s)
+    --- PASS: TestVec2Ops/scale (0.00s)
+    --- PASS: TestVec2Ops/limit_under (0.00s)
+    --- PASS: TestVec2Ops/limit_over (0.00s)
+    --- PASS: TestVec2Ops/limit_zero_vec (0.00s)
+=== RUN   TestVec2Len
+--- PASS: TestVec2Len (0.00s)
+=== RUN   TestTorusDelta
+=== RUN   TestTorusDelta/direct
+=== RUN   TestTorusDelta/wrap_x
+=== RUN   TestTorusDelta/wrap_x_negative
+=== RUN   TestTorusDelta/wrap_y
+=== RUN   TestTorusDelta/wrap_both
+--- PASS: TestTorusDelta (0.00s)
+    --- PASS: TestTorusDelta/direct (0.00s)
+    --- PASS: TestTorusDelta/wrap_x (0.00s)
+    --- PASS: TestTorusDelta/wrap_x_negative (0.00s)
+    --- PASS: TestTorusDelta/wrap_y (0.00s)
+    --- PASS: TestTorusDelta/wrap_both (0.00s)
+=== RUN   TestWrap
+=== RUN   TestWrap/inside
+=== RUN   TestWrap/over_x
+=== RUN   TestWrap/under_x
+=== RUN   TestWrap/over_y
+=== RUN   TestWrap/under_y
+--- PASS: TestWrap (0.00s)
+    --- PASS: TestWrap/inside (0.00s)
+    --- PASS: TestWrap/over_x (0.00s)
+    --- PASS: TestWrap/under_x (0.00s)
+    --- PASS: TestWrap/over_y (0.00s)
+    --- PASS: TestWrap/under_y (0.00s)
+PASS
+ok  	github.com/c360studio/semboids/internal/flock	4.910s
+=== RUN   TestComponentPublishesOneFramePerTick
+--- PASS: TestComponentPublishesOneFramePerTick (0.02s)
+=== RUN   TestComponentStopsCleanlyOnContextCancel
+--- PASS: TestComponentStopsCleanlyOnContextCancel (0.11s)
+=== RUN   TestComponentStopIsIdempotent
+--- PASS: TestComponentStopIsIdempotent (0.00s)
+=== RUN   TestComponentRejectsDoubleStart
+--- PASS: TestComponentRejectsDoubleStart (0.00s)
+=== RUN   TestComponentPublishesTransitionEvents
+--- PASS: TestComponentPublishesTransitionEvents (0.16s)
+=== RUN   TestComponentClearModifierKind
+--- PASS: TestComponentClearModifierKind (0.00s)
+=== RUN   TestComponentRejectsInvalidZones
+--- PASS: TestComponentRejectsInvalidZones (0.00s)
+=== RUN   TestComponentDefaults
+--- PASS: TestComponentDefaults (0.00s)
+=== RUN   TestDrainPoolBoundsConcurrency
+--- PASS: TestDrainPoolBoundsConcurrency (0.00s)
+=== RUN   TestDrainPoolSubmitBlocksWhenFull
+--- PASS: TestDrainPoolSubmitBlocksWhenFull (0.05s)
+=== RUN   TestDrainPoolWaitJoinsInFlight
+--- PASS: TestDrainPoolWaitJoinsInFlight (0.00s)
+=== RUN   TestDrainPoolCancelledCtxDropsWork
+--- PASS: TestDrainPoolCancelledCtxDropsWork (0.00s)
+=== RUN   TestDrainPoolClampsToSerial
+--- PASS: TestDrainPoolClampsToSerial (0.05s)
+=== RUN   TestFrameMarshalsCompactWireFormat
+--- PASS: TestFrameMarshalsCompactWireFormat (0.00s)
+=== RUN   TestFrameWithoutZonesOrMods
+--- PASS: TestFrameWithoutZonesOrMods (0.00s)
+=== RUN   TestFrameRoundTrips
+--- PASS: TestFrameRoundTrips (0.00s)
+=== RUN   TestCreatePendingCreatesActivePerBoid
+--- PASS: TestCreatePendingCreatesActivePerBoid (0.00s)
+=== RUN   TestCreatePendingRunsConcurrently
+--- PASS: TestCreatePendingRunsConcurrently (0.00s)
+=== RUN   TestCulledBoidID
+--- PASS: TestCulledBoidID (0.00s)
+=== RUN   TestBoidIDFromKey
+--- PASS: TestBoidIDFromKey (0.00s)
+=== RUN   TestDeleteEntityFencedPairing
+--- PASS: TestDeleteEntityFencedPairing (0.00s)
+=== RUN   TestDeleteEntityRetryClassification
+=== RUN   TestDeleteEntityRetryClassification/unavailable_read_retries
+=== RUN   TestDeleteEntityRetryClassification/conflict_read_retries
+=== RUN   TestDeleteEntityRetryClassification/ambiguous_read_is_not_retried
+2026/10/01 06:49:07 WARN reclaim culled entity entity=c360.semboids.sim.flock.boid.9 attempts=1 error="projection mutation  failed (commit-unknown, ): commit-unknown"
+=== RUN   TestDeleteEntityRetryClassification/invalid_read_is_not_retried
+2026/10/01 06:49:07 WARN reclaim culled entity entity=c360.semboids.sim.flock.boid.9 attempts=1 error="projection mutation  failed (invalid, ): invalid"
+=== RUN   TestDeleteEntityRetryClassification/unavailable_delete_retries
+=== RUN   TestDeleteEntityRetryClassification/conflict_re-reads_then_succeeds
+=== RUN   TestDeleteEntityRetryClassification/read_not-found_is_already_reclaimed
+=== RUN   TestDeleteEntityRetryClassification/delete_not-found_is_already_reclaimed
+=== RUN   TestDeleteEntityRetryClassification/ambiguous_is_not_retried
+2026/10/01 06:49:07 WARN reclaim culled entity: ambiguous outcome, not retried entity=c360.semboids.sim.flock.boid.9 error="projection mutation  failed (commit-unknown, ): commit-unknown"
+=== RUN   TestDeleteEntityRetryClassification/conflict_exhausts_bound
+2026/10/01 06:49:07 WARN reclaim culled entity entity=c360.semboids.sim.flock.boid.9 attempts=5 error="projection mutation  failed (revision-conflict, ): revision-conflict"
+=== RUN   TestDeleteEntityRetryClassification/invalid_is_not_retried
+2026/10/01 06:49:07 WARN reclaim culled entity entity=c360.semboids.sim.flock.boid.9 attempts=1 error="projection mutation  failed (invalid, ): invalid"
+--- PASS: TestDeleteEntityRetryClassification (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/unavailable_read_retries (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/conflict_read_retries (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/ambiguous_read_is_not_retried (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/invalid_read_is_not_retried (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/unavailable_delete_retries (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/conflict_re-reads_then_succeeds (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/read_not-found_is_already_reclaimed (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/delete_not-found_is_already_reclaimed (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/ambiguous_is_not_retried (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/conflict_exhausts_bound (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/invalid_is_not_retried (0.00s)
+=== RUN   TestCreateWithRetrySurvivesSeedRace
+--- PASS: TestCreateWithRetrySurvivesSeedRace (0.30s)
+=== RUN   TestCreateWithRetryExhaustsBound
+--- PASS: TestCreateWithRetryExhaustsBound (1.50s)
+=== RUN   TestCreateTreatsAlreadyManagedAsSuccess
+--- PASS: TestCreateTreatsAlreadyManagedAsSuccess (0.00s)
+=== RUN   TestComponentStoppedInstanceCannotRestart
+--- PASS: TestComponentStoppedInstanceCannotRestart (0.01s)
+=== RUN   TestComponentStopReportsIncompleteJoin
+--- PASS: TestComponentStopReportsIncompleteJoin (0.01s)
+=== RUN   TestComponentRejectsNilContexts
+--- PASS: TestComponentRejectsNilContexts (0.00s)
+=== RUN   TestPopulationStateStagesAndDrains
+--- PASS: TestPopulationStateStagesAndDrains (0.00s)
+=== RUN   TestPopulationStateConcurrentStaging
+--- PASS: TestPopulationStateConcurrentStaging (0.00s)
+=== RUN   TestSnapshotCadenceFollowsDial
+2026/10/01 06:49:09 INFO Graph snapshot cadence set graph_hz=50
+2026/10/01 06:49:09 INFO Graph snapshot cadence set graph_hz=0
+--- PASS: TestSnapshotCadenceFollowsDial (0.30s)
+=== RUN   TestSetGraphHzClampsAndRejects
+2026/10/01 06:49:09 INFO Graph snapshot cadence set graph_hz=30
+--- PASS: TestSetGraphHzClampsAndRejects (0.00s)
+=== RUN   TestParseModifier
+=== RUN   TestParseModifier/numeric_boid_id
+=== RUN   TestParseModifier/string_boid_id_(substitution_renders_strings)
+=== RUN   TestParseModifier/cancel
+=== RUN   TestParseModifier/unknown_kind
+=== RUN   TestParseModifier/missing_boid_id
+--- PASS: TestParseModifier (0.00s)
+    --- PASS: TestParseModifier/numeric_boid_id (0.00s)
+    --- PASS: TestParseModifier/string_boid_id_(substitution_renders_strings) (0.00s)
+    --- PASS: TestParseModifier/cancel (0.00s)
+    --- PASS: TestParseModifier/unknown_kind (0.00s)
+    --- PASS: TestParseModifier/missing_boid_id (0.00s)
+=== RUN   TestParseModifierMalformedJSON
+--- PASS: TestParseModifierMalformedJSON (0.00s)
+=== RUN   TestSteeringTableLifecycle
+--- PASS: TestSteeringTableLifecycle (0.00s)
+=== RUN   TestSteeringCancelRemoves
+--- PASS: TestSteeringCancelRemoves (0.00s)
+=== RUN   TestSteeringClearKind
+--- PASS: TestSteeringClearKind (0.00s)
+=== RUN   TestExternalVectors
+--- PASS: TestExternalVectors (0.00s)
+=== RUN   TestTrackerEdgeDetection
+--- PASS: TestTrackerEdgeDetection (0.00s)
+=== RUN   TestTrackerMultipleZonesAndBoids
+--- PASS: TestTrackerMultipleZonesAndBoids (0.00s)
+=== RUN   TestTrackerLingeredFiresPastGracePredatorOnly
+--- PASS: TestTrackerLingeredFiresPastGracePredatorOnly (0.00s)
+=== RUN   TestTrackerLingeredNotForFleeingBoid
+--- PASS: TestTrackerLingeredNotForFleeingBoid (0.00s)
+=== RUN   TestTrackerForgetPrunes
+--- PASS: TestTrackerForgetPrunes (0.00s)
+PASS
+ok  	github.com/c360studio/semboids/internal/sim	4.942s
+=== RUN   TestIngestPublishesOneMessagePerZone
+--- PASS: TestIngestPublishesOneMessagePerZone (0.00s)
+=== RUN   TestIngestRejectsInvalidZones
+--- PASS: TestIngestRejectsInvalidZones (0.00s)
+=== RUN   TestEntityID6Part
+--- PASS: TestEntityID6Part (0.00s)
+=== RUN   TestEntityTriples
+--- PASS: TestEntityTriples (0.00s)
+=== RUN   TestWindEntityHasDirectionTriples
+--- PASS: TestWindEntityHasDirectionTriples (0.00s)
+=== RUN   TestPayloadSchemaAndValidate
+--- PASS: TestPayloadSchemaAndValidate (0.00s)
+=== RUN   TestRegisterPayloads
+--- PASS: TestRegisterPayloads (0.00s)
+=== RUN   TestRegisteredPayloadRoundTripAndFloor
+--- PASS: TestRegisteredPayloadRoundTripAndFloor (0.00s)
+=== RUN   TestValidateAcceptsValidSet
+--- PASS: TestValidateAcceptsValidSet (0.00s)
+=== RUN   TestValidateRejections
+=== RUN   TestValidateRejections/unknown_type
+=== RUN   TestValidateRejections/zero_radius
+=== RUN   TestValidateRejections/negative_radius
+=== RUN   TestValidateRejections/duplicate_ids
+=== RUN   TestValidateRejections/empty_id
+=== RUN   TestValidateRejections/wind_without_direction
+--- PASS: TestValidateRejections (0.00s)
+    --- PASS: TestValidateRejections/unknown_type (0.00s)
+    --- PASS: TestValidateRejections/zero_radius (0.00s)
+    --- PASS: TestValidateRejections/negative_radius (0.00s)
+    --- PASS: TestValidateRejections/duplicate_ids (0.00s)
+    --- PASS: TestValidateRejections/empty_id (0.00s)
+    --- PASS: TestValidateRejections/wind_without_direction (0.00s)
+=== RUN   TestContains
+=== RUN   TestContains/center
+=== RUN   TestContains/inside
+=== RUN   TestContains/boundary
+=== RUN   TestContains/outside
+=== RUN   TestContains/diagonal_inside
+=== RUN   TestContains/diagonal_outside
+--- PASS: TestContains (0.00s)
+    --- PASS: TestContains/center (0.00s)
+    --- PASS: TestContains/inside (0.00s)
+    --- PASS: TestContains/boundary (0.00s)
+    --- PASS: TestContains/outside (0.00s)
+    --- PASS: TestContains/diagonal_inside (0.00s)
+    --- PASS: TestContains/diagonal_outside (0.00s)
+PASS
+ok  	github.com/c360studio/semboids/internal/zone	1.929s

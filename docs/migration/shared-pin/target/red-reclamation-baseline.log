@@ -1,0 +1,29 @@
+2026/10/01 06:42:24 INFO Connecting to NATS urls=nats://localhost:55029
+2026/10/01 06:42:24 INFO Successfully connected to NATS urls=nats://localhost:55029
+2026/10/01 06:42:24 INFO component initialized component=graph-ingest component=graph-ingest
+2026/10/01 06:42:24 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:42:24 INFO Created new KV bucket bucket=ENTITY_SUFFIX_INDEX
+2026/10/01 06:42:24 INFO Created new KV bucket bucket=GRAPH_INGEST_APPLIED_SEQ
+2026/10/01 06:42:24 INFO Created new KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:42:24 INFO query handlers registered component=graph-ingest subjects="[graph.ingest.query.entity graph.ingest.query.batch graph.ingest.query.prefix graph.ingest.query.suffix]"
+2026/10/01 06:42:24 INFO mutation handlers registered component=graph-ingest subjects="[graph.mutation.entity.create graph.mutation.entity.reconcile graph.mutation.triple.append graph.mutation.entity.delete]"
+2026/10/01 06:42:24 INFO component started component=graph-ingest component=graph-ingest start_time=2026-10-01T06:42:24.392-05:00
+2026/10/01 06:42:24 INFO component initialized component=graph-index component=graph-index
+2026/10/01 06:42:24 INFO Created new KV bucket bucket=OUTGOING_INDEX
+2026/10/01 06:42:24 INFO Created new KV bucket bucket=INCOMING_INDEX
+2026/10/01 06:42:24 INFO Created new KV bucket bucket=ALIAS_INDEX
+2026/10/01 06:42:24 INFO Created new KV bucket bucket=PREDICATE_INDEX
+2026/10/01 06:42:24 INFO Created new KV bucket bucket=NAME_INDEX
+2026/10/01 06:42:24 INFO Using existing KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:42:24 INFO resource available component=graph-index resource=ENTITY_STATES attempt=1
+2026/10/01 06:42:24 INFO query handlers registered component=graph-index subjects="[graph.index.query.outgoing graph.index.query.incoming graph.index.query.alias graph.index.query.predicate graph.index.query.predicateList graph.index.query.predicateStats graph.index.query.predicateCompound graph.index.query.byName]"
+2026/10/01 06:42:24 INFO component started component=graph-index component=graph-index start_time=2026-10-01T06:42:24.432-05:00
+2026/10/01 06:42:24 INFO lifecycle: registered workflow workflow=flock.boid pattern=*.*.sim.flock.boid.* phase_count=3 operator_writable_predicates=0 child_workflows=0 reference_predicates=0
+2026/10/01 06:42:24 INFO entity watcher started component=graph-index bucket=ENTITY_STATES
+2026/10/01 06:42:24 INFO component stopped gracefully component=graph-index component=graph-index
+2026/10/01 06:42:24 INFO component stopped gracefully component=graph-ingest component=graph-ingest
+--- FAIL: TestReclaimedBoidRejectsDelayedPreCullSnapshot (0.80s)
+    reclamation_qualification_test.go:66: reclaimed boid resurrected: deletion receipt revision=1, late-snapshot revision=3; held snapshot tick=1 observed_at=2026-10-01T06:42:24.433244-05:00
+FAIL
+FAIL	github.com/c360studio/semboids/internal/boidgraph	1.231s
+FAIL

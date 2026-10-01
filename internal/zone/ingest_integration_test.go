@@ -49,7 +49,7 @@ func TestZonesLandInEntityStates(t *testing.T) {
 		Platform:        component.PlatformMeta{Org: "c360", Platform: "semboids"},
 		PayloadRegistry: payloadReg,
 	}
-	inst, err := registry.CreateComponent("graph-ingest-test", types.ComponentConfig{
+	inst, err := createTestComponent(registry, "graph-ingest-test", types.ComponentConfig{
 		Type:    types.ComponentTypeProcessor,
 		Name:    "graph-ingest",
 		Enabled: true,
@@ -78,7 +78,7 @@ func TestZonesLandInEntityStates(t *testing.T) {
 	if err := lc.Start(ctx); err != nil {
 		t.Fatalf("start: %v", err)
 	}
-	defer func() { _ = lc.Stop(5 * time.Second) }()
+	defer func() { _ = lc.Stop(testStopContext(t)) }()
 
 	// Ingest the zones through the real pipeline.
 	zones := validZones()

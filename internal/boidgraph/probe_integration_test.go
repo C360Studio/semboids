@@ -124,7 +124,7 @@ func TestE2ELatencyProbeTracksBacklog(t *testing.T) {
 		"boids": 400, "tick_hz": 30, "seed": 7,
 		"graph_hz": 1, "graph_probe_sample_n": 1,
 	})
-	simInst, err := registry.CreateComponent("sim-t", types.ComponentConfig{
+	simInst, err := createTestComponent(registry, "sim-t", types.ComponentConfig{
 		Type: types.ComponentTypeInput, Name: "sim", Enabled: true, Config: simCfgJSON,
 	}, deps)
 	if err != nil {
@@ -137,7 +137,7 @@ func TestE2ELatencyProbeTracksBacklog(t *testing.T) {
 	if err := simLC.Start(ctx); err != nil {
 		t.Fatalf("sim start: %v", err)
 	}
-	t.Cleanup(func() { _ = simLC.Stop(5 * time.Second) })
+	t.Cleanup(func() { _ = simLC.Stop(testStopContext(t)) })
 
 	dialer, ok := simInst.(graphDialer)
 	if !ok {

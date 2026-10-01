@@ -1,0 +1,132 @@
+[
+  {
+    "probe": "fresh_startup",
+    "utc": "2026-10-01T11:34:43Z",
+    "frames": 6,
+    "tick_first": 5,
+    "tick_last": 10,
+    "population": 30,
+    "entity_states": {
+      "messages": 30,
+      "bytes": 62003,
+      "first_seq": 1,
+      "first_ts": "2026-10-01T11:34:43.212826002Z",
+      "last_seq": 30,
+      "last_ts": "2026-10-01T11:34:43.254033669Z",
+      "num_subjects": 30,
+      "consumer_count": 1
+    },
+    "passed": true
+  },
+  {
+    "probe": "first_sigterm",
+    "utc": "2026-10-01T11:34:43Z",
+    "returncode": 0,
+    "seconds": 0.008129875059239566,
+    "forced_kill": false
+  },
+  {
+    "probe": "retained_application_restart",
+    "utc": "2026-10-01T11:34:44Z",
+    "frames": 31,
+    "tick_first": 5,
+    "tick_last": 35,
+    "population": 30,
+    "entity_states": {
+      "messages": 30,
+      "bytes": 92331,
+      "first_seq": 31,
+      "first_ts": "2026-10-01T11:34:44.639183586Z",
+      "last_seq": 60,
+      "last_ts": "2026-10-01T11:34:44.663048878Z",
+      "num_subjects": 30,
+      "consumer_count": 4
+    },
+    "passed": true
+  },
+  {
+    "probe": "broker_storage_retained",
+    "utc": "2026-10-01T11:34:45Z",
+    "before": {
+      "messages": 30,
+      "bytes": 92331,
+      "first_seq": 31,
+      "first_ts": "2026-10-01T11:34:44.639183586Z",
+      "last_seq": 60,
+      "last_ts": "2026-10-01T11:34:44.663048878Z",
+      "num_subjects": 30,
+      "consumer_count": 4
+    },
+    "after": {
+      "messages": 30,
+      "bytes": 92331,
+      "first_seq": 31,
+      "first_ts": "2026-10-01T11:34:44.639183586Z",
+      "last_seq": 60,
+      "last_ts": "2026-10-01T11:34:44.663048878Z",
+      "num_subjects": 30,
+      "consumer_count": 0
+    },
+    "passed": true
+  },
+  {
+    "probe": "broker_reconnect",
+    "utc": "2026-10-01T11:34:47Z",
+    "frames": 25,
+    "tick_first": 101,
+    "tick_last": 125,
+    "population": 30,
+    "entity_states": {
+      "messages": 30,
+      "bytes": 97391,
+      "first_seq": 61,
+      "first_ts": "2026-10-01T11:34:47.639320046Z",
+      "last_seq": 90,
+      "last_ts": "2026-10-01T11:34:47.659233129Z",
+      "num_subjects": 30,
+      "consumer_count": 0
+    },
+    "passed": true
+  },
+  {
+    "probe": "index_reconnect_progress",
+    "utc": "2026-10-01T11:35:04Z",
+    "after_reconnect": 60.0,
+    "subsequent": 65.0,
+    "passed": true
+  },
+  {
+    "probe": "restart_sigterm",
+    "utc": "2026-10-01T11:35:04Z",
+    "returncode": 0,
+    "seconds": 0.008374042110517621,
+    "forced_kill": false
+  },
+  {
+    "probe": "startup_cancellation_signal",
+    "utc": "2026-10-01T11:35:04Z",
+    "process_alive": true,
+    "accepted_peer": "('127.0.0.1', 60206)",
+    "passed": true
+  },
+  {
+    "probe": "cancellation_during_stalled_nats",
+    "utc": "2026-10-01T11:35:04Z",
+    "returncode": -15,
+    "seconds": 0.0013074589660391212,
+    "forced_kill": false
+  },
+  {
+    "probe": "failed_startup_port_conflict",
+    "utc": "2026-10-01T11:35:29Z",
+    "passed": false,
+    "error": "did not exit within 25 seconds"
+  },
+  {
+    "probe": "failed_startup_forced_cancellation",
+    "utc": "2026-10-01T11:35:29Z",
+    "returncode": 0,
+    "seconds": 0.018073250073939562,
+    "forced_kill": false
+  }
+]

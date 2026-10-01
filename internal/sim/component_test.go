@@ -71,7 +71,7 @@ func TestComponentPublishesOneFramePerTick(t *testing.T) {
 	if err := comp.Start(ctx); err != nil {
 		t.Fatalf("Start: %v", err)
 	}
-	defer func() { _ = comp.Stop(time.Second) }()
+	defer func() { _ = comp.Stop(testStopContext(t)) }()
 
 	var prevTick uint64
 	for i := range 3 {
@@ -111,7 +111,7 @@ func TestComponentStopsCleanlyOnContextCancel(t *testing.T) {
 
 	cancel()
 	// The tick goroutine must exit: Stop waits for it (explicit sync, no sleeps).
-	if err := comp.Stop(2 * time.Second); err != nil {
+	if err := comp.Stop(testStopContext(t)); err != nil {
 		t.Fatalf("Stop after cancel: %v", err)
 	}
 
@@ -143,10 +143,10 @@ func TestComponentStopIsIdempotent(t *testing.T) {
 	if err := comp.Start(ctx); err != nil {
 		t.Fatalf("Start: %v", err)
 	}
-	if err := comp.Stop(time.Second); err != nil {
+	if err := comp.Stop(testStopContext(t)); err != nil {
 		t.Fatalf("first Stop: %v", err)
 	}
-	if err := comp.Stop(time.Second); err != nil {
+	if err := comp.Stop(testStopContext(t)); err != nil {
 		t.Fatalf("second Stop: %v", err)
 	}
 }
@@ -162,7 +162,7 @@ func TestComponentRejectsDoubleStart(t *testing.T) {
 	if err := comp.Start(ctx); err != nil {
 		t.Fatalf("Start: %v", err)
 	}
-	defer func() { _ = comp.Stop(time.Second) }()
+	defer func() { _ = comp.Stop(testStopContext(t)) }()
 
 	if err := comp.Start(ctx); err == nil {
 		t.Fatal("second Start succeeded, want error")
@@ -189,7 +189,7 @@ func TestComponentPublishesTransitionEvents(t *testing.T) {
 	if err := comp.Start(ctx); err != nil {
 		t.Fatalf("Start: %v", err)
 	}
-	defer func() { _ = comp.Stop(time.Second) }()
+	defer func() { _ = comp.Stop(testStopContext(t)) }()
 
 	for i := range 5 {
 		select {
@@ -260,7 +260,7 @@ func TestComponentDefaults(t *testing.T) {
 		t.Fatalf("defaults = %d boids @ %vHz, want 200 @ 30Hz", comp.config.Boids, comp.config.TickHz)
 	}
 	outs := comp.OutputPorts()
-	if len(outs) != 1 {
-		t.Fatalf("output ports = %d, want 1", len(outs))
+	if len(outs) != 3 {
+		t.Fatalf("output ports = %d, want 3", len(outs))
 	}
 }

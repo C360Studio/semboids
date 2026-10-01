@@ -1,0 +1,10 @@
+
+> semboids-ui@0.0.1 dev
+> vite dev --host 127.0.0.1
+
+
+  VITE v7.3.6  ready in 312 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+
+[1;31m[404] GET /favicon.ico[0m

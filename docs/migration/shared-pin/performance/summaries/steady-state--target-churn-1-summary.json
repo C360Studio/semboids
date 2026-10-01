@@ -1,0 +1,98 @@
+{
+  "label": "target-churn-1",
+  "profile": "churn",
+  "elapsed_seconds": 45.007956981658936,
+  "deltas": {
+    "acked_entities": 18443.0,
+    "completed_snapshot_attempts": 45.0,
+    "snapshot_offer_drops": 0.0,
+    "entity_updates": 18669.0,
+    "neighbor_clear_failures": 0.0,
+    "reclaim_failures": 0.0,
+    "spawn_creates": 225.0,
+    "cull_observations": 1.0,
+    "mutation_rejections": null,
+    "predicate_rejections": null,
+    "entity_state_rejections": null,
+    "index_events": 5626.0,
+    "websocket_received": 1350.0,
+    "websocket_sent": 1335.0,
+    "websocket_errors": null
+  },
+  "rates_per_s": {
+    "acked_entities": 409.7719878179686,
+    "completed_snapshot_attempts": 0.9998232094457836,
+    "snapshot_offer_drops": 0.0,
+    "entity_updates": 414.79332215874075,
+    "neighbor_clear_failures": 0.0,
+    "reclaim_failures": 0.0,
+    "spawn_creates": 4.999116047228918,
+    "cull_observations": 0.022218293543239634,
+    "mutation_rejections": null,
+    "predicate_rejections": null,
+    "entity_state_rejections": null,
+    "index_events": 125.00011947426619,
+    "websocket_received": 29.994696283373507,
+    "websocket_sent": 29.661421880224914,
+    "websocket_errors": null
+  },
+  "backlog_start": {
+    "pending": 0,
+    "ack_pending": 0,
+    "outstanding": 0,
+    "redelivered": 0,
+    "ack_floor": {
+      "consumer_seq": 4953,
+      "stream_seq": 4953,
+      "last_active": "2026-10-01T12:15:37.211916555Z"
+    },
+    "delivered": {
+      "consumer_seq": 4953,
+      "stream_seq": 4953,
+      "last_active": "2026-10-01T12:15:37.079188263Z"
+    }
+  },
+  "backlog_end": {
+    "pending": 0,
+    "ack_pending": 0,
+    "outstanding": 0,
+    "redelivered": 0,
+    "ack_floor": {
+      "consumer_seq": 23396,
+      "stream_seq": 23396,
+      "last_active": "2026-10-01T12:16:22.343371631Z"
+    },
+    "delivered": {
+      "consumer_seq": 23396,
+      "stream_seq": 23396,
+      "last_active": "2026-10-01T12:16:22.085076298Z"
+    }
+  },
+  "backlog_growth_per_s": 0.0,
+  "physics_egress_fps": 29.994696283373507,
+  "max_frame_gap_seconds": 0.04811501502990723,
+  "missing_egress_ticks": 0,
+  "population_start": 300,
+  "population_end": 519,
+  "e2e_p50": {
+    "seconds": 0.11746921443736731,
+    "lower_bound": false,
+    "observations": 1867.0
+  },
+  "e2e_p99": {
+    "seconds": 0.4008483720930228,
+    "lower_bound": false,
+    "observations": 1867.0
+  },
+  "websocket_fps": 29.661421880224914,
+  "websocket_missing_ticks": 15,
+  "websocket_internal_sequence_gaps": 15,
+  "websocket_max_gap_seconds": 0.5329999923706055,
+  "websocket_max_delivery_age_ms": 17.0,
+  "load_end": [
+    6.68359375,
+    10.15087890625,
+    9.57275390625
+  ],
+  "frame_reader_error": null
+}

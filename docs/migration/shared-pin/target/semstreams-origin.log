@@ -1,0 +1,15 @@
+{
+	"Path": "github.com/c360studio/semstreams",
+	"Version": "v1.0.0-beta.162.0.20260930150212-8b99efe9c66a",
+	"Info": "/Users/coby/go/pkg/mod/cache/download/github.com/c360studio/semstreams/@v/v1.0.0-beta.162.0.20260930150212-8b99efe9c66a.info",
+	"GoMod": "/Users/coby/go/pkg/mod/cache/download/github.com/c360studio/semstreams/@v/v1.0.0-beta.162.0.20260930150212-8b99efe9c66a.mod",
+	"Zip": "/Users/coby/go/pkg/mod/cache/download/github.com/c360studio/semstreams/@v/v1.0.0-beta.162.0.20260930150212-8b99efe9c66a.zip",
+	"Dir": "/Users/coby/go/pkg/mod/github.com/c360studio/semstreams@v1.0.0-beta.162.0.20260930150212-8b99efe9c66a",
+	"Sum": "h1:WAlGLMjE/3EnYyeoqounCfYnVyIB3igMlG+FLP1Iq+o=",
+	"GoModSum": "h1:C3/wpNLTLCifyqkNx5j8cpxvQiCIqD8/YAOlKtkFv2o=",
+	"Origin": {
+		"VCS": "git",
+		"URL": "https://github.com/c360studio/semstreams",
+		"Hash": "8b99efe9c66a4faa4fa509f9f62cc6bad8392128"
+	}
+}

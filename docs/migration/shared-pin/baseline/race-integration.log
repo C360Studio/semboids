@@ -1,0 +1,1228 @@
+?   	github.com/c360studio/semboids/cmd/semboids	[no test files]
+?   	github.com/c360studio/semboids/cmd/sweep	[no test files]
+?   	github.com/c360studio/semboids/componentregistry	[no test files]
+=== RUN   TestDecodeBoidEntity
+=== PAUSE TestDecodeBoidEntity
+=== RUN   TestDecodeCommunity
+=== PAUSE TestDecodeCommunity
+=== RUN   TestSharedFanOutIsFlatInClientCount
+2026/10/01 06:26:18 github.com/testcontainers/testcontainers-go - Connected to docker: 
+  Server Version: 29.8.0
+  API Version: 1.51
+  Operating System: Docker Desktop
+  Total Memory: 23742 MB
+  Labels:
+    com.docker.desktop.address=unix:///Users/coby/Library/Containers/com.docker.docker/Data/docker-cli.sock
+  Testcontainers for Go Version: v0.40.0
+  Resolved Docker Host: unix:///var/run/docker.sock
+  Resolved Docker Socket Path: /var/run/docker.sock
+  Test SessionID: c2db3c74cbf349e550ef19374379454284f74f80977f5f7725745f642bee8ec6
+  Test ProcessID: 2a641719-1454-4a25-ab39-42b00822724f
+2026/10/01 06:26:18 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:26:18 🐳 Creating container for image testcontainers/ryuk:0.13.0
+2026/10/01 06:26:18 ✅ Container created: 59be3d072c07
+2026/10/01 06:26:18 🐳 Starting container: 59be3d072c07
+2026/10/01 06:26:18 ✅ Container started: 59be3d072c07
+2026/10/01 06:26:18 ⏳ Waiting for container id 59be3d072c07 image: testcontainers/ryuk:0.13.0. Waiting for: port 8080/tcp to be listening
+2026/10/01 06:26:18 Shell not found in container
+2026/10/01 06:26:18 🔔 Container is ready: 59be3d072c07
+2026/10/01 06:26:18 ✅ Container created: c5d89de54248
+2026/10/01 06:26:18 🐳 Starting container: c5d89de54248
+2026/10/01 06:26:18 ✅ Container started: c5d89de54248
+2026/10/01 06:26:18 ⏳ Waiting for container id c5d89de54248 image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:26:18 🔔 Container is ready: c5d89de54248
+2026/10/01 06:26:18 INFO Connecting to NATS urls=nats://localhost:55001
+2026/10/01 06:26:18 INFO Successfully connected to NATS urls=nats://localhost:55001
+2026/10/01 06:26:18 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:26:18 INFO graph view attached service=boids bucket=ENTITY_STATES
+2026/10/01 06:26:18 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:26:18 INFO Graph stream client connected service=boids
+2026/10/01 06:26:19 INFO Graph stream client connected service=boids
+2026/10/01 06:26:20 INFO Graph stream client connected service=boids
+2026/10/01 06:26:20 INFO Graph stream client connected service=boids
+2026/10/01 06:26:21 INFO Graph stream client disconnected service=boids
+2026/10/01 06:26:21 INFO Graph stream client disconnected service=boids
+2026/10/01 06:26:21 INFO Graph stream client disconnected service=boids
+2026/10/01 06:26:21 INFO Graph stream client disconnected service=boids
+2026/10/01 06:26:21 INFO Graph stream client connected service=boids
+2026/10/01 06:26:21 INFO Graph stream client disconnected service=boids
+2026/10/01 06:26:21 🐳 Stopping container: c5d89de54248
+2026/10/01 06:26:21 ✅ Container stopped: c5d89de54248
+2026/10/01 06:26:21 🐳 Terminating container: c5d89de54248
+2026/10/01 06:26:21 🚫 Container terminated: c5d89de54248
+--- PASS: TestSharedFanOutIsFlatInClientCount (3.26s)
+=== RUN   TestAttachDuringWritesConverges
+2026/10/01 06:26:21 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:26:21 ✅ Container created: 6e4166adf9a3
+2026/10/01 06:26:21 🐳 Starting container: 6e4166adf9a3
+2026/10/01 06:26:21 ✅ Container started: 6e4166adf9a3
+2026/10/01 06:26:21 ⏳ Waiting for container id 6e4166adf9a3 image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:26:21 🔔 Container is ready: 6e4166adf9a3
+2026/10/01 06:26:21 INFO Connecting to NATS urls=nats://localhost:55002
+2026/10/01 06:26:21 INFO Successfully connected to NATS urls=nats://localhost:55002
+2026/10/01 06:26:21 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:26:21 INFO graph view attached service=boids bucket=ENTITY_STATES
+2026/10/01 06:26:21 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:26:21 INFO Graph stream client connected service=boids
+2026/10/01 06:26:22 INFO Graph stream client disconnected service=boids
+2026/10/01 06:26:22 🐳 Stopping container: 6e4166adf9a3
+2026/10/01 06:26:22 ✅ Container stopped: 6e4166adf9a3
+2026/10/01 06:26:22 🐳 Terminating container: 6e4166adf9a3
+2026/10/01 06:26:22 🚫 Container terminated: 6e4166adf9a3
+--- PASS: TestAttachDuringWritesConverges (0.89s)
+=== RUN   TestSlowClientDoesNotStallPeers
+2026/10/01 06:26:22 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:26:22 ✅ Container created: e056879d5904
+2026/10/01 06:26:22 🐳 Starting container: e056879d5904
+2026/10/01 06:26:22 ✅ Container started: e056879d5904
+2026/10/01 06:26:22 ⏳ Waiting for container id e056879d5904 image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:26:22 🔔 Container is ready: e056879d5904
+2026/10/01 06:26:22 INFO Connecting to NATS urls=nats://localhost:55003
+2026/10/01 06:26:22 INFO Successfully connected to NATS urls=nats://localhost:55003
+2026/10/01 06:26:22 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:26:22 INFO graph view attached service=boids bucket=ENTITY_STATES
+2026/10/01 06:26:22 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:26:22 INFO Graph stream client connected service=boids
+2026/10/01 06:26:22 INFO Graph stream client connected service=boids
+2026/10/01 06:26:23 INFO Graph stream client disconnected service=boids
+2026/10/01 06:26:23 INFO Graph stream client disconnected service=boids
+2026/10/01 06:26:23 🐳 Stopping container: e056879d5904
+2026/10/01 06:26:23 ✅ Container stopped: e056879d5904
+2026/10/01 06:26:23 🐳 Terminating container: e056879d5904
+2026/10/01 06:26:23 🚫 Container terminated: e056879d5904
+--- PASS: TestSlowClientDoesNotStallPeers (0.93s)
+=== RUN   TestWatcherLossEndsStreamFailClosed
+2026/10/01 06:26:23 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:26:23 ✅ Container created: eac37d64f566
+2026/10/01 06:26:23 🐳 Starting container: eac37d64f566
+2026/10/01 06:26:23 ✅ Container started: eac37d64f566
+2026/10/01 06:26:23 ⏳ Waiting for container id eac37d64f566 image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:26:23 🔔 Container is ready: eac37d64f566
+2026/10/01 06:26:23 INFO Connecting to NATS urls=nats://localhost:55004
+2026/10/01 06:26:23 INFO Successfully connected to NATS urls=nats://localhost:55004
+2026/10/01 06:26:23 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:26:23 INFO graph view attached service=boids bucket=ENTITY_STATES
+2026/10/01 06:26:23 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:26:23 INFO Graph stream client connected service=boids
+2026/10/01 06:26:43 ERROR NATS error error="nats: stream not found: recreating ordered consumer"
+2026/10/01 06:26:43 INFO Graph stream ended; view no longer current service=boids error="graphview: watcher lost: graphview: watcher updates channel closed"
+2026/10/01 06:26:43 🐳 Stopping container: eac37d64f566
+2026/10/01 06:26:43 ✅ Container stopped: eac37d64f566
+2026/10/01 06:26:43 🐳 Terminating container: eac37d64f566
+2026/10/01 06:26:43 🚫 Container terminated: eac37d64f566
+--- PASS: TestWatcherLossEndsStreamFailClosed (20.36s)
+=== RUN   TestCommunityDataRemainsOptional
+2026/10/01 06:26:43 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:26:43 ✅ Container created: c659877bb78a
+2026/10/01 06:26:43 🐳 Starting container: c659877bb78a
+2026/10/01 06:26:44 ✅ Container started: c659877bb78a
+2026/10/01 06:26:44 ⏳ Waiting for container id c659877bb78a image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:26:44 🔔 Container is ready: c659877bb78a
+2026/10/01 06:26:44 INFO Connecting to NATS urls=nats://localhost:55005
+2026/10/01 06:26:44 INFO Successfully connected to NATS urls=nats://localhost:55005
+2026/10/01 06:26:44 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:26:44 INFO graph view attached service=boids bucket=ENTITY_STATES
+2026/10/01 06:26:44 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:26:44 INFO Graph stream client connected service=boids
+2026/10/01 06:26:44 INFO Created new KV bucket bucket=COMMUNITY_INDEX
+2026/10/01 06:26:49 INFO graph view attached service=boids bucket=COMMUNITY_INDEX
+2026/10/01 06:26:49 INFO Graph stream client disconnected service=boids
+2026/10/01 06:26:49 🐳 Stopping container: c659877bb78a
+2026/10/01 06:26:49 ✅ Container stopped: c659877bb78a
+2026/10/01 06:26:49 🐳 Terminating container: c659877bb78a
+2026/10/01 06:26:49 🚫 Container terminated: c659877bb78a
+--- PASS: TestCommunityDataRemainsOptional (5.43s)
+=== RUN   TestGraphStreamOverKV
+2026/10/01 06:26:49 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:26:49 ✅ Container created: 9ba1e7ab7646
+2026/10/01 06:26:49 🐳 Starting container: 9ba1e7ab7646
+2026/10/01 06:26:49 ✅ Container started: 9ba1e7ab7646
+2026/10/01 06:26:49 ⏳ Waiting for container id 9ba1e7ab7646 image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:26:49 🔔 Container is ready: 9ba1e7ab7646
+2026/10/01 06:26:49 INFO Connecting to NATS urls=nats://localhost:55006
+2026/10/01 06:26:49 INFO Successfully connected to NATS urls=nats://localhost:55006
+2026/10/01 06:26:49 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:26:49 INFO graph view attached service=boids bucket=ENTITY_STATES
+2026/10/01 06:26:49 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:26:49 INFO Graph stream client connected service=boids
+2026/10/01 06:26:50 INFO Graph stream client disconnected service=boids
+2026/10/01 06:26:50 🐳 Stopping container: 9ba1e7ab7646
+2026/10/01 06:26:50 ✅ Container stopped: 9ba1e7ab7646
+2026/10/01 06:26:50 🐳 Terminating container: 9ba1e7ab7646
+2026/10/01 06:26:50 🚫 Container terminated: 9ba1e7ab7646
+--- PASS: TestGraphStreamOverKV (1.38s)
+=== RUN   TestBridgeCoalescesLatestWins
+--- PASS: TestBridgeCoalescesLatestWins (0.00s)
+=== RUN   TestBridgeSeedFromSnapshotIsTheInitialSync
+--- PASS: TestBridgeSeedFromSnapshotIsTheInitialSync (0.00s)
+=== RUN   TestBridgeCommunityInversion
+--- PASS: TestBridgeCommunityInversion (0.00s)
+=== RUN   TestBridgeEntityRemoval
+--- PASS: TestBridgeEntityRemoval (0.00s)
+=== RUN   TestBridgePoisonKeepsLastKnownGood
+--- PASS: TestBridgePoisonKeepsLastKnownGood (0.00s)
+=== RUN   TestGetRulesDerivesFromRuleConfig
+2026/10/01 06:26:50 INFO Boids API handlers registered service=boids prefix=/boids/
+--- PASS: TestGetRulesDerivesFromRuleConfig (0.00s)
+=== RUN   TestToggleFlipsRulePairAndClears
+2026/10/01 06:26:50 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:26:50 INFO Zone rules toggled service=boids kind=flee rules="[predator-flee predator-clear]" enabled=false
+2026/10/01 06:26:50 INFO Zone rules toggled service=boids kind=flee rules="[predator-flee predator-clear]" enabled=true
+--- PASS: TestToggleFlipsRulePairAndClears (0.00s)
+=== RUN   TestToggleRejections
+2026/10/01 06:26:50 INFO Boids API handlers registered service=boids prefix=/boids/
+=== RUN   TestToggleRejections/unknown_kind
+=== RUN   TestToggleRejections/bad_body
+=== RUN   TestToggleRejections/wrong_method_on_toggle
+=== RUN   TestToggleRejections/wrong_method_on_list
+--- PASS: TestToggleRejections (0.00s)
+    --- PASS: TestToggleRejections/unknown_kind (0.00s)
+    --- PASS: TestToggleRejections/bad_body (0.00s)
+    --- PASS: TestToggleRejections/wrong_method_on_toggle (0.00s)
+    --- PASS: TestToggleRejections/wrong_method_on_list (0.00s)
+=== RUN   TestUnavailableWithoutRuleProcessor
+2026/10/01 06:26:50 INFO Boids API handlers registered service=boids prefix=/boids/
+--- PASS: TestUnavailableWithoutRuleProcessor (0.00s)
+=== RUN   TestGraphDialRoundTrip
+2026/10/01 06:26:50 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:26:50 INFO Graph dial set service=boids hz=10
+--- PASS: TestGraphDialRoundTrip (0.00s)
+=== RUN   TestToggleWorksWithoutSim
+2026/10/01 06:26:50 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:26:50 INFO Zone rules toggled service=boids kind=wind rules="[wind-bias wind-clear]" enabled=false
+--- PASS: TestToggleWorksWithoutSim (0.00s)
+=== RUN   TestCullToggleSkipsModifierClear
+2026/10/01 06:26:50 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:26:50 INFO Zone rules toggled service=boids kind=cull rules=[predator-cull] enabled=true
+2026/10/01 06:26:50 INFO Zone rules toggled service=boids kind=cull rules=[predator-cull] enabled=false
+--- PASS: TestCullToggleSkipsModifierClear (0.00s)
+=== RUN   TestPopulationEndpoints
+2026/10/01 06:26:50 INFO Boids API handlers registered service=boids prefix=/boids/
+2026/10/01 06:26:50 INFO Spawn wave requested service=boids n=25
+2026/10/01 06:26:50 INFO Churn dial set service=boids hz=4
+--- PASS: TestPopulationEndpoints (0.00s)
+=== CONT  TestDecodeBoidEntity
+=== RUN   TestDecodeBoidEntity/boid_key_decodes_position_and_neighbors
+=== PAUSE TestDecodeBoidEntity/boid_key_decodes_position_and_neighbors
+=== CONT  TestDecodeCommunity
+=== RUN   TestDecodeBoidEntity/neighbor_count_resets_the_set_so_a_shrinking_flock_does_not_accumulate
+=== RUN   TestDecodeCommunity/level-0_entry_keeps_its_members
+=== PAUSE TestDecodeBoidEntity/neighbor_count_resets_the_set_so_a_shrinking_flock_does_not_accumulate
+=== PAUSE TestDecodeCommunity/level-0_entry_keeps_its_members
+=== RUN   TestDecodeBoidEntity/duplicate_predicates_resolve_last-write-wins
+=== PAUSE TestDecodeBoidEntity/duplicate_predicates_resolve_last-write-wins
+=== RUN   TestDecodeCommunity/non_level-0_key_maps_to_absence
+=== PAUSE TestDecodeCommunity/non_level-0_key_maps_to_absence
+=== RUN   TestDecodeBoidEntity/non-boid_key_maps_to_absence
+=== PAUSE TestDecodeBoidEntity/non-boid_key_maps_to_absence
+=== RUN   TestDecodeCommunity/level_field_is_authoritative_even_when_the_key_prefix_says_otherwise
+=== RUN   TestDecodeBoidEntity/malformed_value_poisons_the_key_rather_than_skipping_silently
+=== PAUSE TestDecodeCommunity/level_field_is_authoritative_even_when_the_key_prefix_says_otherwise
+=== PAUSE TestDecodeBoidEntity/malformed_value_poisons_the_key_rather_than_skipping_silently
+=== RUN   TestDecodeBoidEntity/non-canonical_predicate_is_rejected_by_the_contract
+=== RUN   TestDecodeCommunity/malformed_value_poisons_the_key_rather_than_skipping_silently
+=== PAUSE TestDecodeBoidEntity/non-canonical_predicate_is_rejected_by_the_contract
+=== CONT  TestDecodeBoidEntity/boid_key_decodes_position_and_neighbors
+=== CONT  TestDecodeBoidEntity/duplicate_predicates_resolve_last-write-wins
+=== CONT  TestDecodeBoidEntity/neighbor_count_resets_the_set_so_a_shrinking_flock_does_not_accumulate
+=== CONT  TestDecodeBoidEntity/non-boid_key_maps_to_absence
+=== CONT  TestDecodeBoidEntity/non-canonical_predicate_is_rejected_by_the_contract
+=== CONT  TestDecodeBoidEntity/malformed_value_poisons_the_key_rather_than_skipping_silently
+=== PAUSE TestDecodeCommunity/malformed_value_poisons_the_key_rather_than_skipping_silently
+=== CONT  TestDecodeCommunity/level-0_entry_keeps_its_members
+=== CONT  TestDecodeCommunity/level_field_is_authoritative_even_when_the_key_prefix_says_otherwise
+=== CONT  TestDecodeCommunity/malformed_value_poisons_the_key_rather_than_skipping_silently
+=== CONT  TestDecodeCommunity/non_level-0_key_maps_to_absence
+--- PASS: TestDecodeBoidEntity (0.00s)
+    --- PASS: TestDecodeBoidEntity/non-boid_key_maps_to_absence (0.00s)
+    --- PASS: TestDecodeBoidEntity/neighbor_count_resets_the_set_so_a_shrinking_flock_does_not_accumulate (0.00s)
+    --- PASS: TestDecodeBoidEntity/boid_key_decodes_position_and_neighbors (0.00s)
+    --- PASS: TestDecodeBoidEntity/duplicate_predicates_resolve_last-write-wins (0.00s)
+    --- PASS: TestDecodeBoidEntity/non-canonical_predicate_is_rejected_by_the_contract (0.00s)
+    --- PASS: TestDecodeBoidEntity/malformed_value_poisons_the_key_rather_than_skipping_silently (0.00s)
+--- PASS: TestDecodeCommunity (0.00s)
+    --- PASS: TestDecodeCommunity/level_field_is_authoritative_even_when_the_key_prefix_says_otherwise (0.00s)
+    --- PASS: TestDecodeCommunity/malformed_value_poisons_the_key_rather_than_skipping_silently (0.00s)
+    --- PASS: TestDecodeCommunity/level-0_entry_keeps_its_members (0.00s)
+    --- PASS: TestDecodeCommunity/non_level-0_key_maps_to_absence (0.00s)
+PASS
+ok  	github.com/c360studio/semboids/internal/api	33.660s
+=== RUN   TestBoidWorkflowRegisters
+2026/10/01 06:26:53 INFO lifecycle: registered workflow workflow=flock.boid pattern=*.*.sim.flock.boid.* phase_count=3 operator_writable_predicates=0 child_workflows=0 reference_predicates=0
+--- PASS: TestBoidWorkflowRegisters (0.00s)
+=== RUN   TestBoidLifecycleParticipant
+--- PASS: TestBoidLifecycleParticipant (0.00s)
+=== RUN   TestBoidTransitionsValid
+--- PASS: TestBoidTransitionsValid (0.00s)
+=== RUN   TestBoidEntityID6Part
+--- PASS: TestBoidEntityID6Part (0.00s)
+=== RUN   TestBoidTriples
+--- PASS: TestBoidTriples (0.00s)
+=== RUN   TestNeighborCountAlwaysPresent
+--- PASS: TestNeighborCountAlwaysPresent (0.00s)
+=== RUN   TestBoidPayloadSchemaAndRegistry
+--- PASS: TestBoidPayloadSchemaAndRegistry (0.00s)
+=== RUN   TestProbeRecordsLatency
+--- PASS: TestProbeRecordsLatency (0.00s)
+=== RUN   TestProbeSampling
+--- PASS: TestProbeSampling (0.00s)
+=== RUN   TestProbeSkipsNonBoidAndMalformed
+--- PASS: TestProbeSkipsNonBoidAndMalformed (0.00s)
+=== RUN   TestParseObservedAtNewest
+--- PASS: TestParseObservedAtNewest (0.00s)
+=== RUN   TestPublisherPublishesEachBoid
+--- PASS: TestPublisherPublishesEachBoid (0.01s)
+=== RUN   TestPublisherDropsWhenStalled
+--- PASS: TestPublisherDropsWhenStalled (0.00s)
+=== RUN   TestPublisherClearsEmptiedNeighborSets
+--- PASS: TestPublisherClearsEmptiedNeighborSets (0.02s)
+=== RUN   TestClearNeighborsRetryClassification
+=== RUN   TestClearNeighborsRetryClassification/conflict_then_success
+=== RUN   TestClearNeighborsRetryClassification/unavailable_then_success
+=== RUN   TestClearNeighborsRetryClassification/conflict_exhausts_bound
+2026/10/01 06:26:53 WARN clear emptied neighbor set boid=7 attempts=3 error="projection mutation  failed (revision-conflict, ): revision-conflict"
+=== RUN   TestClearNeighborsRetryClassification/not_found_is_already_clear
+=== RUN   TestClearNeighborsRetryClassification/ambiguous_is_not_retried
+2026/10/01 06:26:53 WARN clear emptied neighbor set: ambiguous outcome, not retried boid=7 error="projection mutation  failed (commit-unknown, ): commit-unknown"
+=== RUN   TestClearNeighborsRetryClassification/invalid_is_not_retried
+2026/10/01 06:26:53 WARN clear emptied neighbor set boid=7 attempts=1 error="projection mutation  failed (invalid, ): invalid"
+--- PASS: TestClearNeighborsRetryClassification (0.00s)
+    --- PASS: TestClearNeighborsRetryClassification/conflict_then_success (0.00s)
+    --- PASS: TestClearNeighborsRetryClassification/unavailable_then_success (0.00s)
+    --- PASS: TestClearNeighborsRetryClassification/conflict_exhausts_bound (0.00s)
+    --- PASS: TestClearNeighborsRetryClassification/not_found_is_already_clear (0.00s)
+    --- PASS: TestClearNeighborsRetryClassification/ambiguous_is_not_retried (0.00s)
+    --- PASS: TestClearNeighborsRetryClassification/invalid_is_not_retried (0.00s)
+=== RUN   TestPublisherNoCrossSnapshotReorder
+--- PASS: TestPublisherNoCrossSnapshotReorder (0.01s)
+=== RUN   TestLPADistinguishesDisjointFlocks
+2026/10/01 06:26:53 github.com/testcontainers/testcontainers-go - Connected to docker: 
+  Server Version: 29.8.0
+  API Version: 1.51
+  Operating System: Docker Desktop
+  Total Memory: 23742 MB
+  Labels:
+    com.docker.desktop.address=unix:///Users/coby/Library/Containers/com.docker.docker/Data/docker-cli.sock
+  Testcontainers for Go Version: v0.40.0
+  Resolved Docker Host: unix:///var/run/docker.sock
+  Resolved Docker Socket Path: /var/run/docker.sock
+  Test SessionID: c2db3c74cbf349e550ef19374379454284f74f80977f5f7725745f642bee8ec6
+  Test ProcessID: 2edfffa3-5dd5-44dd-b2fb-c5880e108e27
+2026/10/01 06:26:53 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:26:53 ⏳ Waiting for Reaper "59be3d07" to be ready
+2026/10/01 06:26:53 🔥 Reaper obtained from Docker for this test session 59be3d07
+2026/10/01 06:26:53 ✅ Container created: 85fabd5102c2
+2026/10/01 06:26:53 🐳 Starting container: 85fabd5102c2
+2026/10/01 06:26:53 ✅ Container started: 85fabd5102c2
+2026/10/01 06:26:53 ⏳ Waiting for container id 85fabd5102c2 image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:26:53 🔔 Container is ready: 85fabd5102c2
+2026/10/01 06:26:53 INFO Connecting to NATS urls=nats://localhost:55007
+2026/10/01 06:26:53 INFO Successfully connected to NATS urls=nats://localhost:55007
+2026/10/01 06:26:53 INFO component initialized component=graph-ingest component=graph-ingest
+2026/10/01 06:26:53 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:26:53 INFO Created new KV bucket bucket=ENTITY_SUFFIX_INDEX
+2026/10/01 06:26:53 INFO Created new KV bucket bucket=GRAPH_INGEST_APPLIED_SEQ
+2026/10/01 06:26:53 INFO Created new KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:26:53 INFO query handlers registered component=graph-ingest subjects="[graph.ingest.query.entity graph.ingest.query.batch graph.ingest.query.prefix graph.ingest.query.suffix]"
+2026/10/01 06:26:53 INFO mutation handlers registered component=graph-ingest subjects="[graph.mutation.entity.create graph.mutation.entity.reconcile graph.mutation.triple.append graph.mutation.entity.delete]"
+2026/10/01 06:26:53 INFO component started component=graph-ingest component=graph-ingest start_time=2026-10-01T06:26:53.493-05:00
+2026/10/01 06:26:53 INFO component initialized component=graph-index component=graph-index
+2026/10/01 06:26:53 INFO Created new KV bucket bucket=OUTGOING_INDEX
+2026/10/01 06:26:53 INFO Created new KV bucket bucket=INCOMING_INDEX
+2026/10/01 06:26:53 INFO Created new KV bucket bucket=ALIAS_INDEX
+2026/10/01 06:26:53 INFO Created new KV bucket bucket=PREDICATE_INDEX
+2026/10/01 06:26:53 INFO Created new KV bucket bucket=NAME_INDEX
+2026/10/01 06:26:53 INFO Using existing KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:26:53 INFO resource available component=graph-index resource=ENTITY_STATES attempt=1
+2026/10/01 06:26:53 INFO query handlers registered component=graph-index subjects="[graph.index.query.outgoing graph.index.query.incoming graph.index.query.alias graph.index.query.predicate graph.index.query.predicateList graph.index.query.predicateStats graph.index.query.predicateCompound graph.index.query.byName]"
+2026/10/01 06:26:53 INFO component started component=graph-index component=graph-index start_time=2026-10-01T06:26:53.518-05:00
+2026/10/01 06:26:53 INFO entity watcher started component=graph-index bucket=ENTITY_STATES
+2026/10/01 06:26:53 INFO component initialized component=graph-clustering component=graph-clustering
+2026/10/01 06:26:53 INFO Created new KV bucket bucket=COMMUNITY_SUMMARIES
+2026/10/01 06:26:53 INFO Created new KV bucket bucket=COMMUNITY_INDEX
+2026/10/01 06:26:53 INFO resource available component=graph-clustering resource=ENTITY_STATES attempt=1
+2026/10/01 06:26:53 INFO resource available component=graph-clustering resource=OUTGOING_INDEX attempt=1
+2026/10/01 06:26:53 INFO resource available component=graph-clustering resource=INCOMING_INDEX attempt=1
+2026/10/01 06:26:53 INFO query handlers registered component=graph-clustering subjects="[graph.clustering.query.community graph.clustering.query.members graph.clustering.query.entity graph.clustering.query.level]"
+2026/10/01 06:26:53 INFO component started component=graph-clustering component=graph-clustering start_time=2026-10-01T06:26:53.539-05:00 detection_interval=2s enable_llm=false enable_anomaly_detection=false
+2026/10/01 06:26:53 INFO detection loop started component=graph-clustering interval=2s
+2026/10/01 06:26:55 WARN community detection deferred component=graph-clustering reason=bootstrap_incomplete status_known=true status_age=2.00787325s state=building lag=0 staleness_ms=0
+2026/10/01 06:26:59 INFO readiness gate cleared; resuming community detection component=graph-clustering status_known=true state=ready staleness_ms=0
+    clustering_spike_integration_test.go:259: spike confirmed: cluster A → c360.semboids.sim.flock.boid.1, cluster B → c360.semboids.sim.flock.boid.4
+2026/10/01 06:27:00 INFO component stopped gracefully component=graph-clustering component=graph-clustering
+2026/10/01 06:27:00 INFO component stopped gracefully component=graph-index component=graph-index
+2026/10/01 06:27:00 INFO component stopped gracefully component=graph-ingest component=graph-ingest
+2026/10/01 06:27:00 🐳 Stopping container: 85fabd5102c2
+2026/10/01 06:27:00 ✅ Container stopped: 85fabd5102c2
+2026/10/01 06:27:00 🐳 Terminating container: 85fabd5102c2
+2026/10/01 06:27:00 🚫 Container terminated: 85fabd5102c2
+--- PASS: TestLPADistinguishesDisjointFlocks (7.61s)
+=== RUN   TestDebugDumpOutgoingIndex
+2026/10/01 06:27:00 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:27:00 ✅ Container created: d364593dcb0e
+2026/10/01 06:27:00 🐳 Starting container: d364593dcb0e
+2026/10/01 06:27:01 ✅ Container started: d364593dcb0e
+2026/10/01 06:27:01 ⏳ Waiting for container id d364593dcb0e image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:27:01 🔔 Container is ready: d364593dcb0e
+2026/10/01 06:27:01 INFO Connecting to NATS urls=nats://localhost:55008
+2026/10/01 06:27:01 INFO Successfully connected to NATS urls=nats://localhost:55008
+2026/10/01 06:27:01 INFO component initialized component=graph-ingest component=graph-ingest
+2026/10/01 06:27:01 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:27:01 INFO Created new KV bucket bucket=ENTITY_SUFFIX_INDEX
+2026/10/01 06:27:01 INFO Created new KV bucket bucket=GRAPH_INGEST_APPLIED_SEQ
+2026/10/01 06:27:01 INFO Created new KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:27:01 INFO query handlers registered component=graph-ingest subjects="[graph.ingest.query.entity graph.ingest.query.batch graph.ingest.query.prefix graph.ingest.query.suffix]"
+2026/10/01 06:27:01 INFO mutation handlers registered component=graph-ingest subjects="[graph.mutation.entity.create graph.mutation.entity.reconcile graph.mutation.triple.append graph.mutation.entity.delete]"
+2026/10/01 06:27:01 INFO component started component=graph-ingest component=graph-ingest start_time=2026-10-01T06:27:01.105-05:00
+2026/10/01 06:27:01 INFO component initialized component=graph-index component=graph-index
+2026/10/01 06:27:01 INFO Created new KV bucket bucket=OUTGOING_INDEX
+2026/10/01 06:27:01 INFO Created new KV bucket bucket=INCOMING_INDEX
+2026/10/01 06:27:01 INFO Created new KV bucket bucket=ALIAS_INDEX
+2026/10/01 06:27:01 INFO Created new KV bucket bucket=PREDICATE_INDEX
+2026/10/01 06:27:01 INFO Created new KV bucket bucket=NAME_INDEX
+2026/10/01 06:27:01 INFO Using existing KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:27:01 INFO resource available component=graph-index resource=ENTITY_STATES attempt=1
+2026/10/01 06:27:01 INFO query handlers registered component=graph-index subjects="[graph.index.query.outgoing graph.index.query.incoming graph.index.query.alias graph.index.query.predicate graph.index.query.predicateList graph.index.query.predicateStats graph.index.query.predicateCompound graph.index.query.byName]"
+2026/10/01 06:27:01 INFO component started component=graph-index component=graph-index start_time=2026-10-01T06:27:01.133-05:00
+2026/10/01 06:27:01 INFO component initialized component=graph-clustering component=graph-clustering
+2026/10/01 06:27:01 INFO entity watcher started component=graph-index bucket=ENTITY_STATES
+2026/10/01 06:27:01 INFO Created new KV bucket bucket=COMMUNITY_SUMMARIES
+2026/10/01 06:27:01 INFO Created new KV bucket bucket=COMMUNITY_INDEX
+2026/10/01 06:27:01 INFO resource available component=graph-clustering resource=ENTITY_STATES attempt=1
+2026/10/01 06:27:01 INFO resource available component=graph-clustering resource=OUTGOING_INDEX attempt=1
+2026/10/01 06:27:01 INFO resource available component=graph-clustering resource=INCOMING_INDEX attempt=1
+2026/10/01 06:27:01 INFO query handlers registered component=graph-clustering subjects="[graph.clustering.query.community graph.clustering.query.members graph.clustering.query.entity graph.clustering.query.level]"
+2026/10/01 06:27:01 INFO component started component=graph-clustering component=graph-clustering start_time=2026-10-01T06:27:01.151-05:00 detection_interval=2s enable_llm=false enable_anomaly_detection=false
+2026/10/01 06:27:01 INFO detection loop started component=graph-clustering interval=2s
+2026/10/01 06:27:03 WARN community detection deferred component=graph-clustering reason=bootstrap_incomplete status_known=true status_age=2.00489825s state=building lag=0 staleness_ms=0
+2026/10/01 06:27:07 INFO readiness gate cleared; resuming community detection component=graph-clustering status_known=true state=ready staleness_ms=0
+    debug_index_integration_test.go:91: OUTGOING_INDEX keys (8):
+    debug_index_integration_test.go:97:   c360.semboids.sim.flock.boid.0 = [{"to_entity_id":"c360.semboids.sim.flock.boid.1","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.2","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.3","predicate":"flock.neighbor.of"}]
+    debug_index_integration_test.go:97:   c360.semboids.sim.flock.boid.1 = [{"to_entity_id":"c360.semboids.sim.flock.boid.0","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.2","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.3","predicate":"flock.neighbor.of"}]
+    debug_index_integration_test.go:97:   c360.semboids.sim.flock.boid.2 = [{"to_entity_id":"c360.semboids.sim.flock.boid.0","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.1","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.3","predicate":"flock.neighbor.of"}]
+    debug_index_integration_test.go:97:   c360.semboids.sim.flock.boid.3 = [{"to_entity_id":"c360.semboids.sim.flock.boid.0","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.1","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.2","predicate":"flock.neighbor.of"}]
+    debug_index_integration_test.go:97:   c360.semboids.sim.flock.boid.4 = [{"to_entity_id":"c360.semboids.sim.flock.boid.5","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.6","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.7","predicate":"flock.neighbor.of"}]
+    debug_index_integration_test.go:97:   c360.semboids.sim.flock.boid.5 = [{"to_entity_id":"c360.semboids.sim.flock.boid.4","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.6","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.7","predicate":"flock.neighbor.of"}]
+    debug_index_integration_test.go:97:   c360.semboids.sim.flock.boid.6 = [{"to_entity_id":"c360.semboids.sim.flock.boid.4","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.5","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.7","predicate":"flock.neighbor.of"}]
+    debug_index_integration_test.go:97:   c360.semboids.sim.flock.boid.7 = [{"to_entity_id":"c360.semboids.sim.flock.boid.4","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.5","predicate":"flock.neighbor.of"},{"to_entity_id":"c360.semboids.sim.flock.boid.6","predicate":"flock.neighbor.of"}]
+    debug_index_integration_test.go:104: ENTITY_STATES keys (8): [c360.semboids.sim.flock.boid.0 c360.semboids.sim.flock.boid.1 c360.semboids.sim.flock.boid.2 c360.semboids.sim.flock.boid.3 c360.semboids.sim.flock.boid.4 c360.semboids.sim.flock.boid.5 c360.semboids.sim.flock.boid.6 c360.semboids.sim.flock.boid.7]
+    debug_index_integration_test.go:107: ENTITY c360.semboids.sim.flock.boid.0 = {"id":"c360.semboids.sim.flock.boid.0","triples":[{"subject":"c360.semboids.sim.flock.boid.0","predicate":"flock.position.x","object":0,"source":"spike","timestamp":"2026-10-01T06:27:01.151551-05:00","confidence":1,"context":"spike-create-0"},{"subject":"c360.semboids.sim.flock.boid.0","predicate":"flock.neighbor.of","object":"c360.semboids.sim.flock.boid.1","source":"spike","timestamp":"2026-10-01T06:27:01.151551-05:00","confidence":1,"context":"spike-create-0"},{"subject":"c360.semboids.sim.flock.boid.0","predicate":"flock.neighbor.of","object":"c360.semboids.sim.flock.boid.2","source":"spike","timestamp":"2026-10-01T06:27:01.151551-05:00","confidence":1,"context":"spike-create-0"},{"subject":"c360.semboids.sim.flock.boid.0","predicate":"flock.neighbor.of","object":"c360.semboids.sim.flock.boid.3","source":"spike","timestamp":"2026-10-01T06:27:01.151551-05:00","confidence":1,"context":...
+    debug_index_integration_test.go:107: ENTITY c360.semboids.sim.flock.boid.4 = {"id":"c360.semboids.sim.flock.boid.4","triples":[{"subject":"c360.semboids.sim.flock.boid.4","predicate":"flock.position.x","object":400,"source":"spike","timestamp":"2026-10-01T06:27:01.172767-05:00","confidence":1,"context":"spike-create-4"},{"subject":"c360.semboids.sim.flock.boid.4","predicate":"flock.neighbor.of","object":"c360.semboids.sim.flock.boid.5","source":"spike","timestamp":"2026-10-01T06:27:01.172767-05:00","confidence":1,"context":"spike-create-4"},{"subject":"c360.semboids.sim.flock.boid.4","predicate":"flock.neighbor.of","object":"c360.semboids.sim.flock.boid.6","source":"spike","timestamp":"2026-10-01T06:27:01.172767-05:00","confidence":1,"context":"spike-create-4"},{"subject":"c360.semboids.sim.flock.boid.4","predicate":"flock.neighbor.of","object":"c360.semboids.sim.flock.boid.7","source":"spike","timestamp":"2026-10-01T06:27:01.172767-05:00","confidence":1,"context...
+    debug_index_integration_test.go:115: INCOMING_INDEX keys (24):
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.0.c360.semboids.sim.flock.boid.1.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.0.c360.semboids.sim.flock.boid.2.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.0.c360.semboids.sim.flock.boid.3.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.1.c360.semboids.sim.flock.boid.0.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.1.c360.semboids.sim.flock.boid.2.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.1.c360.semboids.sim.flock.boid.3.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.2.c360.semboids.sim.flock.boid.0.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.2.c360.semboids.sim.flock.boid.1.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.2.c360.semboids.sim.flock.boid.3.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.3.c360.semboids.sim.flock.boid.0.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.3.c360.semboids.sim.flock.boid.1.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.3.c360.semboids.sim.flock.boid.2.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.4.c360.semboids.sim.flock.boid.5.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.4.c360.semboids.sim.flock.boid.6.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.4.c360.semboids.sim.flock.boid.7.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.5.c360.semboids.sim.flock.boid.4.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.5.c360.semboids.sim.flock.boid.6.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.5.c360.semboids.sim.flock.boid.7.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.6.c360.semboids.sim.flock.boid.4.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.6.c360.semboids.sim.flock.boid.5.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.6.c360.semboids.sim.flock.boid.7.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.7.c360.semboids.sim.flock.boid.4.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.7.c360.semboids.sim.flock.boid.5.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:118:   c360.semboids.sim.flock.boid.7.c360.semboids.sim.flock.boid.6.666c6f636b2e6e65696768626f722e6f66 = 
+    debug_index_integration_test.go:132: COMMUNITY_INDEX keys (27):
+    debug_index_integration_test.go:138:   0.c360.semboids.sim.flock.boid.4 = {"id":"c360.semboids.sim.flock.boid.4","level":0,"members":["c360.semboids.sim.flock.boid.0","c360.semboids.sim.flock.boid.1","c360.semboids.sim.flock.boid.2","c360.semboids.sim.flock.boid.3","c360.semboids.sim.flock.boid.4","c360.semboids.sim.flock.boid.5","c360.semboids.sim.flock.boid.6","c360.semboids.sim.flock.boid.7"],"statistical_summary":"Community of 8 entities including 8 boids. Key themes: boid, flock.position.x, entity.indexing.profile, control.","keywords":["boid","flock.position.x","entity.indexing.profile","control"],"rep_entities":["c360.semboids.sim.flock.boid.0","c360.semboids...
+    debug_index_integration_test.go:138:   1.c360.semboids.sim.flock.boid.5 = {"id":"c360.semboids.sim.flock.boid.5","level":1,"members":["c360.semboids.sim.flock.boid.0","c360.semboids.sim.flock.boid.1","c360.semboids.sim.flock.boid.2","c360.semboids.sim.flock.boid.3","c360.semboids.sim.flock.boid.4","c360.semboids.sim.flock.boid.5","c360.semboids.sim.flock.boid.6","c360.semboids.sim.flock.boid.7"],"statistical_summary":"Community of 8 entities including 8 boids. Key themes: entity.indexing.profile, control, boid, flock.position.x.","keywords":["entity.indexing.profile","control","boid","flock.position.x"],"rep_entities":["c360.semboids.sim.flock.boid.0","c360.semboids...
+    debug_index_integration_test.go:138:   2.c360.semboids.sim.flock.boid.4 = {"id":"c360.semboids.sim.flock.boid.4","level":2,"members":["c360.semboids.sim.flock.boid.0","c360.semboids.sim.flock.boid.1","c360.semboids.sim.flock.boid.2","c360.semboids.sim.flock.boid.3","c360.semboids.sim.flock.boid.4","c360.semboids.sim.flock.boid.5","c360.semboids.sim.flock.boid.6","c360.semboids.sim.flock.boid.7"],"statistical_summary":"Community of 8 entities including 8 boids. Key themes: flock.position.x, entity.indexing.profile, control, boid.","keywords":["flock.position.x","entity.indexing.profile","control","boid"],"rep_entities":["c360.semboids.sim.flock.boid.0","c360.semboids...
+    debug_index_integration_test.go:138:   entity.0.c360.semboids.sim.flock.boid.0 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.0.c360.semboids.sim.flock.boid.1 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.0.c360.semboids.sim.flock.boid.2 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.0.c360.semboids.sim.flock.boid.3 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.0.c360.semboids.sim.flock.boid.4 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.0.c360.semboids.sim.flock.boid.5 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.0.c360.semboids.sim.flock.boid.6 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.0.c360.semboids.sim.flock.boid.7 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.1.c360.semboids.sim.flock.boid.0 = c360.semboids.sim.flock.boid.5
+    debug_index_integration_test.go:138:   entity.1.c360.semboids.sim.flock.boid.1 = c360.semboids.sim.flock.boid.5
+    debug_index_integration_test.go:138:   entity.1.c360.semboids.sim.flock.boid.2 = c360.semboids.sim.flock.boid.5
+    debug_index_integration_test.go:138:   entity.1.c360.semboids.sim.flock.boid.3 = c360.semboids.sim.flock.boid.5
+    debug_index_integration_test.go:138:   entity.1.c360.semboids.sim.flock.boid.4 = c360.semboids.sim.flock.boid.5
+    debug_index_integration_test.go:138:   entity.1.c360.semboids.sim.flock.boid.5 = c360.semboids.sim.flock.boid.5
+    debug_index_integration_test.go:138:   entity.1.c360.semboids.sim.flock.boid.6 = c360.semboids.sim.flock.boid.5
+    debug_index_integration_test.go:138:   entity.1.c360.semboids.sim.flock.boid.7 = c360.semboids.sim.flock.boid.5
+    debug_index_integration_test.go:138:   entity.2.c360.semboids.sim.flock.boid.0 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.2.c360.semboids.sim.flock.boid.1 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.2.c360.semboids.sim.flock.boid.2 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.2.c360.semboids.sim.flock.boid.3 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.2.c360.semboids.sim.flock.boid.4 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.2.c360.semboids.sim.flock.boid.5 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.2.c360.semboids.sim.flock.boid.6 = c360.semboids.sim.flock.boid.4
+    debug_index_integration_test.go:138:   entity.2.c360.semboids.sim.flock.boid.7 = c360.semboids.sim.flock.boid.4
+2026/10/01 06:27:09 WARN Failed to fetch entities for summarization component=graph-clustering community_id=c360.semboids.sim.flock.boid.4 error="kvEntityQuerier.GetEntities: get entity failed: context canceled"
+2026/10/01 06:27:09 INFO component stopped gracefully component=graph-clustering component=graph-clustering
+2026/10/01 06:27:09 INFO component stopped gracefully component=graph-index component=graph-index
+2026/10/01 06:27:09 INFO component stopped gracefully component=graph-ingest component=graph-ingest
+2026/10/01 06:27:09 🐳 Stopping container: d364593dcb0e
+2026/10/01 06:27:09 ✅ Container stopped: d364593dcb0e
+2026/10/01 06:27:09 🐳 Terminating container: d364593dcb0e
+2026/10/01 06:27:09 🚫 Container terminated: d364593dcb0e
+--- PASS: TestDebugDumpOutgoingIndex (8.61s)
+=== RUN   TestLPALibraryOnDisjointCliques
+    lpa_unit_test.go:165: level 0: 2 communities
+    lpa_unit_test.go:167:   c360.semboids.sim.flock.boid.1 (level 0): [c360.semboids.sim.flock.boid.0 c360.semboids.sim.flock.boid.1 c360.semboids.sim.flock.boid.2 c360.semboids.sim.flock.boid.3]
+    lpa_unit_test.go:167:   c360.semboids.sim.flock.boid.4 (level 0): [c360.semboids.sim.flock.boid.4 c360.semboids.sim.flock.boid.5 c360.semboids.sim.flock.boid.6 c360.semboids.sim.flock.boid.7]
+--- PASS: TestLPALibraryOnDisjointCliques (0.00s)
+=== RUN   TestNeighborEmptyGate
+2026/10/01 06:27:09 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:27:09 ✅ Container created: 79425785e71a
+2026/10/01 06:27:09 🐳 Starting container: 79425785e71a
+2026/10/01 06:27:09 ✅ Container started: 79425785e71a
+2026/10/01 06:27:09 ⏳ Waiting for container id 79425785e71a image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:27:09 🔔 Container is ready: 79425785e71a
+2026/10/01 06:27:09 INFO Connecting to NATS urls=nats://localhost:55009
+2026/10/01 06:27:09 INFO Successfully connected to NATS urls=nats://localhost:55009
+2026/10/01 06:27:09 INFO component initialized component=graph-ingest component=graph-ingest
+2026/10/01 06:27:09 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:27:09 INFO Created new KV bucket bucket=ENTITY_SUFFIX_INDEX
+2026/10/01 06:27:09 INFO Created new KV bucket bucket=GRAPH_INGEST_APPLIED_SEQ
+2026/10/01 06:27:09 INFO Created new KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:27:09 INFO query handlers registered component=graph-ingest subjects="[graph.ingest.query.entity graph.ingest.query.batch graph.ingest.query.prefix graph.ingest.query.suffix]"
+2026/10/01 06:27:09 INFO mutation handlers registered component=graph-ingest subjects="[graph.mutation.entity.create graph.mutation.entity.reconcile graph.mutation.triple.append graph.mutation.entity.delete]"
+2026/10/01 06:27:09 INFO component started component=graph-ingest component=graph-ingest start_time=2026-10-01T06:27:09.667-05:00
+2026/10/01 06:27:09 INFO component initialized component=graph-index component=graph-index
+2026/10/01 06:27:09 INFO Created new KV bucket bucket=OUTGOING_INDEX
+2026/10/01 06:27:09 INFO Created new KV bucket bucket=INCOMING_INDEX
+2026/10/01 06:27:09 INFO Created new KV bucket bucket=ALIAS_INDEX
+2026/10/01 06:27:09 INFO Created new KV bucket bucket=PREDICATE_INDEX
+2026/10/01 06:27:09 INFO Created new KV bucket bucket=NAME_INDEX
+2026/10/01 06:27:09 INFO Using existing KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:27:09 INFO resource available component=graph-index resource=ENTITY_STATES attempt=1
+2026/10/01 06:27:09 INFO query handlers registered component=graph-index subjects="[graph.index.query.outgoing graph.index.query.incoming graph.index.query.alias graph.index.query.predicate graph.index.query.predicateList graph.index.query.predicateStats graph.index.query.predicateCompound graph.index.query.byName]"
+2026/10/01 06:27:09 INFO component started component=graph-index component=graph-index start_time=2026-10-01T06:27:09.689-05:00
+2026/10/01 06:27:09 INFO entity watcher started component=graph-index bucket=ENTITY_STATES
+    neighbor_empty_verify_test.go:207: STEP 1 (neighbors {1,2,3}): version=1  ENTITY_STATES flock.neighbor.of=3  INCOMING rows for source=3
+    neighbor_empty_verify_test.go:215: STEP 2 (empty via stream MergeEntity): version=2  ENTITY_STATES flock.neighbor.of=3  INCOMING rows for source=3
+    neighbor_empty_verify_test.go:222: GATE RESULT: stream MergeEntity does NOT clear an emptied neighbor set (3 stale flock.neighbor.of remain in ENTITY_STATES) — the app-side removal is still load-bearing.
+    neighbor_empty_verify_test.go:263: STEP 3 (entity.reconcile, empty desired): kv_revision=3  ENTITY_STATES flock.neighbor.of=0  INCOMING rows for source=-1
+2026/10/01 06:27:16 INFO component stopped gracefully component=graph-index component=graph-index
+2026/10/01 06:27:16 INFO component stopped gracefully component=graph-ingest component=graph-ingest
+2026/10/01 06:27:16 🐳 Stopping container: 79425785e71a
+2026/10/01 06:27:16 ✅ Container stopped: 79425785e71a
+2026/10/01 06:27:16 🐳 Terminating container: 79425785e71a
+2026/10/01 06:27:16 🚫 Container terminated: 79425785e71a
+--- PASS: TestNeighborEmptyGate (6.91s)
+=== RUN   TestE2ELatencyProbeTracksBacklog
+2026/10/01 06:27:16 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:27:16 ✅ Container created: d0d582c0027f
+2026/10/01 06:27:16 🐳 Starting container: d0d582c0027f
+2026/10/01 06:27:16 ✅ Container started: d0d582c0027f
+2026/10/01 06:27:16 ⏳ Waiting for container id d0d582c0027f image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:27:16 🔔 Container is ready: d0d582c0027f
+2026/10/01 06:27:16 INFO Connecting to NATS urls=nats://localhost:55010
+2026/10/01 06:27:16 INFO Successfully connected to NATS urls=nats://localhost:55010
+2026/10/01 06:27:16 INFO component initialized component=graph-ingest component=graph-ingest
+2026/10/01 06:27:16 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:27:16 INFO Created new KV bucket bucket=ENTITY_SUFFIX_INDEX
+2026/10/01 06:27:16 INFO Created new KV bucket bucket=GRAPH_INGEST_APPLIED_SEQ
+2026/10/01 06:27:16 INFO Created new KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:27:16 INFO query handlers registered component=graph-ingest subjects="[graph.ingest.query.entity graph.ingest.query.batch graph.ingest.query.prefix graph.ingest.query.suffix]"
+2026/10/01 06:27:16 INFO mutation handlers registered component=graph-ingest subjects="[graph.mutation.entity.create graph.mutation.entity.reconcile graph.mutation.triple.append graph.mutation.entity.delete]"
+2026/10/01 06:27:16 INFO component started component=graph-ingest component=graph-ingest start_time=2026-10-01T06:27:16.649-05:00
+2026/10/01 06:27:16 INFO Starting sim component boids=400 tick_hz=30 seed=7 zones=0 subject=boids.frames
+    probe_integration_test.go:151: baseline: 333 samples, mean e2e 0.0014s
+2026/10/01 06:27:17 INFO Graph snapshot cadence set graph_hz=30
+    probe_integration_test.go:164: flood: 27176 new samples, window mean e2e 4.3072s
+2026/10/01 06:27:29 INFO Sim component stopped
+2026/10/01 06:27:29 WARN publish snapshot batch tick=393 boids=400 error="PublishBatchToStream: context already cancelled: context canceled"
+2026/10/01 06:27:29 WARN publish snapshot batch tick=395 boids=400 error="PublishBatchToStream: context already cancelled: context canceled"
+2026/10/01 06:27:29 WARN publish snapshot batch tick=396 boids=400 error="PublishBatchToStream: context already cancelled: context canceled"
+2026/10/01 06:27:30 INFO component stopped gracefully component=graph-ingest component=graph-ingest
+2026/10/01 06:27:30 🐳 Stopping container: d0d582c0027f
+2026/10/01 06:27:30 ERROR Failed to Nak after submit failure component=graph-ingest error="nats: connection closed"
+2026/10/01 06:27:30 ✅ Container stopped: d0d582c0027f
+2026/10/01 06:27:30 🐳 Terminating container: d0d582c0027f
+2026/10/01 06:27:30 🚫 Container terminated: d0d582c0027f
+--- PASS: TestE2ELatencyProbeTracksBacklog (14.21s)
+=== RUN   TestSnapshotsLandAndReplace
+2026/10/01 06:27:30 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:27:30 ✅ Container created: 3423f8488bf6
+2026/10/01 06:27:30 🐳 Starting container: 3423f8488bf6
+2026/10/01 06:27:30 ✅ Container started: 3423f8488bf6
+2026/10/01 06:27:30 ⏳ Waiting for container id 3423f8488bf6 image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:27:30 🔔 Container is ready: 3423f8488bf6
+2026/10/01 06:27:30 INFO Connecting to NATS urls=nats://localhost:55011
+2026/10/01 06:27:30 INFO Successfully connected to NATS urls=nats://localhost:55011
+2026/10/01 06:27:30 INFO component initialized component=graph-ingest component=graph-ingest
+2026/10/01 06:27:30 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:27:30 INFO Created new KV bucket bucket=ENTITY_SUFFIX_INDEX
+2026/10/01 06:27:30 INFO Created new KV bucket bucket=GRAPH_INGEST_APPLIED_SEQ
+2026/10/01 06:27:30 INFO Created new KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:27:30 INFO query handlers registered component=graph-ingest subjects="[graph.ingest.query.entity graph.ingest.query.batch graph.ingest.query.prefix graph.ingest.query.suffix]"
+2026/10/01 06:27:30 INFO mutation handlers registered component=graph-ingest subjects="[graph.mutation.entity.create graph.mutation.entity.reconcile graph.mutation.triple.append graph.mutation.entity.delete]"
+2026/10/01 06:27:30 INFO component started component=graph-ingest component=graph-ingest start_time=2026-10-01T06:27:30.810-05:00
+2026/10/01 06:27:30 INFO Starting sim component boids=20 tick_hz=30 seed=7 zones=0 subject=boids.frames
+2026/10/01 06:27:31 INFO Sim component stopped
+2026/10/01 06:27:31 INFO component stopped gracefully component=graph-ingest component=graph-ingest
+2026/10/01 06:27:31 🐳 Stopping container: 3423f8488bf6
+2026/10/01 06:27:31 ✅ Container stopped: 3423f8488bf6
+2026/10/01 06:27:31 🐳 Terminating container: 3423f8488bf6
+2026/10/01 06:27:32 🚫 Container terminated: 3423f8488bf6
+--- PASS: TestSnapshotsLandAndReplace (1.45s)
+PASS
+ok  	github.com/c360studio/semboids/internal/boidgraph	40.300s
+=== RUN   TestTickSteadyStateAllocs
+--- PASS: TestTickSteadyStateAllocs (0.11s)
+=== RUN   TestTickBudgetHeadroom
+    bench_test.go:55: tick at 500 boids: 1614521ns (budget 33ms)
+--- PASS: TestTickBudgetHeadroom (2.35s)
+=== RUN   TestAddBoidsAllocatesFreshMonotonicIDs
+--- PASS: TestAddBoidsAllocatesFreshMonotonicIDs (0.00s)
+=== RUN   TestNextIDNeverReused
+--- PASS: TestNextIDNeverReused (0.00s)
+=== RUN   TestRemoveBoidsPreservesSurvivors
+--- PASS: TestRemoveBoidsPreservesSurvivors (0.00s)
+=== RUN   TestPopulationChangeAppliesAcrossTick
+--- PASS: TestPopulationChangeAppliesAcrossTick (0.00s)
+=== RUN   TestSpawnPlacementDeterministic
+--- PASS: TestSpawnPlacementDeterministic (0.00s)
+=== RUN   TestSeparationRepels
+--- PASS: TestSeparationRepels (0.00s)
+=== RUN   TestCohesionAttracts
+--- PASS: TestCohesionAttracts (0.00s)
+=== RUN   TestAlignmentConvergesHeadings
+--- PASS: TestAlignmentConvergesHeadings (0.00s)
+=== RUN   TestClampsAlwaysHold
+--- PASS: TestClampsAlwaysHold (0.01s)
+=== RUN   TestDeterministicSeeding
+--- PASS: TestDeterministicSeeding (0.02s)
+=== RUN   TestDifferentSeedsDiverge
+--- PASS: TestDifferentSeedsDiverge (0.00s)
+=== RUN   TestPositionsStayInWorld
+--- PASS: TestPositionsStayInWorld (0.02s)
+=== RUN   TestInitialSpeedsWithinClamp
+--- PASS: TestInitialSpeedsWithinClamp (0.00s)
+=== RUN   TestExternalSteeringBendsTrajectory
+--- PASS: TestExternalSteeringBendsTrajectory (0.00s)
+=== RUN   TestExternalSteeringClampsHold
+--- PASS: TestExternalSteeringClampsHold (0.00s)
+=== RUN   TestDeterminismUnaffectedByEmptyExternal
+--- PASS: TestDeterminismUnaffectedByEmptyExternal (0.02s)
+=== RUN   TestExternalSteeringClearable
+--- PASS: TestExternalSteeringClearable (0.00s)
+=== RUN   TestGridNeighborsBasic
+--- PASS: TestGridNeighborsBasic (0.00s)
+=== RUN   TestGridNeighborsExcludesSelf
+--- PASS: TestGridNeighborsExcludesSelf (0.00s)
+=== RUN   TestGridNeighborsRadiusFilter
+--- PASS: TestGridNeighborsRadiusFilter (0.00s)
+=== RUN   TestGridNeighborsWrapAround
+=== RUN   TestGridNeighborsWrapAround/left_sees_right
+=== RUN   TestGridNeighborsWrapAround/right_sees_left
+=== RUN   TestGridNeighborsWrapAround/top_sees_bottom
+=== RUN   TestGridNeighborsWrapAround/corner_sees_opposite_corner
+--- PASS: TestGridNeighborsWrapAround (0.00s)
+    --- PASS: TestGridNeighborsWrapAround/left_sees_right (0.00s)
+    --- PASS: TestGridNeighborsWrapAround/right_sees_left (0.00s)
+    --- PASS: TestGridNeighborsWrapAround/top_sees_bottom (0.00s)
+    --- PASS: TestGridNeighborsWrapAround/corner_sees_opposite_corner (0.00s)
+=== RUN   TestGridReuseAcrossRebuilds
+--- PASS: TestGridReuseAcrossRebuilds (0.00s)
+=== RUN   TestSnapshotNeighbors
+--- PASS: TestSnapshotNeighbors (0.00s)
+=== RUN   TestSnapshotNeighborsDoesNotPerturbSim
+--- PASS: TestSnapshotNeighborsDoesNotPerturbSim (0.01s)
+=== RUN   TestVec2Ops
+=== RUN   TestVec2Ops/add
+=== RUN   TestVec2Ops/sub
+=== RUN   TestVec2Ops/scale
+=== RUN   TestVec2Ops/limit_under
+=== RUN   TestVec2Ops/limit_over
+=== RUN   TestVec2Ops/limit_zero_vec
+--- PASS: TestVec2Ops (0.00s)
+    --- PASS: TestVec2Ops/add (0.00s)
+    --- PASS: TestVec2Ops/sub (0.00s)
+    --- PASS: TestVec2Ops/scale (0.00s)
+    --- PASS: TestVec2Ops/limit_under (0.00s)
+    --- PASS: TestVec2Ops/limit_over (0.00s)
+    --- PASS: TestVec2Ops/limit_zero_vec (0.00s)
+=== RUN   TestVec2Len
+--- PASS: TestVec2Len (0.00s)
+=== RUN   TestTorusDelta
+=== RUN   TestTorusDelta/direct
+=== RUN   TestTorusDelta/wrap_x
+=== RUN   TestTorusDelta/wrap_x_negative
+=== RUN   TestTorusDelta/wrap_y
+=== RUN   TestTorusDelta/wrap_both
+--- PASS: TestTorusDelta (0.00s)
+    --- PASS: TestTorusDelta/direct (0.00s)
+    --- PASS: TestTorusDelta/wrap_x (0.00s)
+    --- PASS: TestTorusDelta/wrap_x_negative (0.00s)
+    --- PASS: TestTorusDelta/wrap_y (0.00s)
+    --- PASS: TestTorusDelta/wrap_both (0.00s)
+=== RUN   TestWrap
+=== RUN   TestWrap/inside
+=== RUN   TestWrap/over_x
+=== RUN   TestWrap/under_x
+=== RUN   TestWrap/over_y
+=== RUN   TestWrap/under_y
+--- PASS: TestWrap (0.00s)
+    --- PASS: TestWrap/inside (0.00s)
+    --- PASS: TestWrap/over_x (0.00s)
+    --- PASS: TestWrap/under_x (0.00s)
+    --- PASS: TestWrap/over_y (0.00s)
+    --- PASS: TestWrap/under_y (0.00s)
+PASS
+ok  	github.com/c360studio/semboids/internal/flock	3.813s
+=== RUN   TestComponentPublishesOneFramePerTick
+2026/10/01 06:27:38 INFO Starting sim component boids=20 tick_hz=200 seed=42 zones=0 subject=boids.frames
+2026/10/01 06:27:38 INFO Sim component stopped
+--- PASS: TestComponentPublishesOneFramePerTick (0.02s)
+=== RUN   TestComponentStopsCleanlyOnContextCancel
+2026/10/01 06:27:38 INFO Starting sim component boids=10 tick_hz=200 seed=42 zones=0 subject=boids.frames
+2026/10/01 06:27:38 INFO Sim component stopped
+--- PASS: TestComponentStopsCleanlyOnContextCancel (0.11s)
+=== RUN   TestComponentStopIsIdempotent
+2026/10/01 06:27:38 INFO Starting sim component boids=5 tick_hz=200 seed=42 zones=0 subject=boids.frames
+2026/10/01 06:27:38 INFO Sim component stopped
+--- PASS: TestComponentStopIsIdempotent (0.00s)
+=== RUN   TestComponentRejectsDoubleStart
+2026/10/01 06:27:38 INFO Starting sim component boids=5 tick_hz=200 seed=42 zones=0 subject=boids.frames
+2026/10/01 06:27:38 INFO Sim component stopped
+--- PASS: TestComponentRejectsDoubleStart (0.00s)
+=== RUN   TestComponentPublishesTransitionEvents
+2026/10/01 06:27:38 INFO Starting sim component boids=5 tick_hz=200 seed=42 zones=1 subject=boids.frames
+2026/10/01 06:27:38 INFO Sim component stopped
+--- PASS: TestComponentPublishesTransitionEvents (0.16s)
+=== RUN   TestComponentClearModifierKind
+--- PASS: TestComponentClearModifierKind (0.00s)
+=== RUN   TestComponentRejectsInvalidZones
+--- PASS: TestComponentRejectsInvalidZones (0.00s)
+=== RUN   TestComponentDefaults
+--- PASS: TestComponentDefaults (0.00s)
+=== RUN   TestPredatorCullReclaimsBoid
+2026/10/01 06:27:38 github.com/testcontainers/testcontainers-go - Connected to docker: 
+  Server Version: 29.8.0
+  API Version: 1.51
+  Operating System: Docker Desktop
+  Total Memory: 23742 MB
+  Labels:
+    com.docker.desktop.address=unix:///Users/coby/Library/Containers/com.docker.docker/Data/docker-cli.sock
+  Testcontainers for Go Version: v0.40.0
+  Resolved Docker Host: unix:///var/run/docker.sock
+  Resolved Docker Socket Path: /var/run/docker.sock
+  Test SessionID: c2db3c74cbf349e550ef19374379454284f74f80977f5f7725745f642bee8ec6
+  Test ProcessID: 083e2ee8-87bf-47eb-a97f-ea6dfae4931c
+2026/10/01 06:27:38 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:27:38 ⏳ Waiting for Reaper "59be3d07" to be ready
+2026/10/01 06:27:38 🔥 Reaper obtained from Docker for this test session 59be3d07
+2026/10/01 06:27:38 ✅ Container created: aff22cfce197
+2026/10/01 06:27:38 🐳 Starting container: aff22cfce197
+2026/10/01 06:27:38 ✅ Container started: aff22cfce197
+2026/10/01 06:27:38 ⏳ Waiting for container id aff22cfce197 image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:27:38 🔔 Container is ready: aff22cfce197
+2026/10/01 06:27:38 INFO Connecting to NATS urls=nats://localhost:55012
+2026/10/01 06:27:38 INFO Successfully connected to NATS urls=nats://localhost:55012
+2026/10/01 06:27:38 INFO lifecycle: registered workflow workflow=flock.boid pattern=*.*.sim.flock.boid.* phase_count=3 operator_writable_predicates=0 child_workflows=0 reference_predicates=0
+2026/10/01 06:27:38 INFO component initialized component=graph-ingest component=graph-ingest
+2026/10/01 06:27:38 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:27:38 INFO Created new KV bucket bucket=ENTITY_SUFFIX_INDEX
+2026/10/01 06:27:38 INFO Created new KV bucket bucket=GRAPH_INGEST_APPLIED_SEQ
+2026/10/01 06:27:38 INFO Created new KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:27:38 INFO query handlers registered component=graph-ingest subjects="[graph.ingest.query.entity graph.ingest.query.batch graph.ingest.query.prefix graph.ingest.query.suffix]"
+2026/10/01 06:27:38 INFO mutation handlers registered component=graph-ingest subjects="[graph.mutation.entity.create graph.mutation.entity.reconcile graph.mutation.triple.append graph.mutation.entity.delete]"
+2026/10/01 06:27:38 INFO component started component=graph-ingest component=graph-ingest start_time=2026-10-01T06:27:38.842-05:00
+2026/10/01 06:27:38 WARN Invalid buffer window size, using default component=rule-processor default=10m0s error="time: invalid duration \"\""
+2026/10/01 06:27:38 WARN Invalid alert cooldown period, using default component=rule-processor default=2m0s error="time: invalid duration \"\""
+2026/10/01 06:27:38 INFO Loaded rule definitions from file component=rule-processor path=/var/folders/db/qk1n2zs935q9ld3p2sn98yzr0000gn/T/TestPredatorCullReclaimsBoid3440465590/001/predator-cull.json count=1
+2026/10/01 06:27:38 INFO Loaded rule from definition component=rule-processor rule_id=predator-cull rule_type=expression rule_name="" on_enter_actions=1 on_exit_actions=0
+2026/10/01 06:27:38 INFO Rule processor initialized component=rule-processor rule_count=1
+2026/10/01 06:27:38 INFO Created RULE_STATE KV bucket for stateful rules component=rule-processor
+2026/10/01 06:27:38 INFO ActionExecutor initialized with publishing and KV write support (graph integration disabled) component=rule-processor
+2026/10/01 06:27:38 INFO State tracker initialized for stateful ECA rules component=rule-processor
+2026/10/01 06:27:38 INFO Created RULE_SCHEDULES KV bucket for cron rule fire tracking component=rule-processor
+2026/10/01 06:27:38 INFO Cron scheduler initialized component=rule-processor registered_rules=0
+2026/10/01 06:27:38 INFO Rule processor started component=rule-processor subject_count=1
+2026/10/01 06:27:38 INFO No rule entity patterns configured; holding no ENTITY_STATES watchers component=rule-processor
+2026/10/01 06:27:38 INFO Rule processor subscribed (NATS) component=rule-processor subject=boids.zone.events
+2026/10/01 06:27:38 INFO Cron scheduler started component=rule-processor registered_rules=0
+2026/10/01 06:27:38 INFO Starting sim component boids=12 tick_hz=30 seed=7 zones=1 subject=boids.frames
+2026/10/01 06:27:38 INFO Using existing KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:27:38 INFO Created new KV bucket bucket=semstreams_config
+2026/10/01 06:27:38 INFO Initialized KVStore for rule configuration component=rule-processor component=rule-config-manager
+2026/10/01 06:27:38 INFO Rule processor ready - watchers and subscriptions established component=rule-processor
+2026/10/01 06:27:38 INFO Rule configuration hot-reload watcher started component=rule-processor component=rule-config-manager pattern=rules.*
+2026/10/01 06:27:39 INFO Applied rule configuration component=rule-processor rule_id=predator-cull rule_type=expression
+2026/10/01 06:27:39 INFO Hot-reload: applied rule configuration from KV component=rule-processor component=rule-config-manager rule_count=1
+2026/10/01 06:27:40 ERROR Rule processor error component=rule-processor error="rule predator-cull execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:40 ERROR Rule processor error component=rule-processor error="rule predator-cull execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:40 ERROR Rule processor error component=rule-processor error="rule predator-cull execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:40 ERROR Rule processor error component=rule-processor error="rule predator-cull execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:40 ERROR Rule processor error component=rule-processor error="rule predator-cull execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:40 ERROR Rule processor error component=rule-processor error="rule predator-cull execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:40 ERROR Rule processor error component=rule-processor error="rule predator-cull execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:40 ERROR Rule processor error component=rule-processor error="rule predator-cull execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:40 ERROR Rule processor error component=rule-processor error="rule predator-cull execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+    cull_integration_test.go:263: cull chain complete: physics 12→3 boids, ENTITY_STATES boid entities down to 3
+2026/10/01 06:27:40 INFO Rule processor context cancelled component=rule-processor error="context canceled"
+2026/10/01 06:27:40 INFO Cron scheduler stopping component=rule-processor
+2026/10/01 06:27:40 WARN reclaim culled entity entity=c360.semboids.sim.flock.boid.9 attempts=1 error="projection mutation read-authoritative failed (commit-unknown, unknown): context canceled"
+2026/10/01 06:27:40 ERROR Failed to execute action component=rule-processor rule_id=predator-cull entity_id=c360.semboids.sim.flock.boid.9 related_id="" action_type=lifecycle_transition error="lifecycle_transition: workflow=\"flock.boid\" entity_id=\"c360.semboids.sim.flock.boid.9\" phase=\"culled\": projection mutation reconcile failed (commit-unknown, unknown): graph mutation entity.reconcile transport failed (commit_unknown): context canceled"
+==================
+WARNING: DATA RACE
+Write at 0x00c000142a78 by goroutine 210:
+  runtime.racewrite()
+      <autogenerated>:1 +0x10
+
+Previous read at 0x00c000142a78 by goroutine 166:
+  runtime.raceread()
+      <autogenerated>:1 +0x10
+  github.com/c360studio/semboids/internal/sim.(*Component).runCullWatcher()
+      /private/tmp/semboids-shared-pin/baseline/internal/sim/lifecycle.go:162 +0x5a0
+  github.com/c360studio/semboids/internal/sim.(*Component).Start.gowrap3()
+      /private/tmp/semboids-shared-pin/baseline/internal/sim/component.go:505 +0x40
+
+Goroutine 210 (running) created at:
+  github.com/c360studio/semboids/internal/sim.(*Component).Stop()
+      /private/tmp/semboids-shared-pin/baseline/internal/sim/component.go:570 +0x29c
+  github.com/c360studio/semboids/internal/sim.startCullChain.func2()
+      /private/tmp/semboids-shared-pin/baseline/internal/sim/cull_integration_test.go:213 +0x48
+  testing.(*common).Cleanup.func1()
+      /usr/local/go/src/testing/testing.go:1317 +0x124
+  testing.(*common).runCleanup()
+      /usr/local/go/src/testing/testing.go:1667 +0x16c
+  testing.tRunner.func2()
+      /usr/local/go/src/testing/testing.go:2030 +0x48
+  runtime.deferreturn()
+      /usr/local/go/src/runtime/panic.go:668 +0x5c
+  github.com/cenkalti/backoff/v4.doRetryNotify[go.shape.*uint8]()
+      /Users/coby/go/pkg/mod/github.com/cenkalti/backoff/v4@v4.3.0/retry.go:88 +0x15c
+  github.com/cenkalti/backoff/v4.RetryNotifyWithData[go.shape.*uint8]()
+      /Users/coby/go/pkg/mod/github.com/cenkalti/backoff/v4@v4.3.0/retry.go:54 +0x6c
+  github.com/cenkalti/backoff/v4.RetryWithData[go.shape.*uint8]()
+      /Users/coby/go/pkg/mod/github.com/cenkalti/backoff/v4@v4.3.0/retry.go:43 +0x18
+  github.com/testcontainers/testcontainers-go.(*reaperSpawner).reaper()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/reaper.go:271 +0x300
+  github.com/testcontainers/testcontainers-go.(*DockerContainer).connectReaper()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/docker.go:931 +0x188
+  github.com/testcontainers/testcontainers-go.(*DockerProvider).CreateContainer()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/docker.go:1268 +0x2b20
+  github.com/testcontainers/testcontainers-go.(*DockerProvider).CreateContainer()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/docker.go:1231 +0x2288
+  github.com/testcontainers/testcontainers-go.(*DockerProvider).CreateContainer()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/docker.go:1145 +0x13e4
+  github.com/testcontainers/testcontainers-go.(*DockerProvider).CreateContainer()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/docker.go:1060 +0x12c
+  github.com/testcontainers/testcontainers-go.GenericContainer()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/generic.go:77 +0x390
+  github.com/c360studio/semstreams/natsclient.runTestClientAttempt()
+      /Users/coby/go/pkg/mod/github.com/c360studio/semstreams@v1.0.0-beta.160/natsclient/test_client.go:693 +0xdc
+  github.com/c360studio/semstreams/natsclient.newTestClient()
+      /Users/coby/go/pkg/mod/github.com/c360studio/semstreams@v1.0.0-beta.160/natsclient/test_client.go:614 +0x1ac
+  github.com/c360studio/semstreams/natsclient.NewTestClient()
+      /Users/coby/go/pkg/mod/github.com/c360studio/semstreams@v1.0.0-beta.160/natsclient/test_client.go:847 +0x84
+  github.com/c360studio/semboids/internal/sim.startCullChain()
+      /private/tmp/semboids-shared-pin/baseline/internal/sim/cull_integration_test.go:104 +0x154
+  github.com/c360studio/semboids/internal/sim.TestPredatorCullReclaimsBoid()
+      /private/tmp/semboids-shared-pin/baseline/internal/sim/cull_integration_test.go:246 +0x70
+  testing.tRunner()
+      /usr/local/go/src/testing/testing.go:2036 +0x164
+  testing.(*T).Run.gowrap1()
+      /usr/local/go/src/testing/testing.go:2101 +0x34
+
+Goroutine 166 (running) created at:
+  github.com/c360studio/semboids/internal/sim.(*Component).Start()
+      /private/tmp/semboids-shared-pin/baseline/internal/sim/component.go:505 +0x734
+  github.com/c360studio/semboids/internal/sim.startCullChain()
+      /private/tmp/semboids-shared-pin/baseline/internal/sim/cull_integration_test.go:210 +0x1cbc
+  github.com/testcontainers/testcontainers-go.GenericContainer()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/generic.go:93 +0x3e0
+  github.com/testcontainers/testcontainers-go.(*reaperSpawner).reaper.(*reaperSpawner).retryLocked.func2()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/reaper.go:282 +0x78
+  github.com/cenkalti/backoff/v4.doRetryNotify[go.shape.*uint8]()
+      /Users/coby/go/pkg/mod/github.com/cenkalti/backoff/v4@v4.3.0/retry.go:88 +0x15c
+  github.com/cenkalti/backoff/v4.RetryNotifyWithData[go.shape.*uint8]()
+      /Users/coby/go/pkg/mod/github.com/cenkalti/backoff/v4@v4.3.0/retry.go:54 +0x6c
+  github.com/cenkalti/backoff/v4.RetryWithData[go.shape.*uint8]()
+      /Users/coby/go/pkg/mod/github.com/cenkalti/backoff/v4@v4.3.0/retry.go:43 +0x18
+  github.com/testcontainers/testcontainers-go.(*reaperSpawner).reaper()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/reaper.go:271 +0x300
+  github.com/testcontainers/testcontainers-go.(*DockerContainer).connectReaper()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/docker.go:931 +0x188
+  github.com/testcontainers/testcontainers-go.(*DockerProvider).CreateContainer()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/docker.go:1268 +0x2b20
+  github.com/testcontainers/testcontainers-go.(*DockerProvider).CreateContainer()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/docker.go:1231 +0x2288
+  github.com/testcontainers/testcontainers-go.(*DockerProvider).CreateContainer()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/docker.go:1145 +0x13e4
+  github.com/testcontainers/testcontainers-go.(*DockerProvider).CreateContainer()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/docker.go:1060 +0x12c
+  github.com/testcontainers/testcontainers-go.GenericContainer()
+      /Users/coby/go/pkg/mod/github.com/testcontainers/testcontainers-go@v0.40.0/generic.go:77 +0x390
+  github.com/c360studio/semstreams/natsclient.runTestClientAttempt()
+      /Users/coby/go/pkg/mod/github.com/c360studio/semstreams@v1.0.0-beta.160/natsclient/test_client.go:693 +0xdc
+  github.com/c360studio/semstreams/natsclient.newTestClient()
+      /Users/coby/go/pkg/mod/github.com/c360studio/semstreams@v1.0.0-beta.160/natsclient/test_client.go:614 +0x1ac
+  github.com/c360studio/semstreams/natsclient.NewTestClient()
+      /Users/coby/go/pkg/mod/github.com/c360studio/semstreams@v1.0.0-beta.160/natsclient/test_client.go:847 +0x84
+  github.com/c360studio/semboids/internal/sim.startCullChain()
+      /private/tmp/semboids-shared-pin/baseline/internal/sim/cull_integration_test.go:104 +0x154
+  github.com/c360studio/semboids/internal/sim.TestPredatorCullReclaimsBoid()
+      /private/tmp/semboids-shared-pin/baseline/internal/sim/cull_integration_test.go:246 +0x70
+  testing.tRunner()
+      /usr/local/go/src/testing/testing.go:2036 +0x164
+  testing.(*T).Run.gowrap1()
+      /usr/local/go/src/testing/testing.go:2101 +0x34
+==================
+2026/10/01 06:27:40 INFO Sim component stopped
+2026/10/01 06:27:40 INFO Rule configuration manager stopped component=rule-processor component=rule-config-manager
+2026/10/01 06:27:40 INFO Rule processor stopped component=rule-processor
+2026/10/01 06:27:40 ERROR Rule processor error component=rule-processor error="rule predator-cull execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:40 INFO component stopped gracefully component=graph-ingest component=graph-ingest
+2026/10/01 06:27:40 🐳 Stopping container: aff22cfce197
+2026/10/01 06:27:40 ✅ Container stopped: aff22cfce197
+2026/10/01 06:27:40 🐳 Terminating container: aff22cfce197
+2026/10/01 06:27:40 🚫 Container terminated: aff22cfce197
+    testing.go:1712: race detected during execution of test
+--- FAIL: TestPredatorCullReclaimsBoid (2.19s)
+=== RUN   TestCullRuleDisabledKeepsFlock
+2026/10/01 06:27:40 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:27:40 ✅ Container created: e58c7f5b77ba
+2026/10/01 06:27:40 🐳 Starting container: e58c7f5b77ba
+2026/10/01 06:27:40 ✅ Container started: e58c7f5b77ba
+2026/10/01 06:27:40 ⏳ Waiting for container id e58c7f5b77ba image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:27:40 🔔 Container is ready: e58c7f5b77ba
+2026/10/01 06:27:40 INFO Connecting to NATS urls=nats://localhost:55013
+2026/10/01 06:27:40 INFO Successfully connected to NATS urls=nats://localhost:55013
+2026/10/01 06:27:40 INFO lifecycle: registered workflow workflow=flock.boid pattern=*.*.sim.flock.boid.* phase_count=3 operator_writable_predicates=0 child_workflows=0 reference_predicates=0
+2026/10/01 06:27:40 INFO component initialized component=graph-ingest component=graph-ingest
+2026/10/01 06:27:40 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:27:40 INFO Created new KV bucket bucket=ENTITY_SUFFIX_INDEX
+2026/10/01 06:27:40 INFO Created new KV bucket bucket=GRAPH_INGEST_APPLIED_SEQ
+2026/10/01 06:27:40 INFO Created new KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:27:40 INFO query handlers registered component=graph-ingest subjects="[graph.ingest.query.entity graph.ingest.query.batch graph.ingest.query.prefix graph.ingest.query.suffix]"
+2026/10/01 06:27:40 INFO mutation handlers registered component=graph-ingest subjects="[graph.mutation.entity.create graph.mutation.entity.reconcile graph.mutation.triple.append graph.mutation.entity.delete]"
+2026/10/01 06:27:40 INFO component started component=graph-ingest component=graph-ingest start_time=2026-10-01T06:27:40.941-05:00
+2026/10/01 06:27:40 WARN Invalid buffer window size, using default component=rule-processor default=10m0s error="time: invalid duration \"\""
+2026/10/01 06:27:40 WARN Invalid alert cooldown period, using default component=rule-processor default=2m0s error="time: invalid duration \"\""
+2026/10/01 06:27:40 INFO Loaded rule definitions from file component=rule-processor path=/var/folders/db/qk1n2zs935q9ld3p2sn98yzr0000gn/T/TestCullRuleDisabledKeepsFlock1063531468/001/predator-cull.json count=1
+2026/10/01 06:27:40 WARN No rules configured - processor will not trigger any actions. Configure rules via rules_files or inline_rules in config. component=rule-processor
+2026/10/01 06:27:40 INFO Rule processor initialized component=rule-processor rule_count=0
+2026/10/01 06:27:40 INFO Created RULE_STATE KV bucket for stateful rules component=rule-processor
+2026/10/01 06:27:40 INFO ActionExecutor initialized with publishing and KV write support (graph integration disabled) component=rule-processor
+2026/10/01 06:27:40 INFO State tracker initialized for stateful ECA rules component=rule-processor
+2026/10/01 06:27:40 INFO Created RULE_SCHEDULES KV bucket for cron rule fire tracking component=rule-processor
+2026/10/01 06:27:40 INFO Cron scheduler initialized component=rule-processor registered_rules=0
+2026/10/01 06:27:40 INFO Rule processor started component=rule-processor subject_count=1
+2026/10/01 06:27:40 INFO No rule entity patterns configured; holding no ENTITY_STATES watchers component=rule-processor
+2026/10/01 06:27:40 INFO Rule processor subscribed (NATS) component=rule-processor subject=boids.zone.events
+2026/10/01 06:27:40 INFO Cron scheduler started component=rule-processor registered_rules=0
+2026/10/01 06:27:40 INFO Starting sim component boids=12 tick_hz=30 seed=7 zones=1 subject=boids.frames
+2026/10/01 06:27:40 INFO Using existing KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:27:40 INFO Created new KV bucket bucket=semstreams_config
+2026/10/01 06:27:40 INFO Initialized KVStore for rule configuration component=rule-processor component=rule-config-manager
+2026/10/01 06:27:40 INFO Rule configuration hot-reload watcher started component=rule-processor component=rule-config-manager pattern=rules.*
+2026/10/01 06:27:40 INFO Rule processor ready - watchers and subscriptions established component=rule-processor
+2026/10/01 06:27:41 INFO Hot-reload: applied rule configuration from KV component=rule-processor component=rule-config-manager rule_count=0
+2026/10/01 06:27:48 INFO Rule processor context cancelled component=rule-processor error="context canceled"
+2026/10/01 06:27:48 INFO Sim component stopped
+2026/10/01 06:27:48 INFO Cron scheduler stopping component=rule-processor
+2026/10/01 06:27:48 INFO Rule configuration manager stopped component=rule-processor component=rule-config-manager
+2026/10/01 06:27:48 INFO Rule processor stopped component=rule-processor
+2026/10/01 06:27:48 INFO component stopped gracefully component=graph-ingest component=graph-ingest
+2026/10/01 06:27:48 🐳 Stopping container: e58c7f5b77ba
+2026/10/01 06:27:49 ✅ Container stopped: e58c7f5b77ba
+2026/10/01 06:27:49 🐳 Terminating container: e58c7f5b77ba
+2026/10/01 06:27:49 🚫 Container terminated: e58c7f5b77ba
+--- PASS: TestCullRuleDisabledKeepsFlock (8.46s)
+=== RUN   TestDrainPoolBoundsConcurrency
+--- PASS: TestDrainPoolBoundsConcurrency (0.00s)
+=== RUN   TestDrainPoolSubmitBlocksWhenFull
+--- PASS: TestDrainPoolSubmitBlocksWhenFull (0.05s)
+=== RUN   TestDrainPoolWaitJoinsInFlight
+--- PASS: TestDrainPoolWaitJoinsInFlight (0.00s)
+=== RUN   TestDrainPoolCancelledCtxDropsWork
+--- PASS: TestDrainPoolCancelledCtxDropsWork (0.00s)
+=== RUN   TestDrainPoolClampsToSerial
+--- PASS: TestDrainPoolClampsToSerial (0.05s)
+=== RUN   TestFrameMarshalsCompactWireFormat
+--- PASS: TestFrameMarshalsCompactWireFormat (0.00s)
+=== RUN   TestFrameWithoutZonesOrMods
+--- PASS: TestFrameWithoutZonesOrMods (0.00s)
+=== RUN   TestFrameRoundTrips
+--- PASS: TestFrameRoundTrips (0.00s)
+=== RUN   TestFramesFlowThroughNATS
+2026/10/01 06:27:49 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:27:49 ✅ Container created: 66b8a5949ea3
+2026/10/01 06:27:49 🐳 Starting container: 66b8a5949ea3
+2026/10/01 06:27:49 ✅ Container started: 66b8a5949ea3
+2026/10/01 06:27:49 ⏳ Waiting for container id 66b8a5949ea3 image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:27:49 🔔 Container is ready: 66b8a5949ea3
+2026/10/01 06:27:49 INFO Connecting to NATS urls=nats://localhost:55014
+2026/10/01 06:27:49 INFO Successfully connected to NATS urls=nats://localhost:55014
+2026/10/01 06:27:49 INFO Starting sim component boids=50 tick_hz=30 seed=7 zones=0 subject=boids.frames
+2026/10/01 06:27:50 WARN e2e latency probe stopped error="bucket \"ENTITY_STATES\" not available after 1m0s"
+2026/10/01 06:27:50 INFO Sim component stopped
+2026/10/01 06:27:50 🐳 Stopping container: 66b8a5949ea3
+2026/10/01 06:27:50 ✅ Container stopped: 66b8a5949ea3
+2026/10/01 06:27:50 🐳 Terminating container: 66b8a5949ea3
+2026/10/01 06:27:50 🚫 Container terminated: 66b8a5949ea3
+--- PASS: TestFramesFlowThroughNATS (1.37s)
+=== RUN   TestCreatePendingCreatesActivePerBoid
+--- PASS: TestCreatePendingCreatesActivePerBoid (0.00s)
+=== RUN   TestCreatePendingRunsConcurrently
+--- PASS: TestCreatePendingRunsConcurrently (0.00s)
+=== RUN   TestCulledBoidID
+--- PASS: TestCulledBoidID (0.00s)
+=== RUN   TestBoidIDFromKey
+--- PASS: TestBoidIDFromKey (0.00s)
+=== RUN   TestDeleteEntityFencedPairing
+--- PASS: TestDeleteEntityFencedPairing (0.00s)
+=== RUN   TestDeleteEntityRetryClassification
+=== RUN   TestDeleteEntityRetryClassification/conflict_re-reads_then_succeeds
+=== RUN   TestDeleteEntityRetryClassification/read_not-found_is_already_reclaimed
+=== RUN   TestDeleteEntityRetryClassification/delete_not-found_is_already_reclaimed
+=== RUN   TestDeleteEntityRetryClassification/ambiguous_is_not_retried
+2026/10/01 06:27:50 WARN reclaim culled entity: ambiguous outcome, not retried entity=c360.semboids.sim.flock.boid.9 error="projection mutation  failed (commit-unknown, ): commit-unknown"
+=== RUN   TestDeleteEntityRetryClassification/conflict_exhausts_bound
+2026/10/01 06:27:50 WARN reclaim culled entity entity=c360.semboids.sim.flock.boid.9 attempts=5 error="projection mutation  failed (revision-conflict, ): revision-conflict"
+=== RUN   TestDeleteEntityRetryClassification/invalid_is_not_retried
+2026/10/01 06:27:50 WARN reclaim culled entity entity=c360.semboids.sim.flock.boid.9 attempts=1 error="projection mutation  failed (invalid, ): invalid"
+--- PASS: TestDeleteEntityRetryClassification (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/conflict_re-reads_then_succeeds (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/read_not-found_is_already_reclaimed (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/delete_not-found_is_already_reclaimed (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/ambiguous_is_not_retried (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/conflict_exhausts_bound (0.00s)
+    --- PASS: TestDeleteEntityRetryClassification/invalid_is_not_retried (0.00s)
+=== RUN   TestCreateWithRetrySurvivesSeedRace
+--- PASS: TestCreateWithRetrySurvivesSeedRace (0.30s)
+=== RUN   TestCreateWithRetryExhaustsBound
+--- PASS: TestCreateWithRetryExhaustsBound (1.50s)
+=== RUN   TestCreateTreatsAlreadyManagedAsSuccess
+--- PASS: TestCreateTreatsAlreadyManagedAsSuccess (0.00s)
+=== RUN   TestPopulationStateStagesAndDrains
+--- PASS: TestPopulationStateStagesAndDrains (0.00s)
+=== RUN   TestPopulationStateConcurrentStaging
+--- PASS: TestPopulationStateConcurrentStaging (0.00s)
+=== RUN   TestRuleRoundTripAppliesModifiers
+2026/10/01 06:27:52 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:27:52 ✅ Container created: bdcf0dbb2166
+2026/10/01 06:27:52 🐳 Starting container: bdcf0dbb2166
+2026/10/01 06:27:52 ✅ Container started: bdcf0dbb2166
+2026/10/01 06:27:52 ⏳ Waiting for container id bdcf0dbb2166 image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:27:52 🔔 Container is ready: bdcf0dbb2166
+2026/10/01 06:27:52 INFO Connecting to NATS urls=nats://localhost:55015
+2026/10/01 06:27:52 INFO Successfully connected to NATS urls=nats://localhost:55015
+2026/10/01 06:27:52 WARN Invalid buffer window size, using default component=rule-processor default=10m0s error="time: invalid duration \"\""
+2026/10/01 06:27:52 WARN Invalid alert cooldown period, using default component=rule-processor default=2m0s error="time: invalid duration \"\""
+2026/10/01 06:27:52 INFO Loaded rule definitions from file component=rule-processor path=/var/folders/db/qk1n2zs935q9ld3p2sn98yzr0000gn/T/TestRuleRoundTripAppliesModifiers2474895565/001/predator.json count=1
+2026/10/01 06:27:52 INFO Loaded rule from definition component=rule-processor rule_id=predator-flee rule_type=expression rule_name="" on_enter_actions=1 on_exit_actions=0
+2026/10/01 06:27:52 INFO Rule processor initialized component=rule-processor rule_count=1
+2026/10/01 06:27:52 INFO Created RULE_STATE KV bucket for stateful rules component=rule-processor
+2026/10/01 06:27:52 INFO ActionExecutor initialized with publishing and KV write support (graph integration disabled) component=rule-processor
+2026/10/01 06:27:52 INFO State tracker initialized for stateful ECA rules component=rule-processor
+2026/10/01 06:27:52 INFO Created RULE_SCHEDULES KV bucket for cron rule fire tracking component=rule-processor
+2026/10/01 06:27:52 INFO Cron scheduler initialized component=rule-processor registered_rules=0
+2026/10/01 06:27:52 INFO Rule processor started component=rule-processor subject_count=1
+2026/10/01 06:27:52 INFO No rule entity patterns configured; holding no ENTITY_STATES watchers component=rule-processor
+2026/10/01 06:27:52 INFO Rule processor subscribed (NATS) component=rule-processor subject=boids.zone.events
+2026/10/01 06:27:52 INFO Starting sim component boids=10 tick_hz=30 seed=7 zones=1 subject=boids.frames
+2026/10/01 06:27:52 INFO Cron scheduler started component=rule-processor registered_rules=0
+2026/10/01 06:27:52 INFO Created new KV bucket bucket=semstreams_config
+2026/10/01 06:27:52 INFO Initialized KVStore for rule configuration component=rule-processor component=rule-config-manager
+2026/10/01 06:27:52 INFO Created new KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:27:52 INFO Rule configuration hot-reload watcher started component=rule-processor component=rule-config-manager pattern=rules.*
+2026/10/01 06:27:52 INFO Rule processor ready - watchers and subscriptions established component=rule-processor
+2026/10/01 06:27:52 ERROR Rule processor error component=rule-processor error="rule predator-flee execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:52 ERROR Rule processor error component=rule-processor error="rule predator-flee execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:52 ERROR Rule processor error component=rule-processor error="rule predator-flee execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:52 ERROR Rule processor error component=rule-processor error="rule predator-flee execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:52 ERROR Rule processor error component=rule-processor error="rule predator-flee execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:52 ERROR Rule processor error component=rule-processor error="rule predator-flee execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:52 ERROR Rule processor error component=rule-processor error="rule predator-flee execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:52 ERROR Rule processor error component=rule-processor error="rule predator-flee execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:52 ERROR Rule processor error component=rule-processor error="rule predator-flee execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+2026/10/01 06:27:52 ERROR Rule processor error component=rule-processor error="rule predator-flee execution failed: Event.Validate: rule name is required in metadata failed: invalid data format"
+    roundtrip_integration_test.go:177: round trip complete: 10/10 boids under flee modifier
+2026/10/01 06:27:52 INFO Rule processor context cancelled component=rule-processor error="context canceled"
+2026/10/01 06:27:52 INFO Sim component stopped
+2026/10/01 06:27:52 WARN e2e latency probe stopped error="bucket \"ENTITY_STATES\" not available after 1m0s"
+2026/10/01 06:27:52 INFO Cron scheduler stopping component=rule-processor
+2026/10/01 06:27:52 INFO Rule configuration manager stopped component=rule-processor component=rule-config-manager
+2026/10/01 06:27:52 INFO Rule processor stopped component=rule-processor
+2026/10/01 06:27:52 🐳 Stopping container: bdcf0dbb2166
+2026/10/01 06:27:52 ✅ Container stopped: bdcf0dbb2166
+2026/10/01 06:27:52 🐳 Terminating container: bdcf0dbb2166
+2026/10/01 06:27:52 🚫 Container terminated: bdcf0dbb2166
+--- PASS: TestRuleRoundTripAppliesModifiers (0.42s)
+=== RUN   TestDisabledRuleProducesNoModifiers
+2026/10/01 06:27:52 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:27:52 ✅ Container created: b9497e7ae554
+2026/10/01 06:27:52 🐳 Starting container: b9497e7ae554
+2026/10/01 06:27:52 ✅ Container started: b9497e7ae554
+2026/10/01 06:27:52 ⏳ Waiting for container id b9497e7ae554 image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:27:53 🔔 Container is ready: b9497e7ae554
+2026/10/01 06:27:53 INFO Connecting to NATS urls=nats://localhost:55016
+2026/10/01 06:27:53 INFO Successfully connected to NATS urls=nats://localhost:55016
+2026/10/01 06:27:53 WARN Invalid buffer window size, using default component=rule-processor default=10m0s error="time: invalid duration \"\""
+2026/10/01 06:27:53 WARN Invalid alert cooldown period, using default component=rule-processor default=2m0s error="time: invalid duration \"\""
+2026/10/01 06:27:53 INFO Loaded rule definitions from file component=rule-processor path=/var/folders/db/qk1n2zs935q9ld3p2sn98yzr0000gn/T/TestDisabledRuleProducesNoModifiers4163639933/001/predator.json count=1
+2026/10/01 06:27:53 WARN No rules configured - processor will not trigger any actions. Configure rules via rules_files or inline_rules in config. component=rule-processor
+2026/10/01 06:27:53 INFO Rule processor initialized component=rule-processor rule_count=0
+2026/10/01 06:27:53 INFO Created RULE_STATE KV bucket for stateful rules component=rule-processor
+2026/10/01 06:27:53 INFO ActionExecutor initialized with publishing and KV write support (graph integration disabled) component=rule-processor
+2026/10/01 06:27:53 INFO State tracker initialized for stateful ECA rules component=rule-processor
+2026/10/01 06:27:53 INFO Created RULE_SCHEDULES KV bucket for cron rule fire tracking component=rule-processor
+2026/10/01 06:27:53 INFO Cron scheduler initialized component=rule-processor registered_rules=0
+2026/10/01 06:27:53 INFO Rule processor started component=rule-processor subject_count=1
+2026/10/01 06:27:53 INFO No rule entity patterns configured; holding no ENTITY_STATES watchers component=rule-processor
+2026/10/01 06:27:53 INFO Rule processor subscribed (NATS) component=rule-processor subject=boids.zone.events
+2026/10/01 06:27:53 INFO Cron scheduler started component=rule-processor registered_rules=0
+2026/10/01 06:27:53 INFO Starting sim component boids=10 tick_hz=30 seed=7 zones=1 subject=boids.frames
+2026/10/01 06:27:53 INFO Created new KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:27:53 INFO Created new KV bucket bucket=semstreams_config
+2026/10/01 06:27:53 INFO Initialized KVStore for rule configuration component=rule-processor component=rule-config-manager
+2026/10/01 06:27:53 INFO Rule configuration hot-reload watcher started component=rule-processor component=rule-config-manager pattern=rules.*
+2026/10/01 06:27:53 INFO Rule processor ready - watchers and subscriptions established component=rule-processor
+2026/10/01 06:27:53 INFO Hot-reload: applied rule configuration from KV component=rule-processor component=rule-config-manager rule_count=0
+2026/10/01 06:27:58 WARN e2e latency probe stopped error="bucket \"ENTITY_STATES\" not available after 1m0s"
+2026/10/01 06:27:58 INFO Sim component stopped
+2026/10/01 06:27:58 INFO Rule processor context cancelled component=rule-processor error="context canceled"
+2026/10/01 06:27:58 INFO Cron scheduler stopping component=rule-processor
+2026/10/01 06:27:58 INFO Rule configuration manager stopped component=rule-processor component=rule-config-manager
+2026/10/01 06:27:58 INFO Rule processor stopped component=rule-processor
+2026/10/01 06:27:58 🐳 Stopping container: b9497e7ae554
+2026/10/01 06:27:58 ✅ Container stopped: b9497e7ae554
+2026/10/01 06:27:58 🐳 Terminating container: b9497e7ae554
+2026/10/01 06:27:58 🚫 Container terminated: b9497e7ae554
+--- PASS: TestDisabledRuleProducesNoModifiers (5.34s)
+=== RUN   TestSnapshotCadenceFollowsDial
+2026/10/01 06:27:58 INFO Graph snapshot cadence set graph_hz=50
+2026/10/01 06:27:58 INFO Starting sim component boids=10 tick_hz=200 seed=42 zones=0 subject=boids.frames
+2026/10/01 06:27:58 INFO Graph snapshot cadence set graph_hz=0
+2026/10/01 06:27:58 INFO Sim component stopped
+--- PASS: TestSnapshotCadenceFollowsDial (0.30s)
+=== RUN   TestSetGraphHzClampsAndRejects
+2026/10/01 06:27:58 INFO Graph snapshot cadence set graph_hz=30
+--- PASS: TestSetGraphHzClampsAndRejects (0.00s)
+=== RUN   TestParseModifier
+=== RUN   TestParseModifier/numeric_boid_id
+=== RUN   TestParseModifier/string_boid_id_(substitution_renders_strings)
+=== RUN   TestParseModifier/cancel
+=== RUN   TestParseModifier/unknown_kind
+=== RUN   TestParseModifier/missing_boid_id
+--- PASS: TestParseModifier (0.00s)
+    --- PASS: TestParseModifier/numeric_boid_id (0.00s)
+    --- PASS: TestParseModifier/string_boid_id_(substitution_renders_strings) (0.00s)
+    --- PASS: TestParseModifier/cancel (0.00s)
+    --- PASS: TestParseModifier/unknown_kind (0.00s)
+    --- PASS: TestParseModifier/missing_boid_id (0.00s)
+=== RUN   TestParseModifierMalformedJSON
+--- PASS: TestParseModifierMalformedJSON (0.00s)
+=== RUN   TestSteeringTableLifecycle
+--- PASS: TestSteeringTableLifecycle (0.00s)
+=== RUN   TestSteeringCancelRemoves
+--- PASS: TestSteeringCancelRemoves (0.00s)
+=== RUN   TestSteeringClearKind
+--- PASS: TestSteeringClearKind (0.00s)
+=== RUN   TestExternalVectors
+--- PASS: TestExternalVectors (0.00s)
+=== RUN   TestTrackerEdgeDetection
+--- PASS: TestTrackerEdgeDetection (0.00s)
+=== RUN   TestTrackerMultipleZonesAndBoids
+--- PASS: TestTrackerMultipleZonesAndBoids (0.00s)
+=== RUN   TestTrackerLingeredFiresPastGracePredatorOnly
+--- PASS: TestTrackerLingeredFiresPastGracePredatorOnly (0.00s)
+=== RUN   TestTrackerLingeredNotForFleeingBoid
+--- PASS: TestTrackerLingeredNotForFleeingBoid (0.00s)
+=== RUN   TestTrackerForgetPrunes
+--- PASS: TestTrackerForgetPrunes (0.00s)
+FAIL
+FAIL	github.com/c360studio/semboids/internal/sim	20.655s
+=== RUN   TestZonesLandInEntityStates
+2026/10/01 06:27:59 github.com/testcontainers/testcontainers-go - Connected to docker: 
+  Server Version: 29.8.0
+  API Version: 1.51
+  Operating System: Docker Desktop
+  Total Memory: 23742 MB
+  Labels:
+    com.docker.desktop.address=unix:///Users/coby/Library/Containers/com.docker.docker/Data/docker-cli.sock
+  Testcontainers for Go Version: v0.40.0
+  Resolved Docker Host: unix:///var/run/docker.sock
+  Resolved Docker Socket Path: /var/run/docker.sock
+  Test SessionID: c2db3c74cbf349e550ef19374379454284f74f80977f5f7725745f642bee8ec6
+  Test ProcessID: 66135393-0fed-4f91-ab3e-6ad6fadc8827
+2026/10/01 06:27:59 🐳 Creating container for image nats:2.14-alpine
+2026/10/01 06:27:59 ⏳ Waiting for Reaper "59be3d07" to be ready
+2026/10/01 06:27:59 🔥 Reaper obtained from Docker for this test session 59be3d07
+2026/10/01 06:27:59 ✅ Container created: 65452ee9ee22
+2026/10/01 06:27:59 🐳 Starting container: 65452ee9ee22
+2026/10/01 06:27:59 ✅ Container started: 65452ee9ee22
+2026/10/01 06:27:59 ⏳ Waiting for container id 65452ee9ee22 image: nats:2.14-alpine. Waiting for: log message "Server is ready"
+2026/10/01 06:27:59 🔔 Container is ready: 65452ee9ee22
+2026/10/01 06:27:59 INFO Connecting to NATS urls=nats://localhost:55017
+2026/10/01 06:27:59 INFO Successfully connected to NATS urls=nats://localhost:55017
+2026/10/01 06:27:59 INFO component initialized component=graph-ingest component=graph-ingest
+2026/10/01 06:27:59 INFO Created new KV bucket bucket=ENTITY_STATES
+2026/10/01 06:27:59 INFO Created new KV bucket bucket=ENTITY_SUFFIX_INDEX
+2026/10/01 06:27:59 INFO Created new KV bucket bucket=GRAPH_INGEST_APPLIED_SEQ
+2026/10/01 06:27:59 INFO Created new KV bucket bucket=GRAPH_STATUS
+2026/10/01 06:27:59 INFO query handlers registered component=graph-ingest subjects="[graph.ingest.query.entity graph.ingest.query.batch graph.ingest.query.prefix graph.ingest.query.suffix]"
+2026/10/01 06:27:59 INFO mutation handlers registered component=graph-ingest subjects="[graph.mutation.entity.create graph.mutation.entity.reconcile graph.mutation.triple.append graph.mutation.entity.delete]"
+2026/10/01 06:27:59 INFO component started component=graph-ingest component=graph-ingest start_time=2026-10-01T06:27:59.846-05:00
+2026/10/01 06:28:00 INFO component stopped gracefully component=graph-ingest component=graph-ingest
+2026/10/01 06:28:00 🐳 Stopping container: 65452ee9ee22
+2026/10/01 06:28:00 ✅ Container stopped: 65452ee9ee22
+2026/10/01 06:28:00 🐳 Terminating container: 65452ee9ee22
+2026/10/01 06:28:00 🚫 Container terminated: 65452ee9ee22
+--- PASS: TestZonesLandInEntityStates (0.74s)
+=== RUN   TestIngestPublishesOneMessagePerZone
+--- PASS: TestIngestPublishesOneMessagePerZone (0.00s)
+=== RUN   TestIngestRejectsInvalidZones
+--- PASS: TestIngestRejectsInvalidZones (0.00s)
+=== RUN   TestEntityID6Part
+--- PASS: TestEntityID6Part (0.00s)
+=== RUN   TestEntityTriples
+--- PASS: TestEntityTriples (0.00s)
+=== RUN   TestWindEntityHasDirectionTriples
+--- PASS: TestWindEntityHasDirectionTriples (0.00s)
+=== RUN   TestPayloadSchemaAndValidate
+--- PASS: TestPayloadSchemaAndValidate (0.00s)
+=== RUN   TestRegisterPayloads
+--- PASS: TestRegisterPayloads (0.00s)
+=== RUN   TestValidateAcceptsValidSet
+--- PASS: TestValidateAcceptsValidSet (0.00s)
+=== RUN   TestValidateRejections
+=== RUN   TestValidateRejections/unknown_type
+=== RUN   TestValidateRejections/zero_radius
+=== RUN   TestValidateRejections/negative_radius
+=== RUN   TestValidateRejections/duplicate_ids
+=== RUN   TestValidateRejections/empty_id
+=== RUN   TestValidateRejections/wind_without_direction
+--- PASS: TestValidateRejections (0.00s)
+    --- PASS: TestValidateRejections/unknown_type (0.00s)
+    --- PASS: TestValidateRejections/zero_radius (0.00s)
+    --- PASS: TestValidateRejections/negative_radius (0.00s)
+    --- PASS: TestValidateRejections/duplicate_ids (0.00s)
+    --- PASS: TestValidateRejections/empty_id (0.00s)
+    --- PASS: TestValidateRejections/wind_without_direction (0.00s)
+=== RUN   TestContains
+=== RUN   TestContains/center
+=== RUN   TestContains/inside
+=== RUN   TestContains/boundary
+=== RUN   TestContains/outside
+=== RUN   TestContains/diagonal_inside
+=== RUN   TestContains/diagonal_outside
+--- PASS: TestContains (0.00s)
+    --- PASS: TestContains/center (0.00s)
+    --- PASS: TestContains/inside (0.00s)
+    --- PASS: TestContains/boundary (0.00s)
+    --- PASS: TestContains/outside (0.00s)
+    --- PASS: TestContains/diagonal_inside (0.00s)
+    --- PASS: TestContains/diagonal_outside (0.00s)
+PASS
+ok  	github.com/c360studio/semboids/internal/zone	2.095s
+FAIL

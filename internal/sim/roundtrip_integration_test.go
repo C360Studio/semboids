@@ -27,6 +27,7 @@ func predatorRuleFile(t *testing.T, enabled bool) string {
 	t.Helper()
 	rules := []map[string]any{{
 		"id":      "predator-flee",
+		"name":    "Predator flee fixture",
 		"type":    "expression",
 		"enabled": enabled,
 		"conditions": []map[string]any{
@@ -98,7 +99,7 @@ func startRoundTrip(t *testing.T, ctx context.Context, ruleEnabled bool) <-chan 
 		},
 	}
 	ruleCfgJSON, _ := json.Marshal(ruleCfg)
-	ruleInst, err := registry.CreateComponent("rule-processor-test", types.ComponentConfig{
+	ruleInst, err := createTestComponent(registry, "rule-processor-test", types.ComponentConfig{
 		Type: types.ComponentTypeProcessor, Name: "rule-processor", Enabled: true, Config: ruleCfgJSON,
 	}, deps)
 	if err != nil {
@@ -111,7 +112,7 @@ func startRoundTrip(t *testing.T, ctx context.Context, ruleEnabled bool) <-chan 
 	if err := ruleLC.Start(ctx); err != nil {
 		t.Fatalf("rule start: %v", err)
 	}
-	t.Cleanup(func() { _ = ruleLC.Stop(5 * time.Second) })
+	t.Cleanup(func() { _ = ruleLC.Stop(testStopContext(t)) })
 
 	// Sim with a world-covering predator zone: every boid enters on tick 1.
 	simCfg := map[string]any{
@@ -121,7 +122,7 @@ func startRoundTrip(t *testing.T, ctx context.Context, ruleEnabled bool) <-chan 
 		},
 	}
 	simCfgJSON, _ := json.Marshal(simCfg)
-	simInst, err := registry.CreateComponent("sim-test", types.ComponentConfig{
+	simInst, err := createTestComponent(registry, "sim-test", types.ComponentConfig{
 		Type: types.ComponentTypeInput, Name: "sim", Enabled: true, Config: simCfgJSON,
 	}, deps)
 	if err != nil {
@@ -150,7 +151,7 @@ func startRoundTrip(t *testing.T, ctx context.Context, ruleEnabled bool) <-chan 
 	if err := simLC.Start(ctx); err != nil {
 		t.Fatalf("sim start: %v", err)
 	}
-	t.Cleanup(func() { _ = simLC.Stop(5 * time.Second) })
+	t.Cleanup(func() { _ = simLC.Stop(testStopContext(t)) })
 
 	return frames
 }

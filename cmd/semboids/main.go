@@ -7,6 +7,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -113,7 +114,13 @@ func run() error {
 		return nil
 	}
 
-	ctx := context.Background()
+	// Signals abort bootstrap; after bootstrap they request controlled Stop.
+	signalCtx, signalCancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer signalCancel()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	stopBootstrapSignal := context.AfterFunc(signalCtx, cancel)
+	defer stopBootstrapSignal()
 
 	// The metrics registry is created before the NATS client so the client
 	// can be built WithMetrics — that turns on the substrate's JetStream
@@ -143,8 +150,6 @@ func run() error {
 	slog.SetDefault(logger)
 	slog.Info("SemBoids ready", "version", Version, "build_time", BuildTime)
 
-	platform := extractPlatformMeta(cfg)
-
 	configManager, err := config.NewConfigManager(cfg, natsClient, logger)
 	if err != nil {
 		return fmt.Errorf("create config manager: %w", err)
@@ -153,6 +158,11 @@ func run() error {
 		return fmt.Errorf("start config manager: %w", err)
 	}
 	defer configManager.Stop(5 * time.Second)
+
+	// Start resolves and persists the effective authority, including its minted
+	// suffix. Every component and graph birth must use this same identity.
+	cfg = configManager.GetConfig().Get()
+	platform := extractPlatformMeta(cfg)
 
 	componentRegistry, manager, err := setupRegistriesAndManager(cfg)
 	if err != nil {
@@ -204,7 +214,8 @@ func run() error {
 		slog.Info("Zones published to graph", "count", len(zones))
 	}
 
-	return runWithSignalHandling(ctx, manager, cliCfg.ShutdownTimeout)
+	stopBootstrapSignal()
+	return runServices(ctx, signalCtx.Done(), manager, cliCfg.ShutdownTimeout)
 }
 
 // parseCLI parses flags; the bool result requests immediate clean exit.
@@ -331,6 +342,14 @@ func connectToNATS(ctx context.Context, cfg *config.Config, registry *metric.Met
 		fmt.Println("FAILED")
 		return nil, fmt.Errorf("create NATS client: %w", err)
 	}
+	connected := false
+	defer func() {
+		if !connected {
+			closeCtx, closeCancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer closeCancel()
+			natsClient.Close(closeCtx)
+		}
+	}()
 	if err := natsClient.Connect(ctx); err != nil {
 		fmt.Println("FAILED")
 		return nil, fmt.Errorf("connect to NATS: %w", err)
@@ -343,6 +362,7 @@ func connectToNATS(ctx context.Context, cfg *config.Config, registry *metric.Met
 		return nil, fmt.Errorf("NATS connection timeout: %w", err)
 	}
 
+	connected = true
 	fmt.Println("OK")
 	return natsClient, nil
 }
@@ -379,20 +399,14 @@ func parseLogLevel(level string) slog.Level {
 
 // extractPlatformMeta extracts platform identity from config.
 func extractPlatformMeta(cfg *config.Config) types.PlatformMeta {
-	platformID := cfg.Platform.InstanceID
-	if platformID == "" {
-		platformID = cfg.Platform.ID
-	}
-	return types.PlatformMeta{
-		Org:      cfg.Platform.Org,
-		Platform: platformID,
-	}
+	return types.PlatformMeta{Org: cfg.Platform.Org, Platform: cfg.Platform.ID}
 }
 
 // setupRegistriesAndManager creates registries and the service manager.
 func setupRegistriesAndManager(cfg *config.Config) (*component.Registry, *service.Manager, error) {
 	componentRegistry := component.NewRegistry()
-	if err := componentregistry.RegisterAll(componentRegistry); err != nil {
+	controls := &api.Controls{}
+	if err := componentregistry.RegisterWithControls(componentRegistry, controls); err != nil {
 		return nil, nil, fmt.Errorf("register components: %w", err)
 	}
 	factories := componentRegistry.ListFactories()
@@ -402,7 +416,9 @@ func setupRegistriesAndManager(cfg *config.Config) (*component.Registry, *servic
 	if err := service.RegisterAll(serviceRegistry); err != nil {
 		return nil, nil, fmt.Errorf("register semstreams services: %w", err)
 	}
-	if err := serviceRegistry.Register(api.ServiceName, api.New); err != nil {
+	if err := serviceRegistry.Register(api.ServiceName, func(raw json.RawMessage, deps *service.Dependencies) (service.Service, error) {
+		return api.NewWithControls(raw, deps, controls)
+	}); err != nil {
 		return nil, nil, fmt.Errorf("register boids service: %w", err)
 	}
 
@@ -448,25 +464,48 @@ func configureAndCreateServices(
 	return nil
 }
 
-// runWithSignalHandling starts services and handles shutdown signals.
-func runWithSignalHandling(ctx context.Context, manager *service.Manager, shutdownTimeout time.Duration) error {
-	signalCtx, signalCancel := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGTERM)
-	defer signalCancel()
+// serviceLifecycle is the host-owned start/stop boundary, kept narrow so tests
+// can prove context ownership and failed-start cleanup without a broker.
+type serviceLifecycle interface {
+	StartAll(context.Context) error
+	StopAll(context.Context) error
+}
 
-	slog.Info("Starting all services")
-	if err := manager.StartAll(signalCtx); err != nil {
-		return fmt.Errorf("start services: %w", err)
+// runServices distinguishes a signal requesting controlled Stop from a parent
+// cancellation abort. The Start context remains live until Stop joins, except
+// when a signal interrupts startup itself.
+func runServices(parent context.Context, shutdown <-chan struct{}, manager serviceLifecycle, shutdownTimeout time.Duration) error {
+	ctx, cancel := context.WithCancel(parent)
+	defer cancel()
+	started := make(chan error, 1)
+	go func() { started <- manager.StartAll(ctx) }()
+	var startErr error
+	select {
+	case startErr = <-started:
+	case <-shutdown:
+		// A process cannot finish boot after its shutdown request. Join the failed
+		// Start before asking the manager to release partially acquired resources.
+		cancel()
+		startErr = <-started
+	case <-parent.Done():
+		startErr = <-started
+	}
+	stop := func() error {
+		stopCtx, stopCancel := context.WithTimeout(context.Background(), shutdownTimeout)
+		defer stopCancel()
+		return manager.StopAll(stopCtx)
+	}
+	if startErr != nil {
+		return errors.Join(fmt.Errorf("start services: %w", startErr), stop())
 	}
 	slog.Info("All services started")
-
-	<-signalCtx.Done()
-	slog.Info("Received shutdown signal")
-
-	if err := manager.StopAll(shutdownTimeout); err != nil {
-		slog.Error("Error stopping services", "error", err)
+	select {
+	case <-shutdown:
+	case <-parent.Done():
+	}
+	if err := stop(); err != nil {
 		return fmt.Errorf("graceful shutdown failed: %w", err)
 	}
-
 	slog.Info("SemBoids shutdown complete")
 	return nil
 }

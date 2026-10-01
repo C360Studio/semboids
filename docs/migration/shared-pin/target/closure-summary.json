@@ -1,0 +1,18 @@
+{
+  "production_semstreams_non_test_physical_lines": 131061,
+  "integration-test_semstreams_non_test_physical_lines": 131061,
+  "selected_modules": 303,
+  "production_packages": 514,
+  "integration_test_packages": 538,
+  "production_external_modules": 64,
+  "integration_test_external_modules": 64,
+  "production_semstreams_packages": 62,
+  "physical_line_method": "sum of splitlines in build-selected non-test GoFiles reported by go list, darwin/arm64 without race tag",
+  "all_non_test_directory_source_lines": 131066,
+  "directory_line_method": "measure_closure.py: raw splitlines across all non-test Go files in every production-reachable SemStreams package directory, including other build tags",
+  "line_method_delta": {
+    "lines": 5,
+    "file": "processor/graph-index/race_enabled.go",
+    "reason": "included by directory census; excluded from ordinary go list GoFiles in favor of race_disabled.go"
+  }
+}
