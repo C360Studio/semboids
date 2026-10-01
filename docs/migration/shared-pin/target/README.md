@@ -7,21 +7,23 @@ No newer tag or commit was selected. Both were built with Go 1.26.4 on darwin/ar
 
 ## Result
 
-All ordinary backend gates pass. The stronger delayed-snapshot reclamation qualification remains **BLOCKED** on
-both pins: a snapshot prepared before deletion can recreate the entity after the exact-revision delete commits.
+All ordinary backend gates pass, including uncached default-parallel real-NATS race tests under `TZ=UTC` after
+the test correction below. High-load cold startup is **BLOCKED** on the target. The stronger delayed-snapshot
+reclamation qualification remains **BLOCKED** on both pins: a snapshot prepared before deletion can recreate the entity after the exact-revision delete commits.
 Do not interpret ordinary green gates as full migration qualification. Browser and measured load evidence are
 recorded in the adjacent directories; those results do not remove this blocker.
 
 | Final gate | Outcome | Evidence |
 | --- | --- | --- |
-| Native build | PASS | `build-native.log`, `gate-status.json` |
-| Go vet, ordinary and integration | PASS | `vet.log`, `vet-integration.log` |
-| gofmt and revive | PASS | `fmt.log`, `revive.log` |
-| Uncached race unit tests | PASS, 197 test/subtest passes, no skips | `race-unit.log` |
-| Uncached real-NATS race integration, serial packages | PASS, 215 passes, no skips | `race-integration-final.log` |
-| Linux/amd64 build, CGO disabled | PASS | `linux-build.log` |
+| Native build | PASS | `build-native-utc.log`, `gate-status-utc.json` |
+| Go vet, ordinary and integration | PASS | `vet-utc.log`, `vet-integration-utc.log` |
+| gofmt and revive | PASS | `fmt-utc.log`, `revive-utc.log` |
+| Uncached race unit tests, UTC | PASS, 203 test/subtest passes, no skips | `race-unit-utc.log` |
+| Uncached real-NATS race integration, default parallelism, UTC | PASS, 221 passes, no skips | `race-integration-default-parallel.log` |
+| Linux/amd64 build, CGO disabled | PASS | `linux-build-utc.log` |
 | Schema drift | NOT APPLICABLE, existing CI explicitly defers this gate | `.github/workflows/ci.yml` |
 | Delayed pre-cull snapshot qualification | FAIL on baseline and target | `red-reclamation-*.log` |
+| High-load target cold startup | FAIL | `cold-start-failure.log.gz` |
 
 Real-NATS tests used isolated testcontainers running `nats:2.14-alpine` with image digest
 `sha256:4063edae0717ba5f7501bfde75f97fd9b57f5b93597b92c70b6a6fbbf6a74e06`, as did the recorded baseline gate.
@@ -81,6 +83,48 @@ or retry-on-ambiguous recovery scheme was introduced. Frozen-pin migration quali
 upstream contract/disposition. The baseline reproduction used a separate archive overlay with the same new test files;
 the original baseline archive and binary were unchanged.
 
+## Cold-start qualification blocker
+
+The first interleaved target run started 200 seeded boids with 30 Hz snapshots on a fresh isolated broker and
+failed during startup. The complete log is retained as `cold-start-failure.log.gz`. At 06:53:42.065–.114 -05:00,
+neighbor clearing received no-responder errors. At .117, the shared client reported an open circuit; tick 3's
+200-entity batch could not enqueue. Graph-ingest registered its query and mutation handlers at .145; graph-index
+then failed to start at .147 because its `GRAPH_STATUS` initialization reported not connected. The process exited
+with startup failure. This is operational failure evidence, not a throughput observation.
+
+The frozen source's `service/component_manager.go:startComponentsBarrier` starts StoreProviders first, then all
+ordinary components concurrently. `Registration.Dependencies` declares framework boot resources rather than
+component-to-component ordering. Sim's off-loop snapshot and seed-create workers can therefore run before graph
+handlers exist. This application/provider startup boundary is unqualified on the target; the failure alone does
+not establish a beta.160-to-target regression or isolate a throughput cause.
+
+The supported `natsclient.RequestReadyClassified` first-read primitive deliberately avoids counting expected
+cold-start no-responders toward the shared circuit breaker. It is insufficient by itself here: graph-ingest installs
+query handlers before its four mutation handlers. A query reply cannot license launching lifecycle mutations.
+The public `graph/readiness.Watcher` also cannot prove a new process has installed those handlers: its first reading
+can be a recent retained `GRAPH_STATUS` value, considered fresh within 15 seconds; the public reading has no
+producer boot identity or revision to distinguish that value from this startup. Retained-broker restart matters.
+No private provider barrier, fabricated mutation probe, arbitrary sleep, changed retry policy, or substrate fork was
+added. A supported handler-readiness/start-order contract is needed before this startup requirement can be admitted.
+
+Any subsequent matched performance campaign that starts both pins at zero snapshot cadence, waits for observed
+startup readiness, then activates the same cadence and warmup is a **steady-state comparison only**. It does not
+remove this cold-start blocker. The original failed run remains retained and excluded from throughput claims.
+
+## UTC test correction
+
+The first hosted CI run exposed a new test's `reflect.DeepEqual` comparison of `time.Location` pointers. JSON
+preserved the instant, but `time.UnixMilli` used Local while decoding a `Z` timestamp used UTC. The failure
+reproduces locally under `TZ=UTC` in `red-roundtrip-utc.log`. Both boid and zone round-trip tests now cover UTC,
+Local and a fixed offset; they compare timestamps using `time.Equal`, then compare every other triple field.
+`green-roundtrip-utc.log` is the passing focused race rerun. Production payloads and physics are unchanged.
+The original frozen target executable remains SHA256
+`4153b224f0a204f2d5349ac0b167288d6ca1223b3082f6ac2368534b34e7f625` for measured runs and browser evidence.
+The rebuild used only to revalidate compilation has SHA256
+`27ec0269033802e33836ef120d760b2f9df338515b08a5f8a1c928d04f1540fb`; its embedded VCS stamp changes from the
+pre-commit working tree to commit `97d24dc082016aa5af1840bb0a52c87021048a18`. `rebuild-metadata.diff` records
+the metadata difference. The rebuilt artifact does not replace the frozen measured binary.
+
 ## Coverage and intermediate failures
 
 A diagnostic `-race -coverprofile` integration run measured the critical operations: snapshot publication 92.0%,
@@ -99,7 +143,10 @@ without coverage instrumentation and passed, including the timing test. The orig
 
 The same census methodology was used for both pins. `non-test-loc.json` comes from the shared
 `measure_closure.py`: raw non-test Go directory lines for reachable packages, including other platform/build-tag
-files. It is not linked binary size or an extraction admission decision.
+files. It is not linked binary size or an extraction admission decision. `closure-summary.json` also retains the
+build-selected GoFiles census: 131061 target lines (140952 baseline), five fewer than the directory census on each
+pin. The five lines are `processor/graph-index/race_enabled.go`, excluded by ordinary Go-list in favor of
+`race_disabled.go`; the directory census includes both. Both methods are labeled explicitly in the summary.
 
 | Census | Baseline | Target |
 | --- | ---: | ---: |

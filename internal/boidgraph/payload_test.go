@@ -2,13 +2,13 @@ package boidgraph
 
 import (
 	"encoding/json"
-	"github.com/c360studio/semstreams/message"
-	"github.com/c360studio/semstreams/vocabulary"
 	"reflect"
 	"testing"
 	"time"
 
+	"github.com/c360studio/semstreams/message"
 	"github.com/c360studio/semstreams/payloadregistry"
+	"github.com/c360studio/semstreams/vocabulary"
 )
 
 func testEntity() *Entity {
@@ -106,28 +106,48 @@ func TestBoidPayloadSchemaAndRegistry(t *testing.T) {
 }
 
 func TestRegisteredPayloadRoundTripAndFloor(t *testing.T) {
-	e := testEntity()
-	reg := payloadregistry.New()
-	if err := RegisterPayloads(reg); err != nil {
-		t.Fatal(err)
-	}
-	registration, ok := reg.GetRegistration(e.Schema().String())
-	if !ok || registration.IndexingProfile != vocabulary.IndexingProfileControl {
-		t.Fatal("payload must declare its control indexing floor")
-	}
-	wire, err := json.Marshal(message.NewBaseMessage(e.Schema(), e, "semboids"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	decoded, err := message.NewDecoder(reg).Decode(wire)
-	if err != nil {
-		t.Fatal(err)
-	}
-	got, ok := decoded.Payload().(*Entity)
-	if !ok {
-		t.Fatalf("decoded payload %T", decoded.Payload())
-	}
-	if got.EntityID() != e.EntityID() || !reflect.DeepEqual(got.Triples(), e.Triples()) {
-		t.Fatalf("round-trip changed entity identity or facts: %+v", got)
+	for _, location := range []*time.Location{time.UTC, time.Local, time.FixedZone("fixture", -7*60*60)} {
+		t.Run(location.String(), func(t *testing.T) {
+			e := testEntity()
+			e.ObservedAt = e.ObservedAt.In(location)
+			reg := payloadregistry.New()
+			if err := RegisterPayloads(reg); err != nil {
+				t.Fatal(err)
+			}
+			registration, ok := reg.GetRegistration(e.Schema().String())
+			if !ok || registration.IndexingProfile != vocabulary.IndexingProfileControl {
+				t.Fatal("payload must declare its control indexing floor")
+			}
+			wire, err := json.Marshal(message.NewBaseMessage(e.Schema(), e, "semboids"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			decoded, err := message.NewDecoder(reg).Decode(wire)
+			if err != nil {
+				t.Fatal(err)
+			}
+			got, ok := decoded.Payload().(*Entity)
+			if !ok {
+				t.Fatalf("decoded payload %T", decoded.Payload())
+			}
+			if got.EntityID() != e.EntityID() {
+				t.Fatalf("round-trip changed entity identity: %+v", got)
+			}
+			actual, expected := got.Triples(), e.Triples()
+			if len(actual) != len(expected) {
+				t.Fatalf("triple count = %d, want %d", len(actual), len(expected))
+			}
+			for i := range actual {
+				if !actual[i].Timestamp.Equal(expected[i].Timestamp) {
+					t.Fatalf("triple %d timestamp = %v, want same instant as %v", i, actual[i].Timestamp, expected[i].Timestamp)
+				}
+				// JSON preserves instants and offsets, not time.Location identity.
+				// Compare every remaining triple field without weakening fact equality.
+				actual[i].Timestamp = expected[i].Timestamp
+				if !reflect.DeepEqual(actual[i], expected[i]) {
+					t.Fatalf("triple %d facts changed: %+v, want %+v", i, actual[i], expected[i])
+				}
+			}
+		})
 	}
 }

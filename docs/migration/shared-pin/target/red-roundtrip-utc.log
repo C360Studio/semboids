@@ -1,0 +1,6 @@
+--- FAIL: TestRegisteredPayloadRoundTripAndFloor (0.00s)
+    payload_test.go:131: round-trip changed entity identity or facts: &{Boid:{ID:7 X:812.5 Y:301.25 VX:21.75 VY:-37 Neighbors:[12 31]} OrgID:c360 Platform:semboids Tick:1234 ObservedAt:2024-07-02 16:00:00.123 +0000 UTC}
+FAIL
+FAIL	github.com/c360studio/semboids/internal/boidgraph	0.288s
+ok  	github.com/c360studio/semboids/internal/zone	1.509s
+FAIL
