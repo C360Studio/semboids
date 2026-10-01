@@ -1,0 +1,19 @@
+{
+  "selected_namespace": "steady-state/",
+  "selected_pattern": "steady-state/{baseline,target}-{stable,churn}-{1,2}",
+  "excluded_from_performance_pairs": [
+    {"run": "baseline-pre-upgrade", "reason": "Pre-upgrade diagnostic; brief cached test overlap; no WebSocket observer."},
+    {"run": "baseline-stable-1", "reason": "Original direct-30Hz startup cohort; observer stopped after 60s, missing 149 tail ticks. Preserved original summary plus corrected cross-checks."},
+    {"run": "target-stable-1", "reason": "Original direct-30Hz startup cohort; target failed before measurement after no-responders/circuit-breaker/index startup error. This remains a startup blocker."},
+    {"run": "baseline-slow-websocket", "reason": "Deliberate slow-client diagnostic; different workload/window."},
+    {"run": "target-slow-websocket", "reason": "Deliberate slow-client diagnostic; different workload/window."},
+    {"run": "operations-*", "reason": "Process qualification; small population and restart/failed-startup probes, not throughput comparisons."},
+    {"run": "baseline-port-conflict", "reason": "Corrected dual-stack occupied-port correctness probe."},
+    {"run": "target-port-conflict", "reason": "Corrected dual-stack occupied-port correctness probe."}
+  ],
+  "withdrawn_assertions": [
+    "IPv4-only port collision did not prove bind failure; Go could bind IPv6. Corrected dual-stack probes supersede that assertion.",
+    "Initial internal WebSocket tick gap 0 did not prove complete whole-window delivery; corrected cross-check exposes 149 missing tail ticks.",
+    "Consumer completion cannot be inferred from accepted minus outstanding under finite delivery limit, even when arithmetic matches commit metrics."
+  ]
+}

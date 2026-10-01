@@ -2,6 +2,8 @@
 import copy
 from pathlib import Path
 import tempfile
+import subprocess
+import json
 import unittest
 from unittest.mock import Mock, patch
 
@@ -49,6 +51,54 @@ class ReviewGuards(unittest.TestCase):
         for state in [start, end]:
             state['consumer_detail'][0]['config']['filter_subject'] = 'entity.some'
         self.assertIsNone(analyze.conservation(start, end, 10)['completed_consumer_work_per_s'])
+
+    def test_offered_load_tracks_changing_population_and_flags_missing_frames(self):
+        rows = [{'at': tick / 30, 'tick': tick, 'population': 200 + tick // 30}
+                for tick in range(1, 61)]
+        actual = analyze.offered_from_frames(rows, 0, 2.01, 30, 1)
+        self.assertEqual(actual['observed_offered_entities'], 403)
+        self.assertEqual(actual['observed_snapshot_offers'], 2)
+        missing = analyze.offered_from_frames(rows[:29] + rows[30:], 0, 2.01, 30, 1)
+        self.assertIsNone(missing['inferred_offered_entities_per_s'])
+        self.assertTrue(missing['ineligible_reasons'])
+
+    def test_websocket_observer_recovers_and_logs_disconnect(self):
+        observer = Path(__file__).with_name('websocket.mjs').resolve().as_uri()
+        code = """let count=0;let finish;const done=new Promise(r=>finish=r);
+        global.WebSocket=class {
+          constructor(){count++;queueMicrotask(()=>{this.onopen?.();
+            if(count===1)this.onclose({code:1006,reason:'test disconnect'});
+            else{this.onmessage({data:JSON.stringify({tick:42,t:1,boids:[]})});finish();}});}
+          close(){this.onclose({code:1000,reason:'stop'});}
+        };
+        await import(MODULE);await done;if(count!==2)throw Error('no reconnect');process.exit(0);
+        """.replace('MODULE', json.dumps(observer))
+        result = subprocess.run(['node', '--input-type=module', '-e', code],
+                                capture_output=True, text=True, timeout=4, check=True)
+        self.assertIn('"tick":42', result.stdout)
+        self.assertIn('closed 1006 test disconnect', result.stderr)
+        self.assertEqual(result.stderr.count('connected'), 2)
+
+    def test_steady_activation_requires_full_public_readiness(self):
+        statuses = {name: {'enabled': True, 'state': 'started', 'healthy': True}
+                    for name in load.REQUIRED_COMPONENTS}
+        text = 'boids_lifecycle_spawns_total 200\nboids_lifecycle_culls_total 0\n'
+        text += 'boids_graph_dial_hz 0\nboids_graph_entities_published_total 0\n'
+        for provider in ('graph_ingest', 'graph_index'):
+            for suffix, value in [('bootstrap_complete', 1), ('readiness', 1), ('lag', 0)]:
+                text += f'semstreams_{provider}_{suffix} {value}\n'
+        metrics = load.exposition(text)
+        queue = {'outstanding': 0}
+        self.assertEqual(load.readiness_failures(statuses, metrics, queue, 200), [])
+        for mutate in [lambda s,m,q: s['graph-ingest'].update(state='initialized'),
+                       lambda s,m,q: s['graph-index'].update(healthy=False),
+                       lambda s,m,q: m.pop('semstreams_graph_index_bootstrap_complete'),
+                       lambda s,m,q: m.update(boids_lifecycle_spawns_total=[({}, 199)]),
+                       lambda s,m,q: m.update(boids_lifecycle_culls_total=[({}, 1)]),
+                       lambda s,m,q: q.update(outstanding=1)]:
+            ss, mm, qq = copy.deepcopy(statuses), copy.deepcopy(metrics), copy.deepcopy(queue)
+            mutate(ss, mm, qq)
+            self.assertTrue(load.readiness_failures(ss, mm, qq, 200))
 
     def test_cleanup_keeps_app_and_broker_cleanup_after_observer_failures(self):
         app = Mock()

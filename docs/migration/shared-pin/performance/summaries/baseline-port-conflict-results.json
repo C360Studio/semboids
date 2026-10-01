@@ -1,0 +1,23 @@
+[
+  {
+    "probe": "occupied_listeners",
+    "utc": "2026-10-01T11:51:05Z",
+    "ipv4": "('0.0.0.0', 48080)",
+    "ipv6": "('::', 48080, 0, 0)",
+    "ipv6_only": 1
+  },
+  {
+    "probe": "failed_startup_port_conflict",
+    "utc": "2026-10-01T11:51:30Z",
+    "passed": false,
+    "error": "did not exit within 25 seconds",
+    "explicit_bind_error": true
+  },
+  {
+    "probe": "failed_startup_forced_cancellation",
+    "utc": "2026-10-01T11:51:30Z",
+    "returncode": 0,
+    "seconds": 0.01876225008163601,
+    "forced_kill": false
+  }
+]

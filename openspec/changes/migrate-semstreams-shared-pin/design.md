@@ -180,12 +180,12 @@ These are SemBoids requirements for a later consumer contract, not capabilities 
 | Capability to admit | Required scope and proving workload |
 | --- | --- |
 | Graph mutation/ingest | Batched Graphable lane, registered births, partial predicate ownership, exact reads |
-| Relationship correctness | Full replacement, empty reconcile, fenced delete, derived-index convergence |
+| Relationship correctness | Full replacement, empty reconcile, fenced delete, applied-input barrier, index convergence |
 | Rules | Message-triggered conditions, substitution, publish actions, lifecycle actions, live activation |
 | Lifecycle | Seed/spawn active, conditional transitions, independent writers, explicit ambiguous outcomes |
 | Clustering | Retained graph-index adjacency and LPA/community lifecycle consumed by the graph pane |
 | Transport | Core-NATS frames/events, JetStream ACK contract, bounded WebSocket clients, graphview watches |
-| Host/operations | Config/effective identity, sealed boot, direct control injection, cancel/drain/join/restart |
+| Host/operations | Effective identity, sealed boot, mutation-provider readiness, controls, cancel/drain/join/restart |
 | Measurement | Stable throughput/backlog/latency/drop semantics, profiling, required dependency closure |
 
 Each admitted row needs a named SemEngine owner, keep/change/defer ruling, source provenance at the frozen
@@ -193,3 +193,22 @@ pin, transitive and test-only closure, side effects, critical tests and workload
 first-consumer contract cannot silently admit SemBoids' additional rules/lifecycle/clustering/transport
 closure. Simulation semantics stay in SemBoids. Until the separate contract and complete workload qualify,
 this migration and its reference runs use SemStreams exclusively.
+
+## D8: Observed cold-start contract gap
+
+The first target 30Hz trial failed before measurement: simulator requests reached graph handlers during their
+startup window, the shared NATS circuit breaker opened, and graph-index could not create `GRAPH_STATUS` despite
+a healthy broker. The component manager starts `StoreProvider` components first, then all ordinary components
+concurrently. Its boot-resource dependencies do not provide general component ordering.
+
+Independent review rejected a query-only readiness workaround. Graph-ingest registers query handlers before
+mutation handlers; a successful query does not prove mutation readiness. Its public readiness reading also
+lacks a producer boot identity or KV revision, so a recent retained envelope can satisfy a fast restart.
+No application-side readiness or recovery framework is added. This remains a qualification blocker at the
+frozen pin, separately from delayed-snapshot resurrection. The reviewed provider contract request is
+[SemStreams #1447](https://github.com/C360Studio/semstreams/issues/1447).
+
+Steady-state comparisons may start both pins at zero snapshot cadence on fresh isolated stores, require
+actual complete startup and provider progress, then activate the identical public snapshot dial before the
+same warmup and measured windows. Activation evidence and the original cold-start failure must be retained.
+Passing that separate experiment does not qualify startup at the requested load or retained-state readiness.

@@ -21,7 +21,8 @@ for profile, hz, churn in [('stable', '30', '0'), ('churn', '1', '1')]:
         command = [sys.executable, str(Path(__file__).with_name('load.py')), '--binary', str(binary),
                    '--source', str(source), '--label', name, '--out', str(a.out / name),
                    '--profile', profile, '--hz', hz, '--churn-hz', churn,
-                   '--boids', '200', '--seed', '1', '--warmup', '20', '--window', '45']
+                   '--boids', '200', '--seed', '1', '--warmup', '20', '--window', '45',
+                   '--activate-after-readiness']
         print('START ' + name, flush=True)
         subprocess.run(command, check=True)
         subprocess.run([sys.executable, str(Path(__file__).with_name('analyze.py')), str(a.out / name)],

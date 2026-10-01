@@ -1,0 +1,92 @@
+{
+  "accepted_stream_messages": 4000,
+  "accepted_stream_per_s": 199.9600394952047,
+  "no_retention_loss": true,
+  "completed_consumer_work_per_s": null,
+  "ineligible_reasons": [
+    "start: finite delivery limit can retire unprocessed work",
+    "end: finite delivery limit can retire unprocessed work"
+  ],
+  "ack_pending_start": 0,
+  "ack_pending_end": 0,
+  "redelivered_start": 0,
+  "redelivered_end": 0,
+  "measurement_warn_error_events": {},
+  "critical_counters_start_end": {
+    "boids_graph_entities_published_total": {
+      "start": 400.0,
+      "end": 4400.0
+    },
+    "boids_graph_snapshots_published_total": {
+      "start": 2.0,
+      "end": 22.0
+    },
+    "boids_graph_snapshots_dropped_total": {
+      "start": 0.0,
+      "end": 0.0
+    },
+    "semstreams_datamanager_entities_updated_total": {
+      "start": 600.0,
+      "end": 4600.0
+    },
+    "boids_graph_neighbor_clear_failures_total": {
+      "start": 0.0,
+      "end": 0.0
+    },
+    "boids_lifecycle_reclaim_failures_total": {
+      "start": 0.0,
+      "end": 0.0
+    },
+    "boids_lifecycle_spawns_total": {
+      "start": 200.0,
+      "end": 200.0
+    },
+    "boids_lifecycle_culls_total": {
+      "start": 0.0,
+      "end": 0.0
+    },
+    "semstreams_graph_ingest_mutation_rejections_total": {
+      "start": null,
+      "end": null
+    },
+    "semstreams_graph_ingest_predicate_contract_rejections_total": {
+      "start": null,
+      "end": null
+    },
+    "semstreams_graph_ingest_entity_state_contract_rejections_total": {
+      "start": null,
+      "end": null
+    },
+    "semstreams_graph_index_events_processed_total": {
+      "start": 320.0,
+      "end": 4414.0
+    },
+    "semstreams_websocket_messages_received_total": {
+      "start": 32.0,
+      "end": 664.0
+    },
+    "semstreams_websocket_messages_sent_total": {
+      "start": 54.0,
+      "end": 687.0
+    },
+    "semstreams_websocket_errors_total": {
+      "start": null,
+      "end": 1.0
+    },
+    "semstreams_graph_ingest_poisoned_entities": {
+      "start": 0.0,
+      "end": 0.0
+    }
+  },
+  "websocket_error_series_end": [
+    [
+      {
+        "error_type": "client_timeout"
+      },
+      1.0
+    ]
+  ],
+  "physics_hashes": {},
+  "websocket_max_gap_seconds": 5.0,
+  "websocket_max_age_ms": 9772.0
+}

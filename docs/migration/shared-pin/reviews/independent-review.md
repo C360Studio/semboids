@@ -1,10 +1,13 @@
 # Independent migration review
 
 Reviewer: separate review agent, with no ownership of production code, tests, or the measurement harness.
-Date: 2026-10-01. Status: **HOLD — qualification is incomplete and a required reclamation invariant is red.**
-The production snapshot has been reviewed after both owners declared it frozen. Final performance and
-operational evidence is still pending. Exact measurement artifact hashes are in
-`initial-measurement-SHA256SUMS.json`; reviewed source hashes are in `source-SHA256SUMS.json`.
+Date: 2026-10-01. Status: **HOLD — delayed-snapshot reclamation and high-load cold startup are unqualified.**
+The first production snapshot was reviewed after both owners declared it frozen. Review reopened after an
+isolated target load run failed during startup; the supported contract audit led to an explicit blocker and
+no production workaround. The same frozen production binary remains the subject of browser and load evidence.
+Corrected WebSocket observer coverage was used for all eight final matched runs. Historical artifact hashes
+are in `initial-measurement-SHA256SUMS.json` and `source-SHA256SUMS.json`; the UTC test correction and current
+reviewed source identities are recorded separately in `final-source-SHA256SUMS.json`.
 
 ## Required correctness blocker
 
@@ -46,6 +49,11 @@ when WebSocket wait or frame socket close throws; injected failures prove applic
 still run. Live probes now require strictly advancing ticks, population 30 in every observed row, and graph
 sequence progress. Fixed harness hashes are in `measurement-remediation-SHA256SUMS.json`.
 
+A ninth regression test subsequently passed after adding population-weighted offered-load inference.
+The analyzer sums physics-frame population at the same snapshot-eligible ticks used by the producer,
+returns a null rate on observed tick gaps/reordering, and discloses receipt-versus-scrape boundary skew.
+This is an inferred offer count, separate from whole-batch ACKed publication and committed entity writes.
+
 ## Evidence and accounting audit
 
 - Independently ran all three Python harness regression tests: pass. They cover absent series, ACK-pending
@@ -67,6 +75,10 @@ sequence progress. Fixed harness hashes are in `measurement-remediation-SHA256SU
   alive was not a startup defect. The initial review accepted that erroneous classification and withdraws
   it explicitly. A corrected dual-family probe must supply a real address-in-use error before comparing
   failure behavior. The startup SIGTERM and separate slow-socket evidence remain independent of this error.
+- Corrected `baseline-port-conflict` and `target-port-conflict` probes now satisfy that requirement. Both
+  hold IPv4 and IPv6 listeners and show explicit bind errors in the application logs. The target exits 1
+  in 0.175s; the baseline remains alive beyond 25s and then receives SIGTERM. This supports a real target
+  failed-start improvement with valid evidence, without rehabilitating the earlier invalid probes.
 - The slow socket probe supports physics isolation and exposes ordinary-client latency; it does not claim
   a universal transport drop count or healthy ordinary-client latency.
 - Each load run creates fresh NATS storage and uses the same immutable image digest; process/binary hashes,
@@ -81,8 +93,8 @@ sequence progress. Fixed harness hashes are in `measurement-remediation-SHA256SU
 
 ## Frozen production and test review
 
-No additional production-code defect was found in the frozen snapshot. This statement is bounded by the
-listed source hashes; it is not migration acceptance while the required qualification remains red.
+No additional production-code defect was found in the frozen source beyond the disclosed reclamation and
+startup contract gaps. This statement is bounded by the listed source hashes and is not migration acceptance.
 
 - `internal/flock`, steering, tracker, frame/population staging, publisher, probe, reclaimer, and drain-pool
   production bodies are unchanged. Seeded physics and sequential batched publications retain their original
@@ -120,7 +132,39 @@ revive, unit race, and Linux/amd64 build. Initial target gate failures remain se
 fixture omitted required payload registration, the strengthened index fixture timed out, and the original
 physics budget test failed under the race-plus-coverage run. Final pass must not erase those observations.
 The debug fixture registration correction is appropriate and does not change product semantics. Detailed
-fixture/performance attribution in the target evidence is still being prepared.
+fixture/performance attribution in `target/README.md` has now been reviewed: the index fixture assumed
+identity appeared only in values, whereas incoming indexes identify it in composite keys. The correction
+accepts the native key/value representation while preserving both pre-removal and post-removal assertions.
+The ordinary final race suite records 215 test/subtest passes; the unit suite records 197, both without skips.
+
+Hosted CI then exposed a test-only time-zone portability bug. Independent review approves the correction:
+boid and zone round trips now cover UTC, Local, and a fixed offset, compare the exact timestamp instant with
+`Time.Equal`, and retain full equality checks for every remaining triple field. The earlier reflection check
+compared `time.Location` representation after JSON decoding. The local UTC failing-first and passing logs are
+retained; production payloads do not change. The final UTC unit race suite reports 203 passes and the uncached,
+default-parallel real-NATS race suite 221, with no skips. Native/Linux builds, both vet modes, gofmt and revive
+also pass in `gate-status-utc.json`. These ordinary gates still exclude the deliberately red qualification tag.
+The original measured binary remains `4153b224f0a204f2d5349ac0b167288d6ca1223b3082f6ac2368534b34e7f625`;
+the compilation revalidation binary has a different embedded VCS stamp, documented in `rebuild-metadata.diff`.
+
+## Dependency closure review
+
+Independently recounted the retained TSVs: production package entries change 517 to 514, SemStreams packages
+60 to 62, reached external modules 67 to 64, and selected modules 298 to 303. The target explicitly retains
+testcontainers/Docker plus agentic/provider reachability. The module selection delta distinguishes selected
+dependencies from production-reachable modules; it does not claim that added selected modules are linked
+into the executable. Directory line counts intentionally include alternate-platform/tag files, and the
+documentation distinguishes them from binary size or an approved SemEngine extraction boundary.
+
+The target's two source-size numbers have different scopes: 131,061 lines in build-selected non-test GoFiles
+versus 131,066 lines across all non-test files in the selected package directories. Independently traced the
+five-line difference to `processor/graph-index/race_enabled.go`, which ordinary Go-list ignores while selecting
+`race_disabled.go`. The final machine summary preserves both historical values and explicitly labels each
+method and the exact five-line difference; this resolves the documentation finding.
+
+The shared-pin authority and exact baseline/target identities match `go.mod`, recorded module provenance,
+and the migration design. The future SemEngine matrix requires explicit graph, relationship, rules,
+lifecycle, clustering, transport, and host admission; the change does not cut over the consumer.
 
 ## Browser evidence review
 
@@ -136,9 +180,90 @@ The final browser binary is SHA-256
 The record explicitly avoids claiming graph/physics population equality because culling remained enabled.
 No UI production code changed. Browser evidence hashes are retained in `browser/SHA256SUMS.json`.
 
-## Final review still required
+## Cold-start contract and experiment scope
 
-Review final target operational probes, detailed target gate attribution, dependency closure, and repeated
-interleaved results when their artifacts are frozen. Preserve exact reviewed hashes and dispositions.
-Do not promote this staged review to full migration acceptance while the reclamation invariant is red.
-No competing Go or Docker workload was started by this reviewer during measured runs.
+The first final target load attempt exposed a bootstrap ordering failure: sim lifecycle/snapshot work reached
+the broker before graph providers were ready, a circuit breaker opened, and graph-index startup failed while
+the broker remained healthy. This raw run is retained. It establishes an observed target failure, not a
+beta.160-to-target regression or a throughput comparison.
+
+The frozen source supports `RequestReadyClassified` for first reads and avoids charging expected readiness
+misses to the shared breaker. It cannot establish the complete provider barrier required here: graph-ingest
+installs query handlers before mutation handlers, and query admission checks entity bootstrap, not completion
+of mutation registration. The public retained readiness envelope lacks a producer boot identity or KV revision;
+a value less than 15 seconds old can belong to the prior process. The component manager orders StoreProviders
+before concurrently starting ordinary components, without a general component dependency barrier.
+
+The outcome of closed SemStreams #874 also provides no hidden startup retry: the canonical mutation client
+sends exactly one `RequestClassified` request, classifies no responders as unavailable and post-send transport
+ambiguity as commit unknown. Retry policy remains explicit and caller-owned. Independent review rejects a
+query-only gate as a full startup fix, approves recording this gap as [SemStreams #1447](https://github.com/C360Studio/semstreams/issues/1447),
+and approves design D7/D8's explicit future SemEngine admission requirements. No app-side provider framework,
+arbitrary delay, mutation probe, private tombstone or ambiguity retry is justified by this migration.
+
+The separate steady-state harness is approved for fresh isolated brokers only. Both pins start at snapshot
+cadence zero. Before activating load it requires all six required components enabled, started and healthy;
+200 successful seed creates and no culls; complete/ready graph-ingest and graph-index with zero lag; zero
+pending plus ACK-pending consumer work; and zero graph publications with the dial still zero. Missing values
+fail admission. Every poll is retained. The public dial activation must return HTTP 200 and the requested
+cadence before the identical warmup and measurement windows begin. This protocol does not qualify direct
+30Hz cold startup or retained-state readiness. The eleventh harness regression test exercises partial startup,
+missing metrics, unhealthy components, missing seed creates, culls and outstanding work. After the campaign
+released its exclusive window, this reviewer independently ran all eleven harness tests: pass.
+
+## Final performance and evidence review
+
+The original WebSocket observer closed at roughly 60 seconds with code 1006, leaving the final part of a
+measurement window uncovered. This required exposing disconnect/reconnect intervals and preserving tick gaps
+across them, followed by rerunning both revisions with the corrected instrument.
+
+The instrument correction is now reviewed: a tenth regression test explicitly drives disconnect, reconnect,
+and resumed frame delivery. All ten tests pass. The observer timestamps close/error/connect events, retries
+after 500ms, and retains tick continuity. The analyzer compares received WebSocket ticks against NATS frames
+over the full measurement window, so an absent tail no longer appears lossless merely because its internal
+sequence has no gaps. Reconnect durations and raw events remain visible. This measures a windowed delivery
+deficit, not universal permanent loss. The aborted cohort remains excluded from matched comparisons.
+
+Independently recomputed all eight selected runs from raw evidence, without calling the production analyzer:
+Prometheus committed-write deltas, NATS accepted stream sequences, pending plus ACK-pending backlog, offered
+population at eligible ticks, histogram window p50/p99, physics FPS, snapshot drops, and whole-window WebSocket
+tick deficits. They match the final aggregate. `independent-load-accounting.json` retains the calculations and
+104 input-file hashes. The archive has all 104 matching members. Its SHA-256 is
+`b1322f5f8dc30c45bc32768a1155a076b83cb2c91c34502416944005a5542401` (3,660,867 bytes, 21 run directories).
+The separate exclusion ledger distinguishes the aborted root-level cohort from selected `steady-state/` runs;
+invalid original port and observer assertions remain withdrawn rather than silently rewritten.
+
+Manifest timestamps confirm A/B/A/B stable runs followed by A/B/A/B churn runs, with the same exact two binary
+hashes, immutable NATS image, seed, initial population, tick rate, per-profile zones/cadence/churn, warmup and
+window. Every admission and dial exchange succeeded. All eight processes exited zero without forced kills.
+The six common sampled stable-state hashes at ticks 300, 600, 900, 1200, 1500 and 1800 match in all four runs;
+this supports those checkpoints, not all-frame identity or deterministic asynchronous churn.
+
+Stable target/baseline committed-write ratios are 0.713 and 1.085. Their reversed direction and within-pin
+variance do not justify a migration speedup or slowdown. Both pins accumulate large backlogs under roughly
+6,000 offered entities/s, while physics stays near 30Hz without missing observed NATS ticks. The first pair
+drops four baseline and three target snapshot offers; the second drops zero. Churn offers roughly 409 entities/s,
+but its population and cull counts differ: observed culls are 0/1/0/6. The report correctly withholds causal
+attribution for that difference and does not present sparse culls as sustained reclamation qualification.
+Finite delivery limits leave consumer-completion inference null in every run; committed writes include
+lifecycle and other mutation paths and remain a distinct observation.
+
+Every selected run reproduces the same receive-only WebSocket disconnect/reconnect, a 15-tick window deficit,
+and approximately 0.5-second reconnect. Source read-deadline behavior at both pins supports that shared
+limitation. Separate slow-client observations support physics isolation while exposing ordinary-client latency;
+they do not enter load ratios. Rule firing-cap warnings remain visible and are distinct from snapshot/frame
+drops. The final measurement report, main summary, metric contract and exclusion ledger respect these limits.
+
+Final source and evidence identities are in `final-source-SHA256SUMS.json` and
+`final-evidence-SHA256SUMS.json`. The reviewed hosted CI record is green for source head
+`58d9b7fe4007c65732c9aa6661aad85feb5f8161`; ordinary CI does not execute the failing stronger reclamation tag.
+No competing Go, Docker, or harness test workload was started by this reviewer during measured runs.
+
+## Independent disposition
+
+**Approve the reviewed compatibility implementation, test corrections, dependency inventory and bounded evidence
+for the draft migration PR. Hold migration/workload acceptance** on the observed delayed-snapshot resurrection
+([#1444](https://github.com/C360Studio/semstreams/issues/1444)) and high-load cold-start contract
+([#1447](https://github.com/C360Studio/semstreams/issues/1447)). No further local implementation workaround is
+approved. The proposal stays open, the exact frozen pin stays unchanged, and SemEngine requires the separately
+owned consumer contract and workload admission recorded in design D7/D8.

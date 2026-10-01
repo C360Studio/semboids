@@ -109,6 +109,27 @@ cull enabled, graph 1Hz, churn 1Hz (five boids per wave). Population changes are
 accepted entity volume must be reported alongside write rate. Changing population makes a raw throughput ratio
 insufficient evidence of a speedup.
 
+## Separate steady-state admission
+
+Direct target startup with snapshots already at 30Hz failed before measurement. The final comparison deliberately
+does not qualify that startup path. Both pins start fresh stores at graph 0Hz, with churn 0Hz and culling disabled.
+The harness requires all six components to report enabled, started and healthy; 200 completed lifecycle creates;
+zero observed culls; graph-ingest and graph-index bootstrap-complete/readiness gauges of 1 and lag of 0; zero
+snapshot publications; and zero authoritative pending plus ACK-pending work. Missing evidence fails admission.
+Every readiness poll and its raw metrics/server state are retained.
+
+Only after this observed barrier does the harness PUT the requested graph dial, require HTTP 200 and the exact dial
+reply, enable culling for the churn profile, and PUT the requested churn rate. Each run then has the same 20-second
+warmup and 45-second measurement. `load-activation.json` preserves the graph request/reply and timestamps; process
+logs retain control changes. The barrier is specific to these fresh instances and does not establish a supported
+mutation-readiness contract for cold 30Hz startup or retained-state restart.
+
+All runs begin with 200 successful seed registrations and no observed culls. Zone steering can evolve during the
+variable readiness wait, and lifecycle/rule delivery is asynchronous. Identical seed and dial settings therefore do
+not imply identical churn populations or zone timing. `analyze.py` infers snapshot offers from the actual population
+at ticks selected by the producer's cadence calculation, separately from ACKed and committed work; missing frame
+continuity makes this inference unavailable. Receipt-versus-scrape boundaries can shift one snapshot.
+
 ## Transport qualification
 
 Both pins increment `semstreams_websocket_messages_sent_total` after successful socket writes and

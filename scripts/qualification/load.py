@@ -38,11 +38,13 @@ COUNTERS = {
 }
 
 
-def fetch(url, body=None):
+def fetch(url, body=None, exchange=None):
     data = None if body is None else json.dumps(body).encode()
     req = urllib.request.Request(url, data=data, method='GET' if body is None else 'PUT',
                                  headers={'Content-Type': 'application/json'})
     with urllib.request.urlopen(req, timeout=8) as response:
+        if exchange is not None:
+            exchange['http_status'] = response.status
         return response.read().decode()
 
 
@@ -156,6 +158,59 @@ def save(path, value):
     path.write_text(json.dumps(value, indent=2, allow_nan=False) + '\n')
 
 
+REQUIRED_COMPONENTS = ('sim', 'graph-ingest', 'graph-index', 'graph-clustering',
+                       'rule-processor', 'frames-websocket')
+
+
+def readiness_failures(statuses, metrics, queue, boids):
+    failures = []
+    for name in REQUIRED_COMPONENTS:
+        status = statuses.get(name, {})
+        if status.get('enabled') is not True or status.get('state') != 'started' or status.get('healthy') is not True:
+            failures.append(name + ': not enabled/started/healthy')
+    expected = {'boids_lifecycle_spawns_total': boids, 'boids_lifecycle_culls_total': 0,
+                'boids_graph_dial_hz': 0, 'boids_graph_entities_published_total': 0}
+    for provider in ('graph_ingest', 'graph_index'):
+        expected.update({f'semstreams_{provider}_bootstrap_complete': 1,
+                         f'semstreams_{provider}_readiness': 1, f'semstreams_{provider}_lag': 0})
+    for name, wanted in expected.items():
+        actual = total(metrics, name)
+        if actual != wanted:
+            failures.append(f'{name}: observed {actual}, require {wanted}')
+    if queue.get('outstanding') != 0:
+        failures.append('ENTITY consumer has outstanding or unknown work')
+    return failures
+
+
+def wait_full_readiness(out, api, metrics_url, monitor, process, boids):
+    """Admission gate only for this fresh-store 0Hz steady-state experiment."""
+    deadline = time.monotonic() + 60
+    index = 0
+    while time.monotonic() < deadline:
+        if process.poll() is not None:
+            raise RuntimeError(f'process exited during readiness admission: {process.returncode}')
+        at = time.time()
+        try:
+            statuses = {name: json.loads(fetch(api.rsplit('/', 1)[0] + '/components/status/' + name))
+                        for name in REQUIRED_COMPONENTS}
+            raw = fetch(metrics_url)
+            jsz = json.loads(fetch(monitor + '/jsz?accounts=true&streams=true&consumers=true&config=true'))
+            queue = consumer(jsz)
+            failures = readiness_failures(statuses, exposition(raw), queue, boids)
+            (out / f'readiness-{index:03d}.prom').write_text(raw)
+            save(out / f'readiness-{index:03d}-jsz.json', jsz)
+            snapshot = {'at': at, 'statuses': statuses, 'consumer': queue, 'failures': failures}
+        except Exception as error:
+            failures = [str(error)]
+            snapshot = {'at': at, 'failures': failures}
+        save(out / f'readiness-{index:03d}.json', snapshot)
+        if not failures:
+            return snapshot
+        index += 1
+        time.sleep(.5)
+    raise RuntimeError('full fresh-store readiness not established within 60 seconds; see readiness snapshots')
+
+
 def cleanup_resources(out, container, process, frames, ws_process, slow):
     """Every owned resource gets a cleanup attempt despite observer failures."""
     errors = []
@@ -212,6 +267,8 @@ def main():
     parser.add_argument('--label', required=True)
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--profile', choices=['stable', 'churn'], default='stable')
+    parser.add_argument('--activate-after-readiness', action='store_true',
+                        help='start snapshots at 0Hz; admit steady-state workload only after public readiness')
     parser.add_argument('--slow-client', action='store_true', help='separate transport probe: connect one non-reading client')
     parser.add_argument('--hz', type=float, default=30)
     parser.add_argument('--churn-hz', type=float, default=0)
@@ -232,7 +289,8 @@ def main():
     cfg['services']['service-manager']['config']['http_port'] = args.api_port
     cfg['services']['metrics']['config']['port'] = args.metrics_port
     sim = cfg['components']['sim']['config']
-    sim.update(boids=args.boids, seed=args.seed, tick_hz=30, graph_hz=args.hz)
+    sim.update(boids=args.boids, seed=args.seed, tick_hz=30,
+               graph_hz=0 if args.activate_after_readiness else args.hz)
     if args.profile == 'stable':
         sim['zones'] = []
     rule_cfg = cfg['components']['rule-processor']['config']
@@ -275,6 +333,11 @@ def main():
                                         '--log-format', 'json'], cwd=args.source, env=env,
                                        stdout=log, stderr=subprocess.STDOUT)
             wait_ready(api + '/rules', process)
+            if args.activate_after_readiness:
+                fetch(api + '/rules/cull', {'enabled': False})
+                fetch(api + '/population/churn-hz', {'hz': 0})
+                ready = wait_full_readiness(args.out, api, metrics_url, monitor, process, args.boids)
+                save(args.out / 'admitted-readiness.json', ready)
             frames = Frames(args.nats_port)
             with (args.out / 'websocket-frames.jsonl').open('w') as wslog, (args.out / 'websocket.log').open('w') as wserr:
                 ws_process = subprocess.Popen(['node', str(Path(__file__).with_name('websocket.mjs').resolve()),
@@ -296,6 +359,15 @@ def main():
                 (args.out / 'slow-client-handshake.txt').write_bytes(headers)
                 if b'101 Switching Protocols' not in headers:
                     raise RuntimeError('slow client upgrade failed')
+            if args.activate_after_readiness:
+                before_put = time.time()
+                exchange = {}
+                reply = json.loads(fetch(api + '/graph/hz', {'hz': args.hz}, exchange))
+                save(args.out / 'load-activation.json', {'before_put': before_put, 'after_put': time.time(),
+                     'request': {'hz': args.hz}, 'reply': reply, **exchange,
+                     'protocol': 'fresh-store 0Hz startup, public readiness, then workload activation'})
+                if exchange.get('http_status') != 200 or reply.get('hz') != args.hz:
+                    raise RuntimeError('dial activation not acknowledged with requested value')
             fetch(api + '/rules/cull', {'enabled': args.profile == 'churn'})
             fetch(api + '/population/churn-hz', {'hz': args.churn_hz})
             save(args.out / 'rules.json', json.loads(fetch(api + '/rules')))
@@ -332,7 +404,9 @@ def main():
                        'population_end': measured_frames[-1]['population'] if measured_frames else None,
                        'e2e_p50': quantile(start, end, 'boids_graph_e2e_latency_seconds', 0.5),
                        'e2e_p99': quantile(start, end, 'boids_graph_e2e_latency_seconds', 0.99),
-                       'websocket_fps': len(ws_measured) / elapsed, 'websocket_missing_ticks': ws_gaps,
+                       'websocket_fps': len(ws_measured) / elapsed,
+                       'websocket_missing_ticks': len({r['tick'] for r in measured_frames} - {r['tick'] for r in ws_measured}),
+                       'websocket_internal_sequence_gaps': ws_gaps,
                        'websocket_max_gap_seconds': max((b['at']-a['at'] for a,b in zip(ws_measured, ws_measured[1:])), default=None),
                        'websocket_max_delivery_age_ms': max((row['at']*1000-row['frame_timestamp_ms'] for row in ws_measured), default=None),
                        'load_end': os.getloadavg(), 'frame_reader_error': frames.error}

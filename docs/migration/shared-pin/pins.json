@@ -23,5 +23,5 @@
   "comparison_boundary": "SemStreams exclusively; no SemEngine cutover or qualification claim",
   "performance_broker": "Recorded by each isolated performance run manifest; baseline integration fixture uses nats:2.14-alpine",
   "toolchain": "go1.26.4 darwin/arm64",
-  "target_qualification": "pending"
+  "target_qualification": "HOLD: delayed pre-cull snapshot resurrection on both pins; target cold-start provider-readiness failure. Ordinary correctness gates pass; steady-state workload comparisons recorded separately."
 }

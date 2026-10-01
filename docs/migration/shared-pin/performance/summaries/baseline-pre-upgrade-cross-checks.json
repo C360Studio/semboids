@@ -1,0 +1,83 @@
+{
+  "accepted_stream_messages": 270000,
+  "accepted_stream_per_s": 5999.480070031985,
+  "no_retention_loss": true,
+  "completed_consumer_work_per_s": null,
+  "ineligible_reasons": [
+    "start: finite delivery limit can retire unprocessed work",
+    "end: finite delivery limit can retire unprocessed work"
+  ],
+  "ack_pending_start": 712,
+  "ack_pending_end": 694,
+  "redelivered_start": 0,
+  "redelivered_end": 0,
+  "measurement_warn_error_events": {},
+  "critical_counters_start_end": {
+    "boids_graph_entities_published_total": {
+      "start": 120600.0,
+      "end": 390600.0
+    },
+    "boids_graph_snapshots_published_total": {
+      "start": 603.0,
+      "end": 1953.0
+    },
+    "boids_graph_snapshots_dropped_total": {
+      "start": 1.0,
+      "end": 1.0
+    },
+    "semstreams_datamanager_entities_updated_total": {
+      "start": 48951.0,
+      "end": 155894.0
+    },
+    "boids_graph_neighbor_clear_failures_total": {
+      "start": 0.0,
+      "end": 0.0
+    },
+    "boids_lifecycle_reclaim_failures_total": {
+      "start": 0.0,
+      "end": 0.0
+    },
+    "boids_lifecycle_spawns_total": {
+      "start": 200.0,
+      "end": 200.0
+    },
+    "boids_lifecycle_culls_total": {
+      "start": 0.0,
+      "end": 0.0
+    },
+    "semstreams_graph_ingest_mutation_rejections_total": {
+      "start": 16.0,
+      "end": 16.0
+    },
+    "semstreams_graph_ingest_predicate_contract_rejections_total": {
+      "start": null,
+      "end": null
+    },
+    "semstreams_graph_ingest_entity_state_contract_rejections_total": {
+      "start": null,
+      "end": null
+    },
+    "semstreams_graph_index_events_processed_total": {
+      "start": 2722.0,
+      "end": 9055.0
+    },
+    "semstreams_websocket_messages_received_total": {
+      "start": 604.0,
+      "end": 1954.0
+    },
+    "semstreams_websocket_messages_sent_total": {
+      "start": null,
+      "end": null
+    },
+    "semstreams_websocket_errors_total": {
+      "start": null,
+      "end": null
+    },
+    "semstreams_graph_ingest_poisoned_entities": {
+      "start": 0.0,
+      "end": 0.0
+    }
+  },
+  "websocket_error_series_end": null,
+  "physics_hashes": {}
+}

@@ -11,4 +11,10 @@ America/Chicago; the runner used UTC. This is a portability defect in the new te
 changed instant or lost payload fact. The correction must compare time instants while retaining exact
 checks of every other fact, and explicitly reproduce the UTC case.
 
-Later runs and their exact heads are recorded here separately; this failed attempt is preserved.
+The corrected head, `58d9b7fe4007c65732c9aa6661aad85feb5f8161`, passed
+[run 36859818470](https://github.com/C360Studio/semboids/actions/runs/36859818470): build, lint, race unit tests,
+real-NATS race integration, and the aggregate status check all succeeded. [The captured job state](corrected-run.json)
+records that exact head. Local revalidation under UTC also passed 203 unit and 221 default-parallel integration
+test/subtest checks. Neither ordinary CI run invokes the deliberately failing stronger reclamation qualification.
+
+The first failed attempt remains preserved in `first-run.json` and `first-failure.log`.

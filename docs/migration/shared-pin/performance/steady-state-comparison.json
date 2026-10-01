@@ -1,0 +1,636 @@
+{
+  "selected_runs": [
+    "baseline-stable-1",
+    "target-stable-1",
+    "baseline-stable-2",
+    "target-stable-2",
+    "baseline-churn-1",
+    "target-churn-1",
+    "baseline-churn-2",
+    "target-churn-2"
+  ],
+  "runs": [
+    {
+      "run": "baseline-stable-1",
+      "binary_sha256": "3167218148a14393aa46efea138c26f53faa05d0ab58bacc367b3d362b49b6e4",
+      "elapsed_seconds": 45.00551199913025,
+      "activation": {
+        "before_put": 1790856559.614313,
+        "after_put": 1790856559.615328,
+        "request": {
+          "hz": 30.0
+        },
+        "reply": {
+          "hz": 30
+        },
+        "http_status": 200,
+        "protocol": "fresh-store 0Hz startup, public readiness, then workload activation"
+      },
+      "admitted_at": 1790856559.5978081,
+      "offered_per_s": 5999.265156792747,
+      "accepted_per_s": 5984.7113839123795,
+      "committed_writes_per_s": 1386.1635437278353,
+      "outstanding_start": 76959,
+      "outstanding_end": 283926,
+      "ack_pending_start": 882,
+      "ack_pending_end": 753,
+      "population_start": 200,
+      "population_end": 200,
+      "population_min": 200,
+      "population_max": 200,
+      "physics_fps": 29.996325783963737,
+      "frame_max_gap_ms": 124.16696548461914,
+      "missing_nats_ticks": 0,
+      "snapshot_drops": 4.0,
+      "spawned": 0.0,
+      "culled": 0.0,
+      "e2e_p50": {
+        "seconds": 23.13125703564728,
+        "lower_bound": false,
+        "observations": 6238.0
+      },
+      "e2e_p99": {
+        "seconds": 62.19055345335515,
+        "lower_bound": false,
+        "observations": 6238.0
+      },
+      "ws_missing_ticks": 15,
+      "ws_max_gap_seconds": 0.5390000343322754,
+      "ws_max_age_ms": 137.0,
+      "ws_reconnect_seconds": [
+        0.505000114440918
+      ],
+      "warn_error_events": {},
+      "load_start": [
+        3.82421875,
+        6.94873046875,
+        7.52783203125
+      ],
+      "load_end": [
+        14.32177734375,
+        9.0439453125,
+        8.2470703125
+      ],
+      "shutdown": {
+        "returncode": 0,
+        "seconds": 6.723524332977831,
+        "forced_kill": false
+      }
+    },
+    {
+      "run": "target-stable-1",
+      "binary_sha256": "4153b224f0a204f2d5349ac0b167288d6ca1223b3082f6ac2368534b34e7f625",
+      "elapsed_seconds": 45.05482482910156,
+      "activation": {
+        "before_put": 1790856635.153717,
+        "after_put": 1790856635.155138,
+        "request": {
+          "hz": 30.0
+        },
+        "reply": {
+          "hz": 30
+        },
+        "http_status": 200,
+        "protocol": "fresh-store 0Hz startup, public readiness, then workload activation"
+      },
+      "admitted_at": 1790856635.125546,
+      "offered_per_s": 6006.016026616878,
+      "accepted_per_s": 5990.52379015502,
+      "committed_writes_per_s": 988.8175166363951,
+      "outstanding_start": 97635,
+      "outstanding_end": 322989,
+      "ack_pending_start": 1000,
+      "ack_pending_end": 929,
+      "population_start": 200,
+      "population_end": 200,
+      "population_min": 200,
+      "population_max": 200,
+      "physics_fps": 30.030080133084386,
+      "frame_max_gap_ms": 92.04697608947754,
+      "missing_nats_ticks": 0,
+      "snapshot_drops": 3.0,
+      "spawned": 0.0,
+      "culled": 0.0,
+      "e2e_p50": {
+        "seconds": 38.532403995560486,
+        "lower_bound": false,
+        "observations": 4455.0
+      },
+      "e2e_p99": {
+        "seconds": 64.99592807991121,
+        "lower_bound": false,
+        "observations": 4455.0
+      },
+      "ws_missing_ticks": 15,
+      "ws_max_gap_seconds": 0.5299999713897705,
+      "ws_max_age_ms": 173.0,
+      "ws_reconnect_seconds": [
+        0.503000020980835
+      ],
+      "warn_error_events": {},
+      "load_start": [
+        18.0595703125,
+        9.90625,
+        8.55615234375
+      ],
+      "load_end": [
+        22.12109375,
+        13.296875,
+        9.97119140625
+      ],
+      "shutdown": {
+        "returncode": 0,
+        "seconds": 1.1562779169762507,
+        "forced_kill": false
+      }
+    },
+    {
+      "run": "baseline-stable-2",
+      "binary_sha256": "3167218148a14393aa46efea138c26f53faa05d0ab58bacc367b3d362b49b6e4",
+      "elapsed_seconds": 45.02134990692139,
+      "activation": {
+        "before_put": 1790856702.9113998,
+        "after_put": 1790856702.912172,
+        "request": {
+          "hz": 30.0
+        },
+        "reply": {
+          "hz": 30
+        },
+        "http_status": 200,
+        "protocol": "fresh-store 0Hz startup, public readiness, then workload activation"
+      },
+      "admitted_at": 1790856702.900309,
+      "offered_per_s": 6001.597032488371,
+      "accepted_per_s": 5997.154695676759,
+      "committed_writes_per_s": 2123.3925725826175,
+      "outstanding_start": 85747,
+      "outstanding_end": 260149,
+      "ack_pending_start": 783,
+      "ack_pending_end": 565,
+      "population_start": 200,
+      "population_end": 200,
+      "population_min": 200,
+      "population_max": 200,
+      "physics_fps": 30.007985162441855,
+      "frame_max_gap_ms": 49.08895492553711,
+      "missing_nats_ticks": 0,
+      "snapshot_drops": 0.0,
+      "spawned": 0.0,
+      "culled": 0.0,
+      "e2e_p50": {
+        "seconds": 29.032046088087718,
+        "lower_bound": false,
+        "observations": 9560.0
+      },
+      "e2e_p99": {
+        "seconds": 64.65431669012102,
+        "lower_bound": false,
+        "observations": 9560.0
+      },
+      "ws_missing_ticks": 15,
+      "ws_max_gap_seconds": 0.5340001583099365,
+      "ws_max_age_ms": 20.0,
+      "ws_reconnect_seconds": [
+        0.5039999485015869
+      ],
+      "warn_error_events": {},
+      "load_start": [
+        22.12109375,
+        13.296875,
+        9.97119140625
+      ],
+      "load_end": [
+        15.28125,
+        13.1259765625,
+        10.17236328125
+      ],
+      "shutdown": {
+        "returncode": 0,
+        "seconds": 0.7901741249952465,
+        "forced_kill": false
+      }
+    },
+    {
+      "run": "target-stable-2",
+      "binary_sha256": "4153b224f0a204f2d5349ac0b167288d6ca1223b3082f6ac2368534b34e7f625",
+      "elapsed_seconds": 45.00693082809448,
+      "activation": {
+        "before_put": 1790856774.777566,
+        "after_put": 1790856774.778594,
+        "request": {
+          "hz": 30.0
+        },
+        "reply": {
+          "hz": 30
+        },
+        "http_status": 200,
+        "protocol": "fresh-store 0Hz startup, public readiness, then workload activation"
+      },
+      "admitted_at": 1790856774.7625868,
+      "offered_per_s": 6003.51979191912,
+      "accepted_per_s": 6002.897665515812,
+      "committed_writes_per_s": 2303.8451654489327,
+      "outstanding_start": 71579,
+      "outstanding_end": 238062,
+      "ack_pending_start": 745,
+      "ack_pending_end": 719,
+      "population_start": 200,
+      "population_end": 200,
+      "population_min": 200,
+      "population_max": 200,
+      "physics_fps": 30.0175989595956,
+      "frame_max_gap_ms": 40.45891761779785,
+      "missing_nats_ticks": 0,
+      "snapshot_drops": 0.0,
+      "spawned": 0.0,
+      "culled": 0.0,
+      "e2e_p50": {
+        "seconds": 25.76505318278514,
+        "lower_bound": false,
+        "observations": 10368.0
+      },
+      "e2e_p99": {
+        "seconds": 64.21508777604977,
+        "lower_bound": false,
+        "observations": 10368.0
+      },
+      "ws_missing_ticks": 15,
+      "ws_max_gap_seconds": 0.5320000648498535,
+      "ws_max_age_ms": 14.0,
+      "ws_reconnect_seconds": [
+        0.5019998550415039
+      ],
+      "warn_error_events": {},
+      "load_start": [
+        15.28125,
+        13.1259765625,
+        10.17236328125
+      ],
+      "load_end": [
+        11.3173828125,
+        12.36669921875,
+        10.1162109375
+      ],
+      "shutdown": {
+        "returncode": 0,
+        "seconds": 0.5790623329812661,
+        "forced_kill": false
+      }
+    },
+    {
+      "run": "baseline-churn-1",
+      "binary_sha256": "3167218148a14393aa46efea138c26f53faa05d0ab58bacc367b3d362b49b6e4",
+      "elapsed_seconds": 45.003589153289795,
+      "activation": {
+        "before_put": 1790856846.352055,
+        "after_put": 1790856846.353219,
+        "request": {
+          "hz": 1.0
+        },
+        "reply": {
+          "hz": 1
+        },
+        "http_status": 200,
+        "protocol": "fresh-store 0Hz startup, public readiness, then workload activation"
+      },
+      "admitted_at": 1790856846.337211,
+      "offered_per_s": 409.9673014335856,
+      "accepted_per_s": 409.9673014335856,
+      "committed_writes_per_s": 414.9669026705805,
+      "outstanding_start": 0,
+      "outstanding_end": 0,
+      "ack_pending_start": 0,
+      "ack_pending_end": 0,
+      "population_start": 295,
+      "population_end": 520,
+      "population_min": 295,
+      "population_max": 520,
+      "physics_fps": 29.997607421969676,
+      "frame_max_gap_ms": 52.45471000671387,
+      "missing_nats_ticks": 0,
+      "snapshot_drops": 0.0,
+      "spawned": 225.0,
+      "culled": 0.0,
+      "e2e_p50": {
+        "seconds": 0.11095081967213115,
+        "lower_bound": false,
+        "observations": 1868.0
+      },
+      "e2e_p99": {
+        "seconds": 0.4295503448275859,
+        "lower_bound": false,
+        "observations": 1868.0
+      },
+      "ws_missing_ticks": 15,
+      "ws_max_gap_seconds": 0.5329999923706055,
+      "ws_max_age_ms": 24.0,
+      "ws_reconnect_seconds": [
+        0.503000020980835
+      ],
+      "warn_error_events": {
+        "WARN|Action firing cap reached, skipping|": 4
+      },
+      "load_start": [
+        11.3173828125,
+        12.36669921875,
+        10.1162109375
+      ],
+      "load_end": [
+        8.5419921875,
+        11.3408203125,
+        9.90576171875
+      ],
+      "shutdown": {
+        "returncode": 0,
+        "seconds": 0.008891083067283034,
+        "forced_kill": false
+      }
+    },
+    {
+      "run": "target-churn-1",
+      "binary_sha256": "4153b224f0a204f2d5349ac0b167288d6ca1223b3082f6ac2368534b34e7f625",
+      "elapsed_seconds": 45.007956981658936,
+      "activation": {
+        "before_put": 1790856917.340352,
+        "after_put": 1790856917.3417559,
+        "request": {
+          "hz": 1.0
+        },
+        "reply": {
+          "hz": 1
+        },
+        "http_status": 200,
+        "protocol": "fresh-store 0Hz startup, public readiness, then workload activation"
+      },
+      "admitted_at": 1790856917.325153,
+      "offered_per_s": 409.7719878179686,
+      "accepted_per_s": 409.7719878179686,
+      "committed_writes_per_s": 414.79332215874075,
+      "outstanding_start": 0,
+      "outstanding_end": 0,
+      "ack_pending_start": 0,
+      "ack_pending_end": 0,
+      "population_start": 300,
+      "population_end": 519,
+      "population_min": 300,
+      "population_max": 519,
+      "physics_fps": 29.994696283373507,
+      "frame_max_gap_ms": 48.11501502990723,
+      "missing_nats_ticks": 0,
+      "snapshot_drops": 0.0,
+      "spawned": 225.0,
+      "culled": 1.0,
+      "e2e_p50": {
+        "seconds": 0.11746921443736731,
+        "lower_bound": false,
+        "observations": 1867.0
+      },
+      "e2e_p99": {
+        "seconds": 0.4008483720930228,
+        "lower_bound": false,
+        "observations": 1867.0
+      },
+      "ws_missing_ticks": 15,
+      "ws_max_gap_seconds": 0.5329999923706055,
+      "ws_max_age_ms": 17.0,
+      "ws_reconnect_seconds": [
+        0.5019998550415039
+      ],
+      "warn_error_events": {
+        "WARN|Action firing cap reached, skipping|": 17
+      },
+      "load_start": [
+        8.5419921875,
+        11.3408203125,
+        9.90576171875
+      ],
+      "load_end": [
+        6.68359375,
+        10.15087890625,
+        9.57275390625
+      ],
+      "shutdown": {
+        "returncode": 0,
+        "seconds": 0.0707396250218153,
+        "forced_kill": false
+      }
+    },
+    {
+      "run": "baseline-churn-2",
+      "binary_sha256": "3167218148a14393aa46efea138c26f53faa05d0ab58bacc367b3d362b49b6e4",
+      "elapsed_seconds": 45.00395202636719,
+      "activation": {
+        "before_put": 1790856988.436061,
+        "after_put": 1790856988.43741,
+        "request": {
+          "hz": 1.0
+        },
+        "reply": {
+          "hz": 1
+        },
+        "http_status": 200,
+        "protocol": "fresh-store 0Hz startup, public readiness, then workload activation"
+      },
+      "admitted_at": 1790856988.421094,
+      "offered_per_s": 409.96399581064355,
+      "accepted_per_s": 409.96399581064355,
+      "committed_writes_per_s": 414.5413715904263,
+      "outstanding_start": 0,
+      "outstanding_end": 13,
+      "ack_pending_start": 0,
+      "ack_pending_end": 13,
+      "population_start": 295,
+      "population_end": 520,
+      "population_min": 295,
+      "population_max": 520,
+      "physics_fps": 29.997365547120257,
+      "frame_max_gap_ms": 43.84207725524902,
+      "missing_nats_ticks": 0,
+      "snapshot_drops": 0.0,
+      "spawned": 225.0,
+      "culled": 0.0,
+      "e2e_p50": {
+        "seconds": 0.11420689655172414,
+        "lower_bound": false,
+        "observations": 1866.0
+      },
+      "e2e_p99": {
+        "seconds": 0.472520991735537,
+        "lower_bound": false,
+        "observations": 1866.0
+      },
+      "ws_missing_ticks": 15,
+      "ws_max_gap_seconds": 0.5329999923706055,
+      "ws_max_age_ms": 17.0,
+      "ws_reconnect_seconds": [
+        0.501000165939331
+      ],
+      "warn_error_events": {
+        "WARN|Action firing cap reached, skipping|": 8
+      },
+      "load_start": [
+        6.68359375,
+        10.15087890625,
+        9.57275390625
+      ],
+      "load_end": [
+        9.41552734375,
+        10.08544921875,
+        9.58154296875
+      ],
+      "shutdown": {
+        "returncode": 0,
+        "seconds": 0.00882904208265245,
+        "forced_kill": false
+      }
+    },
+    {
+      "run": "target-churn-2",
+      "binary_sha256": "4153b224f0a204f2d5349ac0b167288d6ca1223b3082f6ac2368534b34e7f625",
+      "elapsed_seconds": 45.00507187843323,
+      "activation": {
+        "before_put": 1790857059.455172,
+        "after_put": 1790857059.456469,
+        "request": {
+          "hz": 1.0
+        },
+        "reply": {
+          "hz": 1
+        },
+        "http_status": 200,
+        "protocol": "fresh-store 0Hz startup, public readiness, then workload activation"
+      },
+      "admitted_at": 1790857059.441673,
+      "offered_per_s": 408.77614971249454,
+      "accepted_per_s": 408.77614971249454,
+      "committed_writes_per_s": 412.9534566726483,
+      "outstanding_start": 0,
+      "outstanding_end": 36,
+      "ack_pending_start": 0,
+      "ack_pending_end": 36,
+      "population_start": 300,
+      "population_end": 514,
+      "population_min": 300,
+      "population_max": 516,
+      "physics_fps": 29.9966191287638,
+      "frame_max_gap_ms": 47.04594612121582,
+      "missing_nats_ticks": 0,
+      "snapshot_drops": 0.0,
+      "spawned": 225.0,
+      "culled": 6.0,
+      "e2e_p50": {
+        "seconds": 0.11735652173913044,
+        "lower_bound": false,
+        "observations": 1859.0
+      },
+      "e2e_p99": {
+        "seconds": 0.4449712676056341,
+        "lower_bound": false,
+        "observations": 1859.0
+      },
+      "ws_missing_ticks": 15,
+      "ws_max_gap_seconds": 0.5329999923706055,
+      "ws_max_age_ms": 15.0,
+      "ws_reconnect_seconds": [
+        0.503000020980835
+      ],
+      "warn_error_events": {
+        "WARN|Action firing cap reached, skipping|": 24
+      },
+      "load_start": [
+        9.41552734375,
+        10.08544921875,
+        9.58154296875
+      ],
+      "load_end": [
+        7.8916015625,
+        9.4375,
+        9.37109375
+      ],
+      "shutdown": {
+        "returncode": 0,
+        "seconds": 0.18407045805361122,
+        "forced_kill": false
+      }
+    }
+  ],
+  "pairs": [
+    {
+      "profile": "stable",
+      "ordinal": 1,
+      "target_over_baseline_commit_rate": 0.7133483787758188,
+      "target_over_baseline_offered_rate": 1.001125282788424,
+      "interpretation": "descriptive only; two repetitions, differing observed demand in churn"
+    },
+    {
+      "profile": "stable",
+      "ordinal": 2,
+      "target_over_baseline_commit_rate": 1.084983151583146,
+      "target_over_baseline_offered_rate": 1.0003203746303426,
+      "interpretation": "descriptive only; two repetitions, differing observed demand in churn"
+    },
+    {
+      "profile": "churn",
+      "ordinal": 1,
+      "target_over_baseline_commit_rate": 0.9995817003459248,
+      "target_over_baseline_offered_rate": 0.999523587332614,
+      "interpretation": "descriptive only; two repetitions, differing observed demand in churn"
+    },
+    {
+      "profile": "churn",
+      "ordinal": 2,
+      "target_over_baseline_commit_rate": 0.9961694657599897,
+      "target_over_baseline_offered_rate": 0.9971025599557829,
+      "interpretation": "descriptive only; two repetitions, differing observed demand in churn"
+    }
+  ],
+  "stable_seeded_hash_comparison": {
+    "common_ticks": [
+      "300",
+      "600",
+      "900",
+      "1200",
+      "1500",
+      "1800"
+    ],
+    "mismatches": [],
+    "per_run_hashes": {
+      "baseline-stable-1": {
+        "300": "27d30f3fd0201970f926b5d14cf8a4236a2de09509a6f0843a0a7c5891e42ee7",
+        "600": "4b01d35ffd6108ff07905418242daa8e70500a040c715c2c188ca5fbaddd2684",
+        "900": "fb1ebcb84fe230b199f5737c4c13ccfa31438ee1219db3a1c67a48fec6ceeaef",
+        "1200": "88a2e0bf6e2df72ffac0c915334214f0dc6b26420b4e990ee9da9517cc51747c",
+        "1500": "c142e92eee4941cf08984bd707483d0e26de53b8d2d672633e53c8df07e27cfe",
+        "1800": "3902927d9b2160a26f681cd79110426c6e2055f52e9cffe2d86674902546a653",
+        "2100": "caba9e974fc66723416e27e039c03c212106406aad98c4b98438a2cb5aed1bb2"
+      },
+      "target-stable-1": {
+        "300": "27d30f3fd0201970f926b5d14cf8a4236a2de09509a6f0843a0a7c5891e42ee7",
+        "600": "4b01d35ffd6108ff07905418242daa8e70500a040c715c2c188ca5fbaddd2684",
+        "900": "fb1ebcb84fe230b199f5737c4c13ccfa31438ee1219db3a1c67a48fec6ceeaef",
+        "1200": "88a2e0bf6e2df72ffac0c915334214f0dc6b26420b4e990ee9da9517cc51747c",
+        "1500": "c142e92eee4941cf08984bd707483d0e26de53b8d2d672633e53c8df07e27cfe",
+        "1800": "3902927d9b2160a26f681cd79110426c6e2055f52e9cffe2d86674902546a653"
+      },
+      "baseline-stable-2": {
+        "300": "27d30f3fd0201970f926b5d14cf8a4236a2de09509a6f0843a0a7c5891e42ee7",
+        "600": "4b01d35ffd6108ff07905418242daa8e70500a040c715c2c188ca5fbaddd2684",
+        "900": "fb1ebcb84fe230b199f5737c4c13ccfa31438ee1219db3a1c67a48fec6ceeaef",
+        "1200": "88a2e0bf6e2df72ffac0c915334214f0dc6b26420b4e990ee9da9517cc51747c",
+        "1500": "c142e92eee4941cf08984bd707483d0e26de53b8d2d672633e53c8df07e27cfe",
+        "1800": "3902927d9b2160a26f681cd79110426c6e2055f52e9cffe2d86674902546a653"
+      },
+      "target-stable-2": {
+        "300": "27d30f3fd0201970f926b5d14cf8a4236a2de09509a6f0843a0a7c5891e42ee7",
+        "600": "4b01d35ffd6108ff07905418242daa8e70500a040c715c2c188ca5fbaddd2684",
+        "900": "fb1ebcb84fe230b199f5737c4c13ccfa31438ee1219db3a1c67a48fec6ceeaef",
+        "1200": "88a2e0bf6e2df72ffac0c915334214f0dc6b26420b4e990ee9da9517cc51747c",
+        "1500": "c142e92eee4941cf08984bd707483d0e26de53b8d2d672633e53c8df07e27cfe",
+        "1800": "3902927d9b2160a26f681cd79110426c6e2055f52e9cffe2d86674902546a653",
+        "2100": "caba9e974fc66723416e27e039c03c212106406aad98c4b98438a2cb5aed1bb2"
+      }
+    }
+  },
+  "qualification": "fresh-store post-readiness steady-state only; does not qualify 30Hz cold startup"
+}

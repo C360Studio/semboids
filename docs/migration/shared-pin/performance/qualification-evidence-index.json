@@ -1,0 +1,39 @@
+{
+  "archive": "qualification-evidence.tar.gz",
+  "sha256": "b1322f5f8dc30c45bc32768a1155a076b83cb2c91c34502416944005a5542401",
+  "bytes": 3660867,
+  "included_runs": [
+    "baseline-port-conflict",
+    "baseline-pre-upgrade",
+    "baseline-slow-websocket",
+    "baseline-stable-1",
+    "operations-baseline",
+    "operations-baseline-final",
+    "operations-baseline-verified",
+    "operations-target-final",
+    "operations-target-preliminary",
+    "operations-target-qualified",
+    "steady-state/baseline-churn-1",
+    "steady-state/baseline-churn-2",
+    "steady-state/baseline-stable-1",
+    "steady-state/baseline-stable-2",
+    "steady-state/target-churn-1",
+    "steady-state/target-churn-2",
+    "steady-state/target-stable-1",
+    "steady-state/target-stable-2",
+    "target-port-conflict",
+    "target-slow-websocket",
+    "target-stable-1"
+  ],
+  "harness_files": {
+    "aggregate.py": "9dc7ec74e9ee6a35d3495138ce5acb4126771ad472111aa7f14400e5d7d2197c",
+    "analyze.py": "91460e52a7249cbc9585802fa60dd6b3b188d9759e4aaf489eb777d442a2480c",
+    "campaign.py": "f1e388841706d20abbd1f2dd981b5739a73b48a7e19f7ca84e0cbbe1d66dec2f",
+    "load.py": "35e6d6828fee07fed2a14f82304dc290524c0f7cbddee8fd789f549765c47f3a",
+    "operations.py": "7a7d1ecd7588ace2595ffcaab06f1ad2861f43f7ee15f1eb80bc1e34314ec615",
+    "pack.py": "352742d276498b0bd9b94e6b2706675eaaa15662a46b5260693b46ea894844f8",
+    "test_load.py": "77e8f32287c37223b7e3337d2407ecb825e9620701323bf2c1187643b44edfa6",
+    "test_review_guards.py": "43df397042a06efbdae4a7aaedb3f9107052c926271d0fb7814d907323ce2b62",
+    "websocket.mjs": "987de6e0362c8ba54dd9c0a02986c200128182225bb41beb3b46ba245ad8f3bc"
+  }
+}

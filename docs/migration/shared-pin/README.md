@@ -1,8 +1,12 @@
 # SemBoids shared-pin migration evidence
 
-Status: ordinary target gates pass; final performance qualification is in progress. Migration admission is
-**HOLD**: a delayed pre-cull snapshot resurrects a reclaimed boid on both pins. The target fixes the reproduced
-SemBoids shutdown race. This migration remains on SemStreams; no SemEngine cutover or admission is claimed.
+Status: ordinary target gates pass, including UTC and default-parallel real-NATS race tests. Migration admission
+is **HOLD**: a delayed pre-cull snapshot resurrects a reclaimed boid on both pins, and the target's first 30Hz
+cold start failed while graph providers were starting. All eight repeated steady-state runs are complete.
+The target fixes the reproduced SemBoids shutdown race. This migration remains on SemStreams; no SemEngine
+cutover or admission is claimed.
+
+[Draft PR #12](https://github.com/C360Studio/semboids/pull/12) carries the implementation and explicit qualification hold.
 
 ## Exact pins and architecture contract
 
@@ -17,8 +21,9 @@ SemBoids shutdown race. This migration remains on SemStreams; no SemEngine cutov
 SETUP 03A selected its main commit while beta.163 was absent. A later release does not move the shared baseline.
 The [proposal][proposal] and [architecture contract][design] preserve seeded physics, batched snapshots,
 neighbor replacement/empty clearing, lifecycle facts, live zone rules, spawn/cull and fenced reclamation,
-clustering, and browser transport. Architecture sign-off permits failing-first adaptation; final independent
-implementation review and workload qualification remain separate gates.
+clustering, and browser transport. Architecture sign-off preceded failing-first adaptation. Final
+[independent review](reviews/independent-review.md) approves the bounded compatibility and evidence work;
+full workload qualification remains on HOLD.
 
 [proposal]: ../../../openspec/changes/migrate-semstreams-shared-pin/proposal.md
 [design]: ../../../openspec/changes/migrate-semstreams-shared-pin/design.md
@@ -39,8 +44,8 @@ retain exit codes and durations. Go is `go1.26.4 darwin/arm64`; native race test
 | Browser flock and graph panes, spawn and rule toggles | Pass with backend caveats below |
 | Schema generation | Existing CI defers this because no schema exists |
 | Retained process/broker restart and bounded cancellation | Pass for measured workload; see performance evidence |
-| Target ordinary gates | Pass; see [target evidence](target/README.md) |
-| Interleaved load comparisons | In progress |
+| Target ordinary gates | Pass after UTC correction: 203 unit / 221 integration test and subtest passes |
+| Interleaved load comparisons | Eight isolated A/B/A/B stable and churn runs complete; see [results](performance/results.md) |
 
 The [race trace](baseline/race-integration.log) shows the cull watcher submitting work while Stop waits on
 its drain-pool WaitGroup. This is an application defect reproduced before upgrading. The migration must
@@ -75,7 +80,7 @@ npm run build
 
 Svelte check reported zero errors and warnings; Vitest reported 24 tests passing. Raw stdout was delivered
 through the tool session and was not saved to an artifact, so the evidence is the recorded observation.
-Target browser qualification also passed on the final binary; no UI source changed. The
+Target browser verification also passed on the frozen production binary; no UI source changed. The
 [observations](browser/target-observations.json), [screenshot](browser/target-final.jpg) and retained-restart
 log record live toggles, spawn 195→220, dial 1→5→1, automatic reconnect, retained platform identity, and
 clean process exit. Population was allowed to change through culling; this is not a graph/physics census proof.
@@ -110,7 +115,8 @@ python3 docs/migration/shared-pin/measure_closure.py \
   --evidence-dir docs/migration/shared-pin/baseline
 ```
 
-Repeat against the target checkout and target TSVs after successful dependency resolution. The [target ledger](target/README.md) records compatibility changes and closure: 62 SemStreams packages,
+The same census was repeated against the target checkout and TSVs. The [target ledger](target/README.md)
+records compatibility changes and closure: 62 SemStreams packages,
 131,066 directory-source lines, 514 production packages and 64 reached external modules. Selected modules
 change from 298 to 303. The frozen baseline ledger is preserved.
 
@@ -125,6 +131,20 @@ Baseline `boids_graph_snapshots_published_total` increments even after a failed 
 coordinator snapshot attempts. `boids_graph_entities_published_total` advances only for wholly ACKed
 batches and can omit partial successes. Neither proves applied graph work. Record actual increment sites,
 HELP/TYPE, labels and raw samples before comparing counters across pins. See [design D6][design].
+Committed entity-write counts include lifecycle and canonical writes as well as snapshots. Consumer-completion
+inference is withheld because finite delivery limits can remove unsettled work without proving successful application.
+
+The [eight-run evidence](performance/results.md) preserves every raw scrape and authoritative backlog sample.
+At 200 boids and 30Hz snapshots, both pins overload the graph: committed entity writes range from 989 to
+2,304/s against approximately 6,000 offered/s. Pair direction reverses, so no repeatable revision speedup or
+regression is established; the cause of host/run variance remains unresolved. Physics remains near 30Hz,
+without missing observed NATS ticks, and all six common stable physics state hashes match across the four runs.
+
+At 1Hz snapshots with five new boids per second, both pins process approximately the offered population-driven
+load. Actual culls are 0/1/0/6 in A/B/A/B order; differing event phase/population prevents interpreting raw write-rate
+differences as throughput gains. Enabling culling is not proof that reclamation completed. Every run records a
+60-second WebSocket disconnect and 15 missing observed ticks during reconnect; both pins share the deadline bug.
+All eight processes stop with exit zero and no forced kill. These results do not close either correctness hold.
 
 ## Blockers and future SemEngine admission
 
@@ -134,13 +154,26 @@ remains blocked: both immutable-pin runs delete revision 1, then a held pre-cull
 The separately invoked qualification assertion stays failing; ordinary CI does not imply this stronger guarantee.
 See [target evidence](target/README.md) and the existing [upstream applied-input barrier request][barrier].
 The app publisher and cull drain have no supported applied-input handoff; no private recovery subsystem was added.
-Independent review found no additional production defect but keeps admission on HOLD. Final operational and
-interleaved performance evidence remains required. The initial IPv4-only occupied-port probe was invalid on this Mac. The corrected dual-family probe
+Independent review approves the final compatibility implementation and measurement evidence but keeps admission
+on HOLD. The first
+30Hz target load trial then exposed a cold-start ordering failure: early simulator requests opened the shared
+NATS circuit breaker before graph services finished starting. No throughput window was collected from that trial.
+The initial [hosted CI attempt](ci/README.md) also exposed a UTC-dependent equality assertion in a new test.
+That test-only correction passed the complete ordinary gates under UTC; production code and the frozen browser/load
+binary are unchanged. [Measurement evidence](performance/results.md) preserves the aborted trial and the
+observer's subsequently corrected tail-coverage gap. Query readiness cannot prove mutation-handler readiness;
+no unsupported local startup barrier was added. Both pins' steady-state comparisons begin at zero snapshot load,
+prove startup, then activate the same public dial before the same warmup. This cannot qualify cold startup at load.
+The reviewed missing startup contract is filed as [SemStreams #1447][startup].
+
+Operational and interleaved performance evidence is retained with its qualification limits. The initial
+IPv4-only occupied-port probe was invalid on this Mac. The corrected dual-family probe
 requires an explicit address-in-use error: baseline remains running beyond 25 seconds, while target
 exits with status 1 in approximately 175 ms. Target startup cancellation is handled but waits for the
 native NATS dial timeout (approximately five seconds). The raw invalid attempts remain distinguishable.
 
 [barrier]: https://github.com/C360Studio/semstreams/issues/1444
+[startup]: https://github.com/C360Studio/semstreams/issues/1447
 
 The [future admission matrix][design] requires explicit graph mutation/ingest, relationships, rule activation,
 lifecycle, clustering, transport, host and observation contracts in SemEngine, with owners, source provenance,
