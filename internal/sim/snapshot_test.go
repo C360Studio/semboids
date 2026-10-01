@@ -49,7 +49,7 @@ func TestSnapshotCadenceFollowsDial(t *testing.T) {
 	if err := comp.Start(ctx); err != nil {
 		t.Fatalf("Start: %v", err)
 	}
-	defer func() { _ = comp.Stop(time.Second) }()
+	defer func() { _ = comp.Stop(testStopContext(t)) }()
 
 	// Collect ~40 frames (ticks); expect snapshots ≈ ticks/4.
 	for range 40 {

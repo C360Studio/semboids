@@ -46,7 +46,7 @@ func startComponent(
 	if err != nil {
 		t.Fatalf("marshal %s config: %v", instance, err)
 	}
-	inst, err := registry.CreateComponent(instance, types.ComponentConfig{
+	inst, err := createTestComponent(registry, instance, types.ComponentConfig{
 		Type: types.ComponentTypeProcessor, Name: factory, Enabled: true, Config: raw,
 	}, deps)
 	if err != nil {
@@ -62,7 +62,7 @@ func startComponent(
 	if err := lc.Start(ctx); err != nil {
 		t.Fatalf("start %s: %v", instance, err)
 	}
-	t.Cleanup(func() { _ = lc.Stop(5 * time.Second) })
+	t.Cleanup(func() { _ = lc.Stop(testStopContext(t)) })
 }
 
 // spikeContract declares the fixture's write intent: strict-create boids
@@ -72,7 +72,7 @@ func startComponent(
 func spikeContract() projection.Contract {
 	vocabulary.Register("flock.position.x",
 		vocabulary.WithDescription("Boid x position at snapshot time (spike fixture)"),
-		vocabulary.WithDataType("number"))
+		vocabulary.WithDataType(vocabulary.DataTypeFloat))
 	return projection.Contract{
 		Name:            "spike-boids",
 		EntityPattern:   boidgraph.BoidEntityIDPattern,
@@ -149,6 +149,10 @@ func TestLPADistinguishesDisjointFlocks(t *testing.T) {
 	payloadReg := payloadregistry.New()
 	if err := payloadbuiltins.Register(payloadReg); err != nil {
 		t.Fatalf("register builtins: %v", err)
+	}
+
+	if err := boidgraph.RegisterPayloads(payloadReg); err != nil {
+		t.Fatal(err)
 	}
 
 	registry := component.NewRegistry()

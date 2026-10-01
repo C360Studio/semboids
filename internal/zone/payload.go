@@ -7,6 +7,7 @@ import (
 
 	"github.com/c360studio/semstreams/message"
 	"github.com/c360studio/semstreams/payloadregistry"
+	"github.com/c360studio/semstreams/vocabulary"
 )
 
 // Entity is the Graphable payload that lands a zone in the graph. It wraps
@@ -20,7 +21,7 @@ type Entity struct {
 }
 
 // EntityID returns the deterministic 6-part ID:
-// org.platform.domain.system.type.instance.
+// org.platform.system.domain.type.instance.
 func (e *Entity) EntityID() string {
 	return fmt.Sprintf("%s.%s.sim.flock.zone.%s", e.OrgID, e.Platform, e.Zone.ID)
 }
@@ -103,12 +104,13 @@ func buildEntity(fields map[string]any) (any, error) {
 // with the supplied registry.
 func RegisterPayloads(reg *payloadregistry.Registry) error {
 	return reg.Register(&payloadregistry.Registration{
-		Domain:      "boids",
-		Category:    "zone",
-		Version:     "v1",
-		Description: "Static steering zone (predator/food/wind) as a graph entity",
-		Factory:     func() any { return &Entity{} },
-		Builder:     buildEntity,
+		Domain:          "boids",
+		Category:        "zone",
+		Version:         "v1",
+		IndexingProfile: vocabulary.IndexingProfileControl,
+		Description:     "Static steering zone (predator/food/wind) as a graph entity",
+		Factory:         func() any { return &Entity{} },
+		Builder:         buildEntity,
 		Example: map[string]any{
 			"zone": map[string]any{
 				"id": "pred-1", "type": "predator",

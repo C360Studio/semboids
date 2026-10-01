@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
@@ -52,8 +53,9 @@ type graphViews struct {
 	entities    *graphview.View[graphEntity]
 	communities *graphview.View[[]string]
 
-	cancel context.CancelFunc
-	wg     sync.WaitGroup
+	cancel  context.CancelFunc
+	wg      sync.WaitGroup
+	stopped chan struct{}
 }
 
 // entityView returns the ENTITY_STATES view, or nil if it has not come up yet.
@@ -83,13 +85,11 @@ type openFunc func(ctx context.Context, bucket string) (graphview.WatcherSource,
 
 // startGraphViews launches a supervisor per bucket and returns immediately.
 //
-// The context deliberately does NOT derive from the caller's start context: the
-// views must live for the service lifetime, and a start-scoped context would
-// cancel the watchers as soon as startup finished. Teardown is driven by stop()
-// instead, which is deterministic.
-func startGraphViews(open openFunc, log logger, metrics *viewMetrics) *graphViews {
-	ctx, cancel := context.WithCancel(context.Background())
-	g := &graphViews{cancel: cancel}
+// The Start context owns the lifetime. Controlled shutdown cancels through
+// stop; cancellation of Start also aborts pending opens and attached watchers.
+func startGraphViews(parent context.Context, open openFunc, log logger, metrics *viewMetrics) *graphViews {
+	ctx, cancel := context.WithCancel(parent)
+	g := &graphViews{cancel: cancel, stopped: make(chan struct{})}
 
 	g.wg.Add(2)
 	go supervise(ctx, &g.wg, entityStatesBucket, log, func() bool {
@@ -112,6 +112,19 @@ func startGraphViews(open openFunc, log logger, metrics *viewMetrics) *graphView
 		g.mu.Unlock()
 		return true
 	})
+	// The lifetime owns cleanup, including native Stop calls that do not take a
+	// context. Stop only bounds the caller's join; it cannot bound native cleanup.
+	go func() {
+		<-ctx.Done()
+		g.wg.Wait()
+		if view := g.entityView(); view != nil {
+			view.Stop()
+		}
+		if view := g.communityView(); view != nil {
+			view.Stop()
+		}
+		close(g.stopped)
+	}()
 	return g
 }
 
@@ -157,19 +170,19 @@ func attach[T any](ctx context.Context, open openFunc, bucket string, decode gra
 }
 
 // stop tears the views down. Safe to call more than once.
-func (g *graphViews) stop() {
+func (g *graphViews) stop(ctx context.Context) error {
+	if ctx == nil {
+		return fmt.Errorf("stop graph views: nil context")
+	}
 	if g == nil {
-		return
+		return nil
 	}
-	if g.cancel != nil {
-		g.cancel()
-	}
-	g.wg.Wait()
-	if view := g.entityView(); view != nil {
-		view.Stop()
-	}
-	if view := g.communityView(); view != nil {
-		view.Stop()
+	g.cancel()
+	select {
+	case <-g.stopped:
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
 	}
 }
 

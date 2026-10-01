@@ -33,6 +33,7 @@ func cullRuleFile(t *testing.T, enabled bool) string {
 	t.Helper()
 	rules := []map[string]any{{
 		"id":      "predator-cull",
+		"name":    "Predator cull fixture",
 		"type":    "expression",
 		"enabled": enabled,
 		"conditions": []map[string]any{
@@ -69,7 +70,7 @@ func startLifecycleComponent(
 	if err != nil {
 		t.Fatalf("marshal %s config: %v", instance, err)
 	}
-	inst, err := registry.CreateComponent(instance, types.ComponentConfig{
+	inst, err := createTestComponent(registry, instance, types.ComponentConfig{
 		Type: types.ComponentTypeProcessor, Name: factory, Enabled: true, Config: raw,
 	}, deps)
 	if err != nil {
@@ -85,7 +86,7 @@ func startLifecycleComponent(
 	if err := lc.Start(ctx); err != nil {
 		t.Fatalf("start %s: %v", instance, err)
 	}
-	t.Cleanup(func() { _ = lc.Stop(5 * time.Second) })
+	t.Cleanup(func() { _ = lc.Stop(testStopContext(t)) })
 	return inst
 }
 
@@ -181,7 +182,7 @@ func startCullChain(
 	if err != nil {
 		t.Fatalf("marshal sim config: %v", err)
 	}
-	simInst, err := registry.CreateComponent("sim-t", types.ComponentConfig{
+	simInst, err := createTestComponent(registry, "sim-t", types.ComponentConfig{
 		Type: types.ComponentTypeInput, Name: "sim", Enabled: true, Config: simCfgJSON,
 	}, deps)
 	if err != nil {
@@ -210,7 +211,7 @@ func startCullChain(
 	if err := simLC.Start(ctx); err != nil {
 		t.Fatalf("sim start: %v", err)
 	}
-	t.Cleanup(func() { _ = simLC.Stop(5 * time.Second) })
+	t.Cleanup(func() { _ = simLC.Stop(testStopContext(t)) })
 
 	// boidEntityCount reports how many boid entities remain in ENTITY_STATES —
 	// the reclaim (graph.mutation.entity.delete) side of the chain.

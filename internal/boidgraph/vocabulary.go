@@ -28,5 +28,5 @@ func RegisterVocabulary() {
 		vocabulary.WithDataType("string"))
 	vocabulary.Register(NeighborPredicate,
 		vocabulary.WithDescription("Directed neighbor edge between two boids at snapshot time"),
-		vocabulary.WithDataType("string"))
+		vocabulary.WithDataType(vocabulary.DataTypeEntityID))
 }

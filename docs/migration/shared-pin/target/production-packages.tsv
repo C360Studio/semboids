@@ -1,0 +1,515 @@
+package	standard_library	module	version	for_test	non_test_go_physical_lines
+archive/tar	true				3123
+bufio	true				1269
+bytes	true				2211
+cmp	true				77
+compress/bzip2	true				869
+compress/flate	true				3205
+compress/gzip	true				540
+container/list	true				235
+context	true				806
+crypto	true				273
+crypto/aes	true				48
+crypto/cipher	true				1040
+crypto/des	true				556
+crypto/dsa	true				330
+crypto/ecdh	true				551
+crypto/ecdsa	true				868
+crypto/ed25519	true				257
+crypto/elliptic	true				884
+crypto/fips140	true				93
+crypto/hkdf	true				84
+crypto/hmac	true				65
+crypto/hpke	true				1482
+crypto/internal/boring	true				142
+crypto/internal/boring/bbig	true				33
+crypto/internal/boring/sig	true				17
+crypto/internal/constanttime	true				42
+crypto/internal/entropy/v1.0.0	true				430
+crypto/internal/fips140	true				256
+crypto/internal/fips140/aes	true				1157
+crypto/internal/fips140/aes/gcm	true				998
+crypto/internal/fips140/alias	true				30
+crypto/internal/fips140/bigmod	true				1266
+crypto/internal/fips140/check	true				108
+crypto/internal/fips140/drbg	true				358
+crypto/internal/fips140/ecdh	true				360
+crypto/internal/fips140/ecdsa	true				836
+crypto/internal/fips140/ed25519	true				404
+crypto/internal/fips140/edwards25519	true				2289
+crypto/internal/fips140/edwards25519/field	true				704
+crypto/internal/fips140/hkdf	true				90
+crypto/internal/fips140/hmac	true				243
+crypto/internal/fips140/mlkem	true				1573
+crypto/internal/fips140/nistec	true				2480
+crypto/internal/fips140/nistec/fiat	true				12323
+crypto/internal/fips140/pbkdf2	true				131
+crypto/internal/fips140/rsa	true				1714
+crypto/internal/fips140/sha256	true				433
+crypto/internal/fips140/sha3	true				956
+crypto/internal/fips140/sha512	true				515
+crypto/internal/fips140/subtle	true				115
+crypto/internal/fips140/tls12	true				108
+crypto/internal/fips140/tls13	true				215
+crypto/internal/fips140cache	true				52
+crypto/internal/fips140deps/byteorder	true				55
+crypto/internal/fips140deps/cpu	true				49
+crypto/internal/fips140deps/godebug	true				23
+crypto/internal/fips140deps/time	true				21
+crypto/internal/fips140hash	true				34
+crypto/internal/fips140only	true				35
+crypto/internal/impl	true				107
+crypto/internal/rand	true				89
+crypto/internal/randutil	true				26
+crypto/internal/sysrand	true				102
+crypto/md5	true				347
+crypto/mlkem	true				221
+crypto/pbkdf2	true				54
+crypto/rand	true				198
+crypto/rc4	true				83
+crypto/rsa	true				1441
+crypto/sha1	true				404
+crypto/sha256	true				74
+crypto/sha3	true				274
+crypto/sha512	true				123
+crypto/subtle	true				134
+crypto/tls	true				14413
+crypto/tls/internal/fips140tls	true				37
+crypto/x509	true				7759
+crypto/x509/internal/macos	true				366
+crypto/x509/pkix	true				320
+dario.cat/mergo	false	dario.cat/mergo	v1.0.2		816
+database/sql	true				4420
+database/sql/driver	true				855
+embed	true				436
+encoding	true				78
+encoding/asn1	true				2107
+encoding/base32	true				587
+encoding/base64	true				665
+encoding/binary	true				1214
+encoding/gob	true				4851
+encoding/hex	true				353
+encoding/json	true				4266
+encoding/pem	true				331
+errors	true				362
+expvar	true				417
+flag	true				1238
+fmt	true				3547
+github.com/beorn7/perks/quantile	false	github.com/beorn7/perks	v1.0.1		316
+github.com/c360studio/semboids/cmd/semboids	false	github.com/c360studio/semboids			511
+github.com/c360studio/semboids/componentregistry	false	github.com/c360studio/semboids			79
+github.com/c360studio/semboids/internal/api	false	github.com/c360studio/semboids			1143
+github.com/c360studio/semboids/internal/boidgraph	false	github.com/c360studio/semboids			863
+github.com/c360studio/semboids/internal/flock	false	github.com/c360studio/semboids			431
+github.com/c360studio/semboids/internal/sim	false	github.com/c360studio/semboids			1764
+github.com/c360studio/semboids/internal/zone	false	github.com/c360studio/semboids			238
+github.com/c360studio/semstreams/agentic	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		6005
+github.com/c360studio/semstreams/agentic/agentrun	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		1505
+github.com/c360studio/semstreams/component	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		5585
+github.com/c360studio/semstreams/component/flowgraph	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		1324
+github.com/c360studio/semstreams/composition	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		914
+github.com/c360studio/semstreams/config	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		5193
+github.com/c360studio/semstreams/governance	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		140
+github.com/c360studio/semstreams/graph	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		3293
+github.com/c360studio/semstreams/graph/clustering	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		5516
+github.com/c360studio/semstreams/graph/inference	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		5338
+github.com/c360studio/semstreams/graph/llm	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		842
+github.com/c360studio/semstreams/graph/readiness	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		1016
+github.com/c360studio/semstreams/graph/structural	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		883
+github.com/c360studio/semstreams/health	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		625
+github.com/c360studio/semstreams/internal/agentterminal	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		188
+github.com/c360studio/semstreams/internal/componentadmission	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		8
+github.com/c360studio/semstreams/internal/deliverylane	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		248
+github.com/c360studio/semstreams/internal/graphmutation	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		264
+github.com/c360studio/semstreams/internal/lifecyclecleanup	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		38
+github.com/c360studio/semstreams/internal/logforwarderpolicy	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		105
+github.com/c360studio/semstreams/internal/looptoken	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		42
+github.com/c360studio/semstreams/message	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		2186
+github.com/c360studio/semstreams/metric	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		1218
+github.com/c360studio/semstreams/model	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		1397
+github.com/c360studio/semstreams/model/wire	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		1182
+github.com/c360studio/semstreams/natsclient	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		12377
+github.com/c360studio/semstreams/output/websocket	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		2220
+github.com/c360studio/semstreams/payloadbuiltins	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		93
+github.com/c360studio/semstreams/payloadregistry	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		508
+github.com/c360studio/semstreams/pkg/acme	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		543
+github.com/c360studio/semstreams/pkg/buffer	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		1235
+github.com/c360studio/semstreams/pkg/cache	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		2449
+github.com/c360studio/semstreams/pkg/dispatch	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		1122
+github.com/c360studio/semstreams/pkg/errs	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		904
+github.com/c360studio/semstreams/pkg/gateddag	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		221
+github.com/c360studio/semstreams/pkg/graphview	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		1193
+github.com/c360studio/semstreams/pkg/lifecycle	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		3739
+github.com/c360studio/semstreams/pkg/platform	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		43
+github.com/c360studio/semstreams/pkg/projection	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		694
+github.com/c360studio/semstreams/pkg/projection/contract	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		163
+github.com/c360studio/semstreams/pkg/resource	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		398
+github.com/c360studio/semstreams/pkg/retry	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		262
+github.com/c360studio/semstreams/pkg/revlag	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		213
+github.com/c360studio/semstreams/pkg/rulepack	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		143
+github.com/c360studio/semstreams/pkg/security	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		384
+github.com/c360studio/semstreams/pkg/timestamp	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		366
+github.com/c360studio/semstreams/pkg/tlsutil	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		533
+github.com/c360studio/semstreams/pkg/types	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		751
+github.com/c360studio/semstreams/pkg/worker	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		707
+github.com/c360studio/semstreams/processor/gated-dag	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		2367
+github.com/c360studio/semstreams/processor/graph-clustering	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		4117
+github.com/c360studio/semstreams/processor/graph-index	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		4522
+github.com/c360studio/semstreams/processor/graph-ingest	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		5870
+github.com/c360studio/semstreams/processor/rule	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		15826
+github.com/c360studio/semstreams/processor/rule/expression	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		1417
+github.com/c360studio/semstreams/service	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		11819
+github.com/c360studio/semstreams/storage	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		356
+github.com/c360studio/semstreams/storage/objectstore	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		3342
+github.com/c360studio/semstreams/storage/storeregistry	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		115
+github.com/c360studio/semstreams/types	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		188
+github.com/c360studio/semstreams/vocabulary	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		2673
+github.com/c360studio/semstreams/vocabulary/agentic	false	github.com/c360studio/semstreams	v1.0.0-beta.162.0.20260930150212-8b99efe9c66a		2133
+github.com/cenkalti/backoff/v4	false	github.com/cenkalti/backoff/v4	v4.3.0		660
+github.com/cespare/xxhash/v2	false	github.com/cespare/xxhash/v2	v2.3.0		316
+github.com/containerd/errdefs	false	github.com/containerd/errdefs	v1.0.0		590
+github.com/containerd/errdefs/pkg/errhttp	false	github.com/containerd/errdefs/pkg	v0.3.0		96
+github.com/containerd/errdefs/pkg/internal/cause	false	github.com/containerd/errdefs/pkg	v0.3.0		33
+github.com/containerd/log	false	github.com/containerd/log	v0.1.0		182
+github.com/containerd/platforms	false	github.com/containerd/platforms	v0.2.1		851
+github.com/cpuguy83/dockercfg	false	github.com/cpuguy83/dockercfg	v0.3.2		335
+github.com/davecgh/go-spew/spew	false	github.com/davecgh/go-spew	v1.1.2-0.20180830191138-d8f796af33cc		2079
+github.com/distribution/reference	false	github.com/distribution/reference	v0.6.0		967
+github.com/docker/docker/api	false	github.com/docker/docker	v28.5.1+incompatible		20
+github.com/docker/docker/api/types	false	github.com/docker/docker	v28.5.1+incompatible		835
+github.com/docker/docker/api/types/blkiodev	false	github.com/docker/docker	v28.5.1+incompatible		23
+github.com/docker/docker/api/types/build	false	github.com/docker/docker	v28.5.1+incompatible		153
+github.com/docker/docker/api/types/checkpoint	false	github.com/docker/docker	v28.5.1+incompatible		26
+github.com/docker/docker/api/types/common	false	github.com/docker/docker	v28.5.1+incompatible		13
+github.com/docker/docker/api/types/container	false	github.com/docker/docker	v28.5.1+incompatible		1530
+github.com/docker/docker/api/types/events	false	github.com/docker/docker	v28.5.1+incompatible		139
+github.com/docker/docker/api/types/filters	false	github.com/docker/docker	v28.5.1+incompatible		387
+github.com/docker/docker/api/types/image	false	github.com/docker/docker	v28.5.1+incompatible		578
+github.com/docker/docker/api/types/mount	false	github.com/docker/docker	v28.5.1+incompatible		157
+github.com/docker/docker/api/types/network	false	github.com/docker/docker	v28.5.1+incompatible		511
+github.com/docker/docker/api/types/registry	false	github.com/docker/docker	v28.5.1+incompatible		303
+github.com/docker/docker/api/types/storage	false	github.com/docker/docker	v28.5.1+incompatible		23
+github.com/docker/docker/api/types/strslice	false	github.com/docker/docker	v28.5.1+incompatible		30
+github.com/docker/docker/api/types/swarm	false	github.com/docker/docker	v28.5.1+incompatible		1382
+github.com/docker/docker/api/types/swarm/runtime	false	github.com/docker/docker	v28.5.1+incompatible		27
+github.com/docker/docker/api/types/system	false	github.com/docker/docker	v28.5.1+incompatible		242
+github.com/docker/docker/api/types/time	false	github.com/docker/docker	v28.5.1+incompatible		131
+github.com/docker/docker/api/types/versions	false	github.com/docker/docker	v28.5.1+incompatible		65
+github.com/docker/docker/api/types/volume	false	github.com/docker/docker	v28.5.1+incompatible		574
+github.com/docker/docker/client	false	github.com/docker/docker	v28.5.1+incompatible		6403
+github.com/docker/docker/pkg/jsonmessage	false	github.com/docker/docker	v28.5.1+incompatible		314
+github.com/docker/docker/pkg/stdcopy	false	github.com/docker/docker	v28.5.1+incompatible		190
+github.com/docker/go-connections/nat	false	github.com/docker/go-connections	v0.6.0		366
+github.com/docker/go-connections/sockets	false	github.com/docker/go-connections	v0.6.0		356
+github.com/docker/go-connections/tlsconfig	false	github.com/docker/go-connections	v0.6.0		261
+github.com/docker/go-units	false	github.com/docker/go-units	v0.5.0		312
+github.com/ebitengine/purego	false	github.com/ebitengine/purego	v0.8.4		1153
+github.com/ebitengine/purego/internal/cgo	false	github.com/ebitengine/purego	v0.8.4		6
+github.com/ebitengine/purego/internal/strings	false	github.com/ebitengine/purego	v0.8.4		40
+github.com/felixge/httpsnoop	false	github.com/felixge/httpsnoop	v1.0.4		532
+github.com/go-acme/lego/v4/acme	false	github.com/go-acme/lego/v4	v4.20.4		407
+github.com/go-acme/lego/v4/acme/api	false	github.com/go-acme/lego/v4	v4.20.4		653
+github.com/go-acme/lego/v4/acme/api/internal/nonces	false	github.com/go-acme/lego/v4	v4.20.4		78
+github.com/go-acme/lego/v4/acme/api/internal/secure	false	github.com/go-acme/lego/v4	v4.20.4		130
+github.com/go-acme/lego/v4/acme/api/internal/sender	false	github.com/go-acme/lego/v4	v4.20.4		161
+github.com/go-acme/lego/v4/certcrypto	false	github.com/go-acme/lego/v4	v4.20.4		332
+github.com/go-acme/lego/v4/certificate	false	github.com/go-acme/lego/v4	v4.20.4		933
+github.com/go-acme/lego/v4/challenge	false	github.com/go-acme/lego/v4	v4.20.4		72
+github.com/go-acme/lego/v4/challenge/dns01	false	github.com/go-acme/lego/v4	v4.20.4		876
+github.com/go-acme/lego/v4/challenge/http01	false	github.com/go-acme/lego/v4	v4.20.4		407
+github.com/go-acme/lego/v4/challenge/resolver	false	github.com/go-acme/lego/v4	v4.20.4		362
+github.com/go-acme/lego/v4/challenge/tlsalpn01	false	github.com/go-acme/lego/v4	v4.20.4		225
+github.com/go-acme/lego/v4/lego	false	github.com/go-acme/lego/v4	v4.20.4		222
+github.com/go-acme/lego/v4/log	false	github.com/go-acme/lego/v4	v4.20.4		59
+github.com/go-acme/lego/v4/platform/wait	false	github.com/go-acme/lego/v4	v4.20.4		36
+github.com/go-acme/lego/v4/registration	false	github.com/go-acme/lego/v4	v4.20.4		182
+github.com/go-jose/go-jose/v4	false	github.com/go-jose/go-jose/v4	v4.1.3		4904
+github.com/go-jose/go-jose/v4/cipher	false	github.com/go-jose/go-jose/v4	v4.1.3		466
+github.com/go-jose/go-jose/v4/json	false	github.com/go-jose/go-jose/v4	v4.1.3		3705
+github.com/go-logr/logr	false	github.com/go-logr/logr	v1.4.3		1072
+github.com/go-logr/logr/funcr	false	github.com/go-logr/logr	v1.4.3		1019
+github.com/go-logr/stdr	false	github.com/go-logr/stdr	v1.2.2		170
+github.com/google/uuid	false	github.com/google/uuid	v1.6.0		1311
+github.com/gorilla/websocket	false	github.com/gorilla/websocket	v1.5.3		3540
+github.com/joho/godotenv	false	github.com/joho/godotenv	v1.5.1		499
+github.com/klauspost/compress	false	github.com/klauspost/compress	v1.18.5		85
+github.com/klauspost/compress/flate	false	github.com/klauspost/compress	v1.18.5		8163
+github.com/klauspost/compress/fse	false	github.com/klauspost/compress	v1.18.5		1539
+github.com/klauspost/compress/huff0	false	github.com/klauspost/compress	v1.18.5		2864
+github.com/klauspost/compress/internal/le	false	github.com/klauspost/compress	v1.18.5		57
+github.com/klauspost/compress/internal/snapref	false	github.com/klauspost/compress	v1.18.5		1016
+github.com/klauspost/compress/zstd	false	github.com/klauspost/compress	v1.18.5		12713
+github.com/klauspost/compress/zstd/internal/xxhash	false	github.com/klauspost/compress	v1.18.5		257
+github.com/magiconair/properties	false	github.com/magiconair/properties	v1.8.10		2263
+github.com/miekg/dns	false	github.com/miekg/dns	v1.1.62		20962
+github.com/moby/docker-image-spec/specs-go/v1	false	github.com/moby/docker-image-spec	v1.3.1		54
+github.com/moby/go-archive	false	github.com/moby/go-archive	v0.1.0		2877
+github.com/moby/go-archive/compression	false	github.com/moby/go-archive	v0.1.0		328
+github.com/moby/go-archive/tarheader	false	github.com/moby/go-archive	v0.1.0		113
+github.com/moby/patternmatcher	false	github.com/moby/patternmatcher	v0.6.0		474
+github.com/moby/patternmatcher/ignorefile	false	github.com/moby/patternmatcher	v0.6.0		73
+github.com/moby/sys/sequential	false	github.com/moby/sys/sequential	v0.6.0		41
+github.com/moby/sys/user	false	github.com/moby/sys/user	v0.4.0		1045
+github.com/moby/term	false	github.com/moby/term	v0.5.0		388
+github.com/morikuni/aec	false	github.com/morikuni/aec	v1.0.0		786
+github.com/munnerz/goautoneg	false	github.com/munnerz/goautoneg	v0.0.0-20191010083416-a7dc8b61c822		189
+github.com/nats-io/nats.go	false	github.com/nats-io/nats.go	v1.52.0		17837
+github.com/nats-io/nats.go/encoders/builtin	false	github.com/nats-io/nats.go	v1.52.0		236
+github.com/nats-io/nats.go/internal/parser	false	github.com/nats-io/nats.go	v1.52.0		104
+github.com/nats-io/nats.go/internal/syncx	false	github.com/nats-io/nats.go	v1.52.0		73
+github.com/nats-io/nats.go/jetstream	false	github.com/nats-io/nats.go	v1.52.0		12553
+github.com/nats-io/nats.go/util	false	github.com/nats-io/nats.go	v1.52.0		25
+github.com/nats-io/nkeys	false	github.com/nats-io/nkeys	v0.4.15		1022
+github.com/nats-io/nuid	false	github.com/nats-io/nuid	v1.0.1		135
+github.com/opencontainers/go-digest	false	github.com/opencontainers/go-digest	v1.0.0		498
+github.com/opencontainers/image-spec/specs-go	false	github.com/opencontainers/image-spec	v1.1.1		55
+github.com/opencontainers/image-spec/specs-go/v1	false	github.com/opencontainers/image-spec	v1.1.1		449
+github.com/pkg/errors	false	github.com/pkg/errors	v0.9.1		503
+github.com/pmezard/go-difflib/difflib	false	github.com/pmezard/go-difflib	v1.0.1-0.20181226105442-5d4384ee4fb2		772
+github.com/prometheus/client_golang/internal/github.com/golang/gddo/httputil	false	github.com/prometheus/client_golang	v1.23.2		36
+github.com/prometheus/client_golang/internal/github.com/golang/gddo/httputil/header	false	github.com/prometheus/client_golang	v1.23.2		145
+github.com/prometheus/client_golang/prometheus	false	github.com/prometheus/client_golang	v1.23.2		8542
+github.com/prometheus/client_golang/prometheus/collectors	false	github.com/prometheus/client_golang	v1.23.2		439
+github.com/prometheus/client_golang/prometheus/internal	false	github.com/prometheus/client_golang	v1.23.2		993
+github.com/prometheus/client_golang/prometheus/promhttp	false	github.com/prometheus/client_golang	v1.23.2		1781
+github.com/prometheus/client_golang/prometheus/promhttp/internal	false	github.com/prometheus/client_golang	v1.23.2		21
+github.com/prometheus/client_model/go	false	github.com/prometheus/client_model	v0.6.2		1399
+github.com/prometheus/common/expfmt	false	github.com/prometheus/common	v0.66.1		3011
+github.com/prometheus/common/model	false	github.com/prometheus/common	v0.66.1		2710
+github.com/robfig/cron/v3	false	github.com/robfig/cron/v3	v3.0.1		1458
+github.com/sashabaranov/go-openai	false	github.com/sashabaranov/go-openai	v1.41.2		5283
+github.com/sashabaranov/go-openai/internal	false	github.com/sashabaranov/go-openai	v1.41.2		238
+github.com/sashabaranov/go-openai/jsonschema	false	github.com/sashabaranov/go-openai	v1.41.2		375
+github.com/shirou/gopsutil/v4/common	false	github.com/shirou/gopsutil/v4	v4.25.6		25
+github.com/shirou/gopsutil/v4/cpu	false	github.com/shirou/gopsutil/v4	v4.25.6		485
+github.com/shirou/gopsutil/v4/internal/common	false	github.com/shirou/gopsutil/v4	v4.25.6		1631
+github.com/shirou/gopsutil/v4/mem	false	github.com/shirou/gopsutil/v4	v4.25.6		251
+github.com/shirou/gopsutil/v4/net	false	github.com/shirou/gopsutil/v4	v4.25.6		809
+github.com/shirou/gopsutil/v4/process	false	github.com/shirou/gopsutil/v4	v4.25.6		1624
+github.com/sirupsen/logrus	false	github.com/sirupsen/logrus	v1.9.3		2171
+github.com/stretchr/testify/assert	false	github.com/stretchr/testify	v1.11.1		5701
+github.com/stretchr/testify/assert/yaml	false	github.com/stretchr/testify	v1.11.1		36
+github.com/stretchr/testify/require	false	github.com/stretchr/testify	v1.11.1		3980
+github.com/testcontainers/testcontainers-go	false	github.com/testcontainers/testcontainers-go	v0.40.0		6538
+github.com/testcontainers/testcontainers-go/exec	false	github.com/testcontainers/testcontainers-go	v0.40.0		128
+github.com/testcontainers/testcontainers-go/internal	false	github.com/testcontainers/testcontainers-go	v0.40.0		4
+github.com/testcontainers/testcontainers-go/internal/config	false	github.com/testcontainers/testcontainers-go	v0.40.0		185
+github.com/testcontainers/testcontainers-go/internal/core	false	github.com/testcontainers/testcontainers-go	v0.40.0		891
+github.com/testcontainers/testcontainers-go/internal/core/network	false	github.com/testcontainers/testcontainers-go	v0.40.0		52
+github.com/testcontainers/testcontainers-go/log	false	github.com/testcontainers/testcontainers-go	v0.40.0		73
+github.com/testcontainers/testcontainers-go/wait	false	github.com/testcontainers/testcontainers-go	v0.40.0		2010
+github.com/tklauser/go-sysconf	false	github.com/tklauser/go-sysconf	v0.3.12		738
+go.opentelemetry.io/auto/sdk	false	go.opentelemetry.io/auto/sdk	v1.2.1		729
+go.opentelemetry.io/auto/sdk/internal/telemetry	false	go.opentelemetry.io/auto/sdk	v1.2.1		1522
+go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp	false	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp	v0.54.0		885
+go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp/internal/request	false	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp	v0.54.0		187
+go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp/internal/semconv	false	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp	v0.54.0		803
+go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp/internal/semconvutil	false	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp	v0.54.0		790
+go.opentelemetry.io/otel	false	go.opentelemetry.io/otel	v1.42.0		207
+go.opentelemetry.io/otel/attribute	false	go.opentelemetry.io/otel	v1.42.0		1404
+go.opentelemetry.io/otel/attribute/internal	false	go.opentelemetry.io/otel	v1.42.0		92
+go.opentelemetry.io/otel/attribute/internal/xxhash	false	go.opentelemetry.io/otel	v1.42.0		64
+go.opentelemetry.io/otel/baggage	false	go.opentelemetry.io/otel	v1.42.0		1112
+go.opentelemetry.io/otel/codes	false	go.opentelemetry.io/otel	v1.42.0		116
+go.opentelemetry.io/otel/internal/baggage	false	go.opentelemetry.io/otel	v1.42.0		113
+go.opentelemetry.io/otel/internal/errorhandler	false	go.opentelemetry.io/otel	v1.42.0		96
+go.opentelemetry.io/otel/internal/global	false	go.opentelemetry.io/otel	v1.42.0		1644
+go.opentelemetry.io/otel/metric	false	go.opentelemetry.io/otel/metric	v1.42.0		2094
+go.opentelemetry.io/otel/metric/embedded	false	go.opentelemetry.io/otel/metric	v1.42.0		243
+go.opentelemetry.io/otel/metric/noop	false	go.opentelemetry.io/otel/metric	v1.42.0		320
+go.opentelemetry.io/otel/propagation	false	go.opentelemetry.io/otel	v1.42.0		433
+go.opentelemetry.io/otel/semconv/v1.20.0	false	go.opentelemetry.io/otel	v1.42.0		6082
+go.opentelemetry.io/otel/semconv/v1.26.0	false	go.opentelemetry.io/otel	v1.42.0		10330
+go.opentelemetry.io/otel/semconv/v1.37.0	false	go.opentelemetry.io/otel	v1.42.0		15276
+go.opentelemetry.io/otel/semconv/v1.40.0	false	go.opentelemetry.io/otel	v1.42.0		16954
+go.opentelemetry.io/otel/trace	false	go.opentelemetry.io/otel/trace	v1.42.0		2332
+go.opentelemetry.io/otel/trace/embedded	false	go.opentelemetry.io/otel/trace	v1.42.0		45
+go.opentelemetry.io/otel/trace/internal/telemetry	false	go.opentelemetry.io/otel/trace	v1.42.0		1525
+go.opentelemetry.io/otel/trace/noop	false	go.opentelemetry.io/otel/trace	v1.42.0		112
+go.yaml.in/yaml/v2	false	go.yaml.in/yaml/v2	v2.4.3		9639
+go/token	true				1458
+golang.org/x/crypto/blake2b	false	golang.org/x/crypto	v0.50.0		710
+golang.org/x/crypto/blowfish	false	golang.org/x/crypto	v0.50.0		457
+golang.org/x/crypto/chacha20	false	golang.org/x/crypto	v0.50.0		456
+golang.org/x/crypto/curve25519	false	golang.org/x/crypto	v0.50.0		93
+golang.org/x/crypto/internal/alias	false	golang.org/x/crypto	v0.50.0		31
+golang.org/x/crypto/internal/poly1305	false	golang.org/x/crypto	v0.50.0		420
+golang.org/x/crypto/nacl/box	false	golang.org/x/crypto	v0.50.0		182
+golang.org/x/crypto/nacl/secretbox	false	golang.org/x/crypto	v0.50.0		173
+golang.org/x/crypto/ocsp	false	golang.org/x/crypto	v0.50.0		793
+golang.org/x/crypto/salsa20/salsa	false	golang.org/x/crypto	v0.50.0		598
+golang.org/x/crypto/ssh	false	golang.org/x/crypto	v0.50.0		11910
+golang.org/x/crypto/ssh/internal/bcrypt_pbkdf	false	golang.org/x/crypto	v0.50.0		93
+golang.org/x/net/bpf	false	golang.org/x/net	v0.53.0		1411
+golang.org/x/net/http/httpguts	false	golang.org/x/net	v0.53.0		397
+golang.org/x/net/http2	false	golang.org/x/net	v0.53.0		12708
+golang.org/x/net/http2/hpack	false	golang.org/x/net	v0.53.0		1592
+golang.org/x/net/idna	false	golang.org/x/net	v0.53.0		6343
+golang.org/x/net/internal/httpcommon	false	golang.org/x/net	v0.53.0		635
+golang.org/x/net/internal/httpsfv	false	golang.org/x/net	v0.53.0		665
+golang.org/x/net/internal/iana	false	golang.org/x/net	v0.53.0		223
+golang.org/x/net/internal/socket	false	golang.org/x/net	v0.53.0		1025
+golang.org/x/net/ipv4	false	golang.org/x/net	v0.53.0		2310
+golang.org/x/net/ipv6	false	golang.org/x/net	v0.53.0		1980
+golang.org/x/sys/unix	false	golang.org/x/sys	v0.43.0		8908
+golang.org/x/text/secure/bidirule	false	golang.org/x/text	v0.36.0		340
+golang.org/x/text/transform	false	golang.org/x/text	v0.36.0		709
+golang.org/x/text/unicode/bidi	false	golang.org/x/text	v0.36.0		4054
+golang.org/x/text/unicode/norm	false	golang.org/x/text	v0.36.0		10152
+google.golang.org/protobuf/encoding/protodelim	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		167
+google.golang.org/protobuf/encoding/prototext	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		1172
+google.golang.org/protobuf/encoding/protowire	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		571
+google.golang.org/protobuf/internal/descfmt	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		409
+google.golang.org/protobuf/internal/descopts	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		29
+google.golang.org/protobuf/internal/detrand	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		69
+google.golang.org/protobuf/internal/editiondefaults	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		12
+google.golang.org/protobuf/internal/encoding/defval	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		213
+google.golang.org/protobuf/internal/encoding/messageset	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		242
+google.golang.org/protobuf/internal/encoding/tag	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		208
+google.golang.org/protobuf/internal/encoding/text	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		1775
+google.golang.org/protobuf/internal/errors	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		104
+google.golang.org/protobuf/internal/filedesc	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		3329
+google.golang.org/protobuf/internal/filetype	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		296
+google.golang.org/protobuf/internal/flags	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		34
+google.golang.org/protobuf/internal/genid	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		2294
+google.golang.org/protobuf/internal/impl	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		16250
+google.golang.org/protobuf/internal/order	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		204
+google.golang.org/protobuf/internal/pragma	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		29
+google.golang.org/protobuf/internal/protolazy	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		740
+google.golang.org/protobuf/internal/set	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		58
+google.golang.org/protobuf/internal/strs	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		267
+google.golang.org/protobuf/internal/version	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		79
+google.golang.org/protobuf/proto	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		2381
+google.golang.org/protobuf/reflect/protoreflect	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		2954
+google.golang.org/protobuf/reflect/protoregistry	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		882
+google.golang.org/protobuf/runtime/protoiface	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		217
+google.golang.org/protobuf/runtime/protoimpl	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		108
+google.golang.org/protobuf/types/known/timestamppb	false	google.golang.org/protobuf	v1.36.12-0.20260120151049-f2248ac996af		356
+gopkg.in/yaml.v3	false	gopkg.in/yaml.v3	v3.0.1		11285
+hash	true				92
+hash/crc32	true				406
+hash/fnv	true				380
+html	true				2475
+internal/abi	true				1500
+internal/asan	true				27
+internal/bisect	true				778
+internal/bytealg	true				296
+internal/byteorder	true				149
+internal/chacha8rand	true				405
+internal/coverage/rtcov	true				88
+internal/cpu	true				496
+internal/filepathlite	true				326
+internal/fmtsort	true				154
+internal/goarch	true				110
+internal/godebug	true				316
+internal/godebugs	true				114
+internal/goexperiment	true				291
+internal/goos	true				48
+internal/msan	true				37
+internal/nettrace	true				46
+internal/oserror	true				18
+internal/poll	true				2023
+internal/profile	true				2550
+internal/profilerecord	true				28
+internal/race	true				66
+internal/reflectlite	true				1201
+internal/routebsd	true				708
+internal/runtime/atomic	true				853
+internal/runtime/exithook	true				85
+internal/runtime/gc	true				168
+internal/runtime/gc/scan	true				239
+internal/runtime/maps	true				4482
+internal/runtime/math	true				62
+internal/runtime/pprof/label	true				25
+internal/runtime/sys	true				369
+internal/saferio	true				132
+internal/singleflight	true				123
+internal/strconv	true				4036
+internal/stringslite	true				150
+internal/sync	true				1010
+internal/synctest	true				105
+internal/syscall/execenv	true				19
+internal/syscall/unix	true				853
+internal/sysinfo	true				38
+internal/testlog	true				113
+internal/trace/tracev2	true				707
+internal/unsafeheader	true				37
+io	true				1089
+io/fs	true				1003
+io/ioutil	true				151
+iter	true				473
+log	true				483
+log/internal	true				12
+log/slog	true				2972
+log/slog/internal	true				9
+log/slog/internal/buffer	true				66
+maps	true				137
+math	true				6007
+math/big	true				9681
+math/bits	true				693
+math/rand	true				1265
+math/rand/v2	true				1046
+mime	true				1295
+mime/multipart	true				1023
+mime/quotedprintable	true				312
+net	true				12457
+net/http	true				29491
+net/http/httptest	true				793
+net/http/httptrace	true				255
+net/http/internal	true				300
+net/http/internal/ascii	true				61
+net/http/internal/httpcommon	true				618
+net/http/internal/testcert	true				65
+net/http/pprof	true				477
+net/netip	true				1677
+net/textproto	true				1295
+net/url	true				1444
+os	true				5524
+os/exec	true				1486
+os/signal	true				639
+os/user	true				506
+path	true				444
+path/filepath	true				1039
+reflect	true				8694
+regexp	true				2714
+regexp/syntax	true				3815
+runtime	true				87552
+runtime/cgo	true				415
+runtime/debug	true				644
+runtime/metrics	true				1301
+runtime/pprof	true				2656
+runtime/trace	true				992
+slices	true				1799
+sort	true				1457
+strconv	true				1689
+strings	true				2435
+sync	true				1697
+sync/atomic	true				768
+syscall	true				7873
+testing	true				5272
+text/scanner	true				792
+text/tabwriter	true				601
+text/template	true				2896
+text/template/parse	true				2547
+time	true				5623
+unicode	true				10335
+unicode/utf16	true				144
+unicode/utf8	true				578
+unique	true				552
+unsafe	true				271
+vendor/golang.org/x/crypto/chacha20	true				456
+vendor/golang.org/x/crypto/chacha20poly1305	true				303
+vendor/golang.org/x/crypto/cryptobyte	true				1358
+vendor/golang.org/x/crypto/cryptobyte/asn1	true				46
+vendor/golang.org/x/crypto/internal/alias	true				31
+vendor/golang.org/x/crypto/internal/poly1305	true				420
+vendor/golang.org/x/net/dns/dnsmessage	true				3067
+vendor/golang.org/x/net/http/httpguts	true				397
+vendor/golang.org/x/net/http/httpproxy	true				373
+vendor/golang.org/x/net/http2/hpack	true				1585
+vendor/golang.org/x/net/idna	true				6343
+vendor/golang.org/x/text/secure/bidirule	true				347
+vendor/golang.org/x/text/transform	true				709
+vendor/golang.org/x/text/unicode/bidi	true				4054
+vendor/golang.org/x/text/unicode/norm	true				10142
+weak	true				107

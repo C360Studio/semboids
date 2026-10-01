@@ -5,7 +5,6 @@
     "id": "semboids",
     "type": "simulation",
     "region": "local",
-    "instance_id": "semboids-001",
     "environment": "development"
   },
   "nats": {
@@ -92,7 +91,17 @@
           }
         ],
         "ports": {
-          "inputs": [],
+          "inputs": [
+            {
+              "name": "steering",
+              "required": true,
+              "description": "Rule-driven steering modifiers",
+              "config": {
+                "kind": "nats",
+                "subject": "boids.steering"
+              }
+            }
+          ],
           "outputs": [
             {
               "name": "frames",
@@ -114,6 +123,26 @@
                   "type": "semstreams.graph.mutation",
                   "version": "v1"
                 }
+              }
+            },
+            {
+              "name": "zone_events",
+              "required": true,
+              "description": "Zone transition events to the rule processor",
+              "config": {
+                "kind": "nats",
+                "subject": "boids.zone.events"
+              }
+            },
+            {
+              "name": "entity_stream",
+              "description": "Batched boid snapshots through graph-ingest",
+              "config": {
+                "kind": "jetstream",
+                "stream_name": "ENTITY",
+                "subjects": [
+                  "entity.boid.upsert"
+                ]
               }
             }
           ]

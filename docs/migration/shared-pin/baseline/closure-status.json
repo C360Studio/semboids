@@ -1,0 +1,100 @@
+[
+  {
+    "name": "toolchain",
+    "command": [
+      "go",
+      "version"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.008237838745117188
+  },
+  {
+    "name": "go-env",
+    "command": [
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "CGO_ENABLED",
+      "GOTOOLCHAIN"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.008133888244628906
+  },
+  {
+    "name": "semstreams-origin",
+    "command": [
+      "go",
+      "mod",
+      "download",
+      "-json",
+      "github.com/c360studio/semstreams@v1.0.0-beta.160"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.008758068084716797
+  },
+  {
+    "name": "modules",
+    "command": [
+      "go",
+      "list",
+      "-m",
+      "-json",
+      "all"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.02519083023071289
+  },
+  {
+    "name": "module-graph",
+    "command": [
+      "go",
+      "mod",
+      "graph"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.009772777557373047
+  },
+  {
+    "name": "prod-closure",
+    "command": [
+      "go",
+      "list",
+      "-deps",
+      "-json",
+      "./cmd/semboids"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.2241368293762207
+  },
+  {
+    "name": "test-closure",
+    "command": [
+      "go",
+      "list",
+      "-deps",
+      "-test",
+      "-tags=integration",
+      "-json",
+      "./..."
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.22265076637268066
+  },
+  {
+    "name": "direct-semstreams-imports",
+    "command": [
+      "rg",
+      "-n",
+      "github.com/c360studio/semstreams",
+      "--glob",
+      "*.go",
+      "--glob",
+      "!ui/**",
+      "."
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.010994911193847656
+  }
+]

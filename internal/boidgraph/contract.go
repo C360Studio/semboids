@@ -1,6 +1,12 @@
 package boidgraph
 
-import "github.com/c360studio/semstreams/pkg/projection"
+import (
+	"github.com/c360studio/semstreams/pkg/projection"
+	entitytypes "github.com/c360studio/semstreams/pkg/types"
+)
+
+// EntityDomains declares the application-owned domain for the identity audit.
+var EntityDomains = []entitytypes.EntityDomainDelegation{{Producer: "semboids", Domain: "flock"}}
 
 const (
 	// NeighborContractName is the projection contract declaring the

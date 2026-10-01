@@ -4,6 +4,7 @@ package boidgraph_test
 
 import (
 	"context"
+	"github.com/c360studio/semboids/internal/boidgraph"
 	"testing"
 	"time"
 
@@ -30,6 +31,9 @@ func TestDebugDumpOutgoingIndex(t *testing.T) {
 
 	payloadReg := payloadregistry.New()
 	_ = payloadbuiltins.Register(payloadReg)
+	if err := boidgraph.RegisterPayloads(payloadReg); err != nil {
+		t.Fatal(err)
+	}
 	registry := component.NewRegistry()
 	_ = graphingest.Register(registry)
 	_ = graphindex.Register(registry)

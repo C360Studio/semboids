@@ -24,7 +24,7 @@ func TestFramesFlowThroughNATS(t *testing.T) {
 	if err != nil {
 		t.Fatalf("marshal config: %v", err)
 	}
-	disc, err := NewComponent(cfg, component.Dependencies{NATSClient: tc.Client})
+	disc, err := NewComponent(cfg, component.Dependencies{NATSClient: tc.Client, Platform: component.PlatformMeta{Org: "c360", Platform: "semboids"}})
 	if err != nil {
 		t.Fatalf("NewComponent: %v", err)
 	}
@@ -48,7 +48,7 @@ func TestFramesFlowThroughNATS(t *testing.T) {
 	if err := comp.Start(ctx); err != nil {
 		t.Fatalf("Start: %v", err)
 	}
-	defer func() { _ = comp.Stop(2 * time.Second) }()
+	defer func() { _ = comp.Stop(testStopContext(t)) }()
 
 	// Collect frames for one second of wall clock; expect roughly 30
 	// (loose bounds: half to double, catching gross cadence failures only).

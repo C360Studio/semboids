@@ -1,0 +1,13 @@
+{
+  "reviewed_at_utc": "2026-10-01T11:52:09.281284+00:00",
+  "disposition": "M1-M3 resolved; 8 independent Python tests passed",
+  "sha256": {
+    "scripts/qualification/analyze.py": "49f7c4a99f510d9057a9465d9c686186919185090fc75289d3c3de78d76132b4",
+    "scripts/qualification/campaign.py": "33d3e49656c463068a6e6c9b00d44ef7866d4dbdff389e255efb9c7e11eece86",
+    "scripts/qualification/load.py": "367f2295f5e4e0d827a110e0ed18d40d86fcfa70165811e3033faf6b92541487",
+    "scripts/qualification/operations.py": "7a7d1ecd7588ace2595ffcaab06f1ad2861f43f7ee15f1eb80bc1e34314ec615",
+    "scripts/qualification/test_load.py": "77e8f32287c37223b7e3337d2407ecb825e9620701323bf2c1187643b44edfa6",
+    "scripts/qualification/test_review_guards.py": "0fc08a30422049ecf683b59a14052803e66dc4b9789581608aead29c2c9cbf6f",
+    "scripts/qualification/websocket.mjs": "65f5474a470bd4103918afbccf42b7f3e6ddd1809a0c32ece86dfa65631374d5"
+  }
+}

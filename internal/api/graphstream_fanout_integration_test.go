@@ -62,7 +62,7 @@ func newStreamFixture(t *testing.T, ctx context.Context) *streamFixture {
 	if err := s.Start(ctx); err != nil {
 		t.Fatalf("Start: %v", err)
 	}
-	t.Cleanup(func() { _ = s.Stop(5 * time.Second) })
+	t.Cleanup(func() { _ = s.Stop(testStopContext(t)) })
 
 	view := waitEntityView(t, s, 15*time.Second)
 	if err := view.WaitCaughtUp(ctx); err != nil {

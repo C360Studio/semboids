@@ -12,6 +12,8 @@ import (
 
 	"github.com/c360studio/semstreams/message"
 	"github.com/c360studio/semstreams/payloadregistry"
+	"github.com/c360studio/semstreams/pkg/projection"
+	"github.com/c360studio/semstreams/vocabulary"
 )
 
 // IngestSubject is the JetStream subject boid snapshots publish to, under
@@ -126,12 +128,14 @@ func buildEntity(fields map[string]any) (any, error) {
 // RegisterPayloads registers the boid entity payload type (boids.boid.v1).
 func RegisterPayloads(reg *payloadregistry.Registry) error {
 	return reg.Register(&payloadregistry.Registration{
-		Domain:      "boids",
-		Category:    "boid",
-		Version:     "v1",
-		Description: "One boid's graph snapshot: position/velocity + neighbor relationships",
-		Factory:     func() any { return &Entity{} },
-		Builder:     buildEntity,
+		Domain:          "boids",
+		Category:        "boid",
+		Version:         "v1",
+		IndexingProfile: vocabulary.IndexingProfileControl,
+		Contracts:       []projection.Contract{NeighborContract()},
+		Description:     "One boid's graph snapshot: position/velocity + neighbor relationships",
+		Factory:         func() any { return &Entity{} },
+		Builder:         buildEntity,
 		Example: map[string]any{
 			"boid": map[string]any{
 				"id": 7, "x": 812.4, "y": 301.2, "vx": 21.8, "vy": -37.1,

@@ -1,0 +1,10 @@
+{
+  "production_semstreams_non_test_physical_lines": 131061,
+  "integration-test_semstreams_non_test_physical_lines": 131061,
+  "selected_modules": 303,
+  "production_packages": 514,
+  "integration_test_packages": 538,
+  "production_external_modules": 64,
+  "integration_test_external_modules": 64,
+  "production_semstreams_packages": 62
+}

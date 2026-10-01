@@ -1,0 +1,9 @@
+2026/10/01 06:30:04 INFO Starting sim component boids=5 tick_hz=200 seed=42 zones=0 subject=boids.frames
+2026/10/01 06:30:04 INFO Sim component stopped
+2026/10/01 06:30:04 INFO Starting sim component boids=5 tick_hz=200 seed=42 zones=0 subject=boids.frames
+2026/10/01 06:30:04 INFO Sim component stopped
+--- FAIL: TestComponentStoppedInstanceCannotRestart (0.01s)
+    migration_test.go:24: stopped component accepted a second Start
+FAIL
+FAIL	github.com/c360studio/semboids/internal/sim	0.313s
+FAIL

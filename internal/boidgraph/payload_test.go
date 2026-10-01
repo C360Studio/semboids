@@ -1,6 +1,10 @@
 package boidgraph
 
 import (
+	"encoding/json"
+	"github.com/c360studio/semstreams/message"
+	"github.com/c360studio/semstreams/vocabulary"
+	"reflect"
 	"testing"
 	"time"
 
@@ -98,5 +102,32 @@ func TestBoidPayloadSchemaAndRegistry(t *testing.T) {
 	}
 	if err := RegisterPayloads(reg); err == nil {
 		t.Fatal("double registration accepted")
+	}
+}
+
+func TestRegisteredPayloadRoundTripAndFloor(t *testing.T) {
+	e := testEntity()
+	reg := payloadregistry.New()
+	if err := RegisterPayloads(reg); err != nil {
+		t.Fatal(err)
+	}
+	registration, ok := reg.GetRegistration(e.Schema().String())
+	if !ok || registration.IndexingProfile != vocabulary.IndexingProfileControl {
+		t.Fatal("payload must declare its control indexing floor")
+	}
+	wire, err := json.Marshal(message.NewBaseMessage(e.Schema(), e, "semboids"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	decoded, err := message.NewDecoder(reg).Decode(wire)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, ok := decoded.Payload().(*Entity)
+	if !ok {
+		t.Fatalf("decoded payload %T", decoded.Payload())
+	}
+	if got.EntityID() != e.EntityID() || !reflect.DeepEqual(got.Triples(), e.Triples()) {
+		t.Fatalf("round-trip changed entity identity or facts: %+v", got)
 	}
 }

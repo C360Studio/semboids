@@ -1,0 +1,14 @@
+{
+  "command": [
+    "go",
+    "test",
+    "-count=1",
+    "-p=1",
+    "-race",
+    "-tags=integration",
+    "-v",
+    "./..."
+  ],
+  "exit_code": 0,
+  "evidence": "race-integration-final.log"
+}
