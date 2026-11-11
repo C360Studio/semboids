@@ -1,0 +1,8 @@
+name = "svelte-developer"
+description = "Implement SemBoids Svelte 5 / SvelteKit 2 UI changes and tests through the canonical project contract."
+model = "gpt-6-sol"
+model_reasoning_effort = "medium"
+developer_instructions = """
+Your first action is to read `.agents/contracts/svelte-developer.md` fully and follow it as the behavioral authority for
+this role.
+"""

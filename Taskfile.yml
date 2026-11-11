@@ -1,8 +1,18 @@
 version: "3"
 
 # .env is gitignored; copy .env.example to .env. Matches the sibling
-# pattern in ../semstreams and ../semspec.
+# pattern in ../semstreams and ../semteams.
 dotenv: ['.env']
+
+vars:
+  # The ateam pin. Installed into the MAIN checkout's gitignored .tools/bin, so it
+  # survives reboots, is shared by every linked worktree, and never collides with
+  # a sister repo pinning another release in $(go env GOPATH)/bin or ~/.local/bin.
+  # Hooks, MCP, and Taskfile targets reach it through scripts/ateam.
+  ATEAM_VERSION: v0.4.1
+  ATEAM_BIN_DIR:
+    sh: echo "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")/.tools/bin"
+  ATEAM: "{{.ATEAM_BIN_DIR}}/ateam"
 
 includes:
   build:
@@ -19,12 +29,57 @@ includes:
   dev:
     taskfile: ./taskfiles/dev.yml
     aliases: [d]
+  openspec:
+    taskfile: ./taskfiles/openspec.yml
 
 tasks:
   default:
     desc: Show available tasks
     cmds:
       - task --list
+
+  tools:ateam:
+    desc: Install the pinned ateam into the main checkout's .tools/bin (skips when already at the pin)
+    status:
+      - '"{{.ATEAM}}" version 2>/dev/null | grep -q "ateam {{.ATEAM_VERSION}} "'
+    cmds:
+      - GOBIN="{{.ATEAM_BIN_DIR}}" GOTOOLCHAIN=auto go install github.com/c360studio/ateam/cmd/ateam@{{.ATEAM_VERSION}}
+
+  doctor:
+    desc: Report tool versions and Docker reachability against their pins; starts no workloads
+    cmds:
+      - scripts/doctor.sh
+
+  ateam:doctor:
+    desc: Check ATeam multi-agent setup, hook, MCP, skill, and review-policy parity without mutating worktree state
+    cmds:
+      - env -u ATEAM_SESSION_ID -u CLAUDE_SESSION_ID -u CODEX_SESSION_ID -u GEMINI_SESSION_ID scripts/ateam doctor --check
+
+  merge:check:
+    desc: Fail if main lacks an active strict Required ruleset, PR <n> is a non-draft code PR failing .agents/review-policy.json or missing a commit-bound review record, or an open class:flake issue is not closed by PR <n>; -- <n>. Reads GitHub, so not in validate/verify
+    cmds:
+      - ATEAM="${ATEAM:-scripts/ateam}" scripts/merge-check.sh {{.CLI_ARGS}}
+
+  mutate:check:
+    desc: "Run non-destructive Go -overlay mutation check (-- -pkg -test -file -mutant -expect or -expect-text)"
+    cmds:
+      - "scripts/ateam mutate {{.CLI_ARGS}}"
+
+  spec:check:
+    desc: Validate all OpenSpec changes and specs strictly, then run ateam's spec-check (fails on a hold written outside every task)
+    cmds:
+      - openspec validate --all --strict
+      - scripts/ateam state spec-check
+
+  spec:queue:
+    desc: Show each in-flight OpenSpec change with its holds and blocking conditions
+    cmds:
+      - scripts/ateam state spec-queue
+
+  test:spec:
+    desc: Check that new and changed Go and Vitest tests cite a spec Requirement (ateam test-spec --base)
+    cmds:
+      - scripts/ateam test-spec --base "${TEST_SPEC_BASE:-origin/main}"
 
   demo:
     desc: "Easy button — start NATS + backend + UI and open the demo (Ctrl-C to stop)"
@@ -45,6 +100,16 @@ tasks:
       - go vet -tags=integration ./...
       - go test -race ./...
       - go test -race -tags=integration ./...
+
+  validate:
+    desc: Run read-only local validation mirroring Repository CI (Go, UI, Governance)
+    cmds:
+      - scripts/validate.sh
+
+  verify:
+    desc: Alias for validate — run read-only local validation mirroring Repository CI (Go, UI, Governance)
+    cmds:
+      - scripts/verify.sh
 
   sweep:
     desc: "One load-dial sweep point against a running stack (HZ=<n> [WINDOW=90] [WARMUP=30] [BOIDS=200])"

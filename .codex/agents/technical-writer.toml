@@ -1,0 +1,8 @@
+name = "technical-writer"
+description = "Maintain SemBoids durable documentation and conservative OpenSpec task truth through the canonical project contract."
+model = "gpt-6-sol"
+model_reasoning_effort = "medium"
+developer_instructions = """
+Your first action is to read `.agents/contracts/technical-writer.md` fully and follow it as the behavioral authority for
+this role.
+"""

@@ -2,7 +2,7 @@ schema: spec-driven
 
 # Planning context OpenSpec injects into every request (self-contained since
 # 1.5). Detailed human references: openspec/project.md (Purpose + Product
-# Boundary + Conventions) and CLAUDE.md.
+# Boundary + Conventions) and AGENTS.md.
 context: |
   SemBoids is a classic Reynolds boids simulator and SemStreams load-generator
   demo (Go 1.26, SemStreams by tag, NATS JetStream, SvelteKit/Svelte 5 ui/,
@@ -32,3 +32,7 @@ rules:
       workarounds — name the issue to file, if any.
   specs:
     - Specs describe CURRENT behavior verified against code, not aspirations.
+  design:
+    - Keep design.md to 120 lines (`ateam state spec-check` warns past it).
+    - Ground every claim about existing code in a `file:line` read in this run.
+    - For each decision, lay out at least two options with cost, blast radius, what each forecloses, and the adopter seam; mark every question needing an owner ruling.

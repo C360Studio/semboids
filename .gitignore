@@ -49,6 +49,11 @@ ui/dist/
 ui/test-results/
 .playwright-mcp/
 
-# Agent/session artifacts
+# Agent/session artifacts and repo-local tools
 .claude/scheduled_tasks.lock
 .artifacts/
+.tools/
+.ateam/
+.worktrees/
+.enjoy-logs/
+benchmarks/runs/

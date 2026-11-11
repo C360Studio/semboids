@@ -1,71 +1,159 @@
-name: CI
+name: Repository CI
 
 on:
   push:
     branches: [main]
+  # Listing types replaces GitHub's default three, so ready_for_review is listed with them: a draft skips every job, so
+  # marking it ready starts the first run that checks it. Merge check is its own workflow (merge-check.yml).
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
 
-env:
-  GO_VERSION: "1.26"
+# As in ateam's ci.yml: superseded PR runs are cancelled, except the run that marking a draft ready starts, so its
+# Required lands after the run already in flight on the same head.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action != 'ready_for_review' }}
 
+# On a draft every job is skipped and renamed, so a draft head carries no check run named Required (GitHub counts a
+# skipped one as passing, ateam #250). A skipped job's name is not evaluated: the draft check run shows the raw
+# expression. Push events are unaffected.
 jobs:
-  lint:
+  go:
+    name: ${{ github.event.pull_request.draft && 'Go (draft, skipped)' || 'Go' }}
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v6
-        with:
-          go-version: ${{ env.GO_VERSION }}
-          cache: true
-      - name: go vet
-        run: go vet ./...
-      - name: gofmt check
-        run: |
-          UNFORMATTED=$(git ls-files -z '*.go' | xargs -0 gofmt -l)
-          if [ -n "$UNFORMATTED" ]; then
-            echo "gofmt needed on:"; echo "$UNFORMATTED"; exit 1
-          fi
-      - name: revive (warnings = failure)
-        run: go tool revive -config revive.toml -formatter friendly -exclude ui/... ./...
+      - name: Checkout
+        uses: actions/checkout@v5
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v6
+      - name: Set up Go
+        uses: actions/setup-go@v6
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version-file: go.mod
           cache: true
+
+      - name: Install pinned Go tools
+        run: |
+          go install github.com/go-task/task/v3/cmd/task@v3.51.1
+          GOTOOLCHAIN=auto go install github.com/c360studio/ateam/cmd/ateam@v0.4.1
+
+      - name: Lint
+        run: task lint
+
+      - name: go vet (integration)
+        run: go vet -tags=integration ./...
+
       - name: Pull NATS image for integration tests
         run: docker pull nats:2.12-alpine
-      - name: Unit tests (race)
-        run: go test -v -race ./...
-      - name: Integration tests (race)
-        run: go test -tags=integration -v -race ./...
 
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v6
-        with:
-          go-version: ${{ env.GO_VERSION }}
-          cache: true
+      - name: Unit tests (race)
+        run: task test
+
+      - name: Integration tests (race)
+        run: task test:integration
+
       - name: Cross-compile
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s -X main.version=${{ github.sha }}" -o semboids-linux-amd64 ./cmd/semboids
 
-  # schema-validation job deferred until a schema exists (see
-  # openspec/changes/add-flock-core/tasks.md 1.4)
-
-  status-check:
+  ui:
+    name: ${{ github.event.pull_request.draft && 'UI (draft, skipped)' || 'UI' }}
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: ubuntu-latest
-    needs: [lint, test, build]
-    if: always()
+    defaults:
+      run:
+        working-directory: ui
     steps:
-      - name: Check all jobs
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.20.0
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type-check
+        run: npm run check
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+  governance:
+    name: ${{ github.event.pull_request.draft && 'Governance (draft, skipped)' || 'Governance' }}
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    steps:
+      # Full history: ateam test-spec --base diffs from the merge base of the base commit and HEAD.
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.20.0
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      # The test-to-spec Vitest scan parses UI tests with ui/node_modules/typescript.
+      - name: Install UI dependencies
+        working-directory: ui
+        run: npm ci
+
+      - name: Install pinned governance tools
+        env:
+          GOTOOLCHAIN: auto
         run: |
-          if [ "${{ contains(needs.*.result, 'failure') }}" = "true" ] || [ "${{ contains(needs.*.result, 'cancelled') }}" = "true" ]; then
-            echo "One or more jobs failed"; exit 1
+          go install github.com/go-task/task/v3/cmd/task@v3.51.1
+          go install github.com/c360studio/ateam/cmd/ateam@v0.4.1
+          npm install --global @fission-ai/openspec@1.7.0
+
+      - name: Check ATeam multi-agent parity
+        run: task ateam:doctor
+
+      - name: Validate OpenSpec
+        run: task openspec:validate
+
+      # New and changed tests cite a spec Requirement (ateam test-spec --base, ateam #237). The base is the pull
+      # request's base commit, or on a push the previous main commit. A push whose before is all zeros (a new ref) has
+      # no previous commit, so it falls back to origin/main, which on a push to main is HEAD and reports nothing.
+      - name: Check test-to-spec citations
+        env:
+          TEST_SPEC_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || (github.event.before != '0000000000000000000000000000000000000000' && github.event.before || 'origin/main') }}
+        run: task test:spec
+
+  # Single required status check: anything other than success in a needed job fails the aggregate. Merge check is
+  # its own workflow and required check (merge-check.yml, ateam #255), so an open flake issue or a missing review never
+  # fails Required.
+  required:
+    name: ${{ github.event.pull_request.draft && 'Required (draft, skipped)' || 'Required' }}
+    runs-on: ubuntu-latest
+    needs: [go, ui, governance]
+    if: always() && (github.event_name != 'pull_request' || !github.event.pull_request.draft)
+    steps:
+      - name: Require every CI lane to pass
+        run: |
+          if [[ "${{ needs.go.result }}" != "success" ]] || \
+             [[ "${{ needs.ui.result }}" != "success" ]] || \
+             [[ "${{ needs.governance.result }}" != "success" ]]; then
+            echo "Required CI check failed: one or more lanes did not succeed"
+            exit 1
           fi
-          echo "All jobs passed"
