@@ -1,0 +1,18 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Show the in-flight OpenSpec queue with each change's blocking condition
+    cmds:
+      - task: queue
+
+  queue:
+    desc: Show each in-flight OpenSpec change with its holds and blocking conditions
+    cmds:
+      - scripts/ateam state spec-queue
+
+  validate:
+    desc: Validate all OpenSpec changes and specs strictly, then run ateam's spec-check (fails on a hold written outside every task)
+    cmds:
+      - openspec validate --all --strict
+      - scripts/ateam state spec-check
